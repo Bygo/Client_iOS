@@ -79,11 +79,14 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         // Reload the user's favorite meeting locations
         guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
         guard let userID = localUser.userID else { return }
-        model?.favoriteMeetingLocationServiceProvider.queryForUsersFavoriteMeetingLocations(userID, completionHandler: {
-            (favoriteMeetingLocations:Results<FavoriteMeetingLocation>) in
-            dispatch_async(dispatch_get_main_queue(), {
-                self.tableView.reloadSections(NSIndexSet(index: self.kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
-            })
+        
+        model?.favoriteMeetingLocationServiceProvider.fetchUsersFavoriteMeetingLocations(userID, completionHandler: {
+            (success:Bool) in
+            if success {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.tableView.reloadSections(NSIndexSet(index: self.kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
+                })
+            }
         })
     }
     

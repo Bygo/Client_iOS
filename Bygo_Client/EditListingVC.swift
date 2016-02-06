@@ -8,13 +8,15 @@
 
 
 import UIKit
+import RealmSwift
 
-class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemCategoryDelegate, EditItemValueDelegate, EditItemRatesDelegate, EditItemDescriptionDelegate {
+class EditListingVC: UITableViewController, EditListingNameDelegate, EditListingCategoryDelegate, EditListingValueDelegate, EditListingRentalRatesDelegate, EditListingDescriptionDelegate { 
     
     @IBOutlet var doneButton:UIBarButtonItem!
     @IBOutlet var headerView: UIView!
     //    @IBOutlet var headerScrollView: UIScrollView!
     
+    var delegate:EditListingsDelegate?
     var listing:Listing?
     var model:Model?
     
@@ -36,6 +38,13 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
         tableView.rowHeight             = UITableViewAutomaticDimension
         tableView.estimatedRowHeight    = 44.0
         headerView.backgroundColor      = .lightGrayColor()
+        
+        model?.categoryServiceProvider.refreshCategories({
+            (success:Bool) in
+            if success {
+                self.tableView.reloadSections(NSIndexSet(index: self.kCATEGORY_SECTION_INDEX), withRowAnimation: .None)
+            }
+        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -77,15 +86,11 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
             
         case kCATEGORY_SECTION_INDEX:
             guard let cell = tableView.dequeueReusableCellWithIdentifier("ItemInfoCell", forIndexPath: indexPath) as? EditListingTableViewCell else { return UITableViewCell() }
-//            model?.queryForCategories([item.categoryID], completionHandler: {(success:Bool, categories:[Model_iOS.Category])->Void in
-//                if success {
-//                    print("Success fetching category")
-//                    let category = categories.first!
-//                    cell.infoLabel.text = "\(category.name)"
-//                } else {
-//                    print("Error fetching category")
-//                }
-//            })
+            guard let categoryID = listing.categoryID else { return cell }
+            let realm = try! Realm()
+            guard let category = realm.objects(Category).filter("categoryID == \"\(categoryID)\"").first else { return cell }
+            guard let name = category.name else { return cell }
+            cell.infoLabel.text = name
             return cell
             
         case kTOTAL_VALUE_SECTION_INDEX:
@@ -125,9 +130,9 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
             
         case kDELETE_SECTION_INDEX:
             let cell = tableView.dequeueReusableCellWithIdentifier("DeleteButtonCell", forIndexPath: indexPath)
-            cell.textLabel?.textAlignment = .Center
-            cell.textLabel?.textColor = .redColor()
-            cell.textLabel?.text = "DELETE ITEM"
+            cell.textLabel?.textAlignment   = .Center
+            cell.textLabel?.textColor       = .redColor()
+            cell.textLabel?.text            = "DELETE LISTING"
             return cell
             
         default:
@@ -139,17 +144,23 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
         switch indexPath.section {
         case kNAME_SECTION_INDEX:
             performSegueWithIdentifier("ShowEditName", sender: nil)
+            
         case kCATEGORY_SECTION_INDEX:
             performSegueWithIdentifier("ShowEditCategory", sender: nil)
+            
         case kTOTAL_VALUE_SECTION_INDEX:
             performSegueWithIdentifier("ShowEditValue", sender: nil)
+            
         case kHOURLY_RATE_SECTION_INDEX, kDAILY_RATE_SECTION_INDEX, kWEEKLY_RATE_SECTION_INDEX:
-            performSegueWithIdentifier("ShowEditRates", sender: nil)
+            performSegueWithIdentifier("ShowEditRentalRates", sender: nil)
+            
         case kDESCRIPTION_SECTION_INDEX:
             performSegueWithIdentifier("ShowEditDescription", sender: nil)
+            
         case kDELETE_SECTION_INDEX:
-            // NOTE: Disabled for DEMO mode
+            // TODO: Throw secondary check before deleting listing
             self.dismissViewControllerAnimated(true, completion: nil)
+            
         default:
             break
         }
@@ -159,6 +170,7 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
     // MARK: - Editing Delegates
     func didUpdateItemName() {
         tableView.beginUpdates()
+        delegate?.didEditListing()
         tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: kNAME_SECTION_INDEX)], withRowAnimation: .Fade)
         tableView.endUpdates()
     }
@@ -175,7 +187,7 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
         tableView.endUpdates()
     }
     
-    func didUpdateRates() {
+    func didUpdateRentalRates() {
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: kHOURLY_RATE_SECTION_INDEX), NSIndexPath(forRow: 0, inSection: kDAILY_RATE_SECTION_INDEX), NSIndexPath(forRow: 0, inSection: kWEEKLY_RATE_SECTION_INDEX)], withRowAnimation: .Fade)
         tableView.endUpdates()
@@ -195,32 +207,35 @@ class EditListingVC: UITableViewController { //, EditItemNameDelegate, EditItemC
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-//        if segue.identifier == "ShowEditName" {
-//            guard let destVC = segue.destinationViewController as? EditItemNameVC else { return }
-//            destVC.model = model
-//            destVC.item = item
-//            destVC.delegate = self
-//        } else if segue.identifier == "ShowEditCategory" {
-//            guard let destVC = segue.destinationViewController as? EditItemDepartmentVC else { return }
-//            destVC.model = model
-//            destVC.item = item
-//            destVC.delegate = self
-//        } else if segue.identifier == "ShowEditValue" {
-//            guard let destVC = segue.destinationViewController as? EditItemValueVC else { return }
-//            destVC.delegate = self
-//            destVC.model = model
-//            destVC.item = item
-//        } else if segue.identifier == "ShowEditRates" {
-//            guard let destVC = segue.destinationViewController as? EditItemRatesVC else { return }
-//            destVC.delegate = self
-//            destVC.model = model
-//            destVC.item = item
-//        } else if segue.identifier == "ShowEditDescription" {
-//            guard let destVC = segue.destinationViewController as?EditItemDescriptionVC else { return }
-//            destVC.delegate = self
-//            destVC.model = model
-//            destVC.item = item
-//        }
-//        
+        if segue.identifier == "ShowEditName" {
+            guard let destVC    = segue.destinationViewController as? EditListingNameVC else { return }
+            destVC.model    = model
+            destVC.listing  = listing
+            destVC.delegate = self
+        }  else if segue.identifier == "ShowEditCategory" {
+            guard let destVC = segue.destinationViewController as? EditListingDepartmentVC else { return }
+            destVC.model    = model
+            destVC.listing  = listing
+            destVC.delegate = self
+        } else if segue.identifier == "ShowEditValue" {
+            guard let destVC = segue.destinationViewController as? EditListingValueVC else { return }
+            destVC.delegate = self
+            destVC.model    = model
+            destVC.listing  = listing
+        } else if segue.identifier == "ShowEditRentalRates" {
+            guard let destVC = segue.destinationViewController as? EditListingRentalRatesVC else { return }
+            destVC.delegate = self
+            destVC.model    = model
+            destVC.listing  = listing
+        }  else if segue.identifier == "ShowEditDescription" {
+            guard let destVC = segue.destinationViewController as? EditListingDescriptionVC else { return }
+            destVC.delegate = self
+            destVC.model    = model
+            destVC.listing  = listing
+        }
     }
+}
+
+protocol EditListingsDelegate {
+    func didEditListing()
 }

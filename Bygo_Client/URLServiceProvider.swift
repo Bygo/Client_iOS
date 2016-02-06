@@ -12,8 +12,8 @@ class URLServiceProvider: NSObject {
     
     // Creates a new JSON POST request with the given URL string and parameters
     func getNewJsonPostRequest(withURL urlString:String, params:[String:AnyObject]) -> NSURLRequest? {
-        guard let url = NSURL(string: urlString) else { return nil }
-        let request = NSMutableURLRequest(URL: url)
+        guard let url   = NSURL(string: urlString) else { return nil }
+        let request     = NSMutableURLRequest(URL: url)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.HTTPMethod = "POST"
@@ -25,5 +25,16 @@ class URLServiceProvider: NSObject {
             print("Error creating JSON POST request")
             return nil
         }
+    }
+    
+    
+    // Creates a new GET request with the give URL string
+    func getNewGETRequest(withURL urlString:String) -> NSURLRequest? {
+        guard let url = NSURL(string: urlString) else { return nil }
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.HTTPMethod = "GET"
+        return request
     }
 }

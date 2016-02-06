@@ -19,13 +19,13 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
     
     // MARK: - Queries
     // Query for a set of favorite meeting locations
-    func queryForUsersFavoriteMeetingLocations(userID:String, completionHandler:(favoriteMeetingLocations:Results<FavoriteMeetingLocation>)->Void) {
+    func fetchUsersFavoriteMeetingLocations(userID:String, completionHandler:(success:Bool)->Void) {
         
         // First check the local cache
         let realm = try! Realm()
         let cachedResults = realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").sorted("name", ascending: true)
         if cachedResults.count > 0 {
-            completionHandler(favoriteMeetingLocations: cachedResults)
+            completionHandler(success: true)
             return
         }
         
@@ -43,7 +43,7 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
             // Handle the server response
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: cachedResults) })
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
                 return
             }
             
@@ -83,13 +83,12 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
                         }
                     }
                     
-                    let fetchedResults = realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").sorted("name", ascending: true)
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: fetchedResults) })
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: cachedResults) })
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
                 }
             default:
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: cachedResults) })
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
             }
         })
         task.resume()

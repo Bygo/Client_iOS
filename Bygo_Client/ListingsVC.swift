@@ -9,24 +9,23 @@
 import UIKit
 import RealmSwift
 
-private let kSHAPE_1_WIDTH_FACTOR:CGFloat = 2.0
-private let kSHAPE_1_HEIGHT_FACTOR:CGFloat = 2.0
-private let kSHAPE_2_WIDTH_FACTOR:CGFloat = 2.0
-private let kSHAPE_2_HEIGHT_FACTOR:CGFloat = 1.0
-private let kSHAPE_3_WIDTH_FACTOR:CGFloat = 1.0
-private let kSHAPE_3_HEIGHT_FACTOR:CGFloat = 1.0
-private let kSHAPE_4_WIDTH_FACTOR:CGFloat = 1.0
-private let kSHAPE_4_HEIGHT_FACTOR:CGFloat = 2.0
+private let kSHAPE_1_WIDTH_FACTOR:CGFloat   = 2.0
+private let kSHAPE_1_HEIGHT_FACTOR:CGFloat  = 2.0
+private let kSHAPE_2_WIDTH_FACTOR:CGFloat   = 2.0
+private let kSHAPE_2_HEIGHT_FACTOR:CGFloat  = 1.0
+private let kSHAPE_3_WIDTH_FACTOR:CGFloat   = 1.0
+private let kSHAPE_3_HEIGHT_FACTOR:CGFloat  = 1.0
+private let kSHAPE_4_WIDTH_FACTOR:CGFloat   = 1.0
+private let kSHAPE_4_HEIGHT_FACTOR:CGFloat  = 2.0
 
-class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, EditListingsDelegate {
     
-
     @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var noListingsLabel: UILabel!
     
-    private var focusListing:Listing?
+    private var focusIndex:NSIndexPath?
     
     var model:Model?
-
     var type:ListingsListType = .All
     
     
@@ -36,10 +35,13 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         switch type {
         case .All:
             title = "ALL MY LISTINGS"
+            noListingsLabel.text = "You have not created any Listings"
         case .Shared:
             title = "SHARED ITEMS"
+            noListingsLabel.text = "You are not sharing any Items"
         case .Rented:
             title = "RENTED ITEMS"
+            noListingsLabel.text = "You are not renting any Items"
         }
     }
     
@@ -72,7 +74,17 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let realm = try! Realm()
-        return realm.objects(Listing).filter(self.getQueryFilter()).count
+        let count = realm.objects(Listing).filter(self.getQueryFilter()).count
+        
+        if count == 0 {
+            noListingsLabel.hidden = false
+            view.bringSubviewToFront(noListingsLabel)
+        } else {
+            noListingsLabel.hidden = true
+            view.sendSubviewToBack(noListingsLabel)
+        }
+        
+        return count
     }
     
     func configureCell(cell:ListingsCollectionViewCell, atIndexPath indexPath:NSIndexPath) {
@@ -118,14 +130,18 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-//        TODO: Set the FocusListing
-        let realm       = try! Realm()
-        focusListing    = realm.objects(Listing).filter(getQueryFilter()).sorted("name", ascending: true)[indexPath.item]
-        performSegueWithIdentifier("ShowEditListing", sender: nil)
-        
-        
-//        focusItem = fetchedResultsController.objectAtIndexPath(indexPath) as? Item
-//        performSegueWithIdentifier("ShowEditItem", sender: nil)
+        focusIndex = indexPath
+        if type == .All {
+            performSegueWithIdentifier("ShowEditListing", sender: nil)
+        }
+    }
+    
+    
+    // MARK: - EditListingsDelegate
+    func didEditListing() {
+        if let focusIndex = focusIndex {
+            collectionView.reloadItemsAtIndexPaths([focusIndex])
+        }
     }
 
     
@@ -134,8 +150,12 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         if segue.identifier == "ShowEditListing" {
             guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
             guard let destVC    = navVC.topViewController as? EditListingVC else { return }
+            destVC.delegate     = self
             destVC.model        = model
-            destVC.listing      = focusListing
+            if let focusIndex   = focusIndex {
+                let realm       = try! Realm()
+                destVC.listing  = realm.objects(Listing).filter(getQueryFilter()).sorted("name", ascending: true)[focusIndex.item]
+            }
         }
     }
 }

@@ -63,7 +63,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         (menuContainer as? MenuContainerVC)?.delegate   = self
         (menuContainer as? MenuContainerVC)?.model      = model
         
-//        ((settingsContainer as? UINavigationController)?.topViewController as? SettingsVC)?.delegate    = self
+        ((settingsContainer as? UINavigationController)?.topViewController as? SettingsVC)?.delegate    = self
         ((settingsContainer as? UINavigationController)?.topViewController as? SettingsVC)?.model       = model
     
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.model = model
@@ -130,8 +130,11 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         }
     }
     
-    func phoneNumberDidVerify(shouldDidmissLogin:Bool) {
+    func phoneNumberDidVerify(shouldDismissLogin:Bool) {
         
+        if shouldDismissLogin {
+            self.loginContainer?.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     func facebookButtonTapped(completionHandler:(success:Bool, data:[String:AnyObject]?)->Void) {
@@ -141,11 +144,15 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     
     // MARK: - Settings Delegate
     func didUpdateAccountSettings() {
-        
+        (menuContainer as? MenuContainerVC)?.userDidUpdateAccountSettings()
     }
     
     func didLogout() {
-        
+        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.userDidLogout()
+        ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.userDidLogout()
+
+        view.bringSubviewToFront(rentContainer!.view)
+        view.bringSubviewToFront(menuContainer!.view)
     }
 }
 

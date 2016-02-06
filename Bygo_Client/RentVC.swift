@@ -31,8 +31,6 @@ var GlobalMainQueue: dispatch_queue_t {
 }
 
 class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-
-
     
     // MARK: - Outlets
     @IBOutlet var collectionView:UICollectionView!
@@ -138,13 +136,12 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         performSegueWithIdentifier("ShowRentItemDetails", sender: nil)
     }
     
-    
-    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowRentItemDetails" {
             guard let destVC = segue.destinationViewController as? RentItemDetailsVC else { return }
             destVC.listing  = focusListing
+            destVC.delegate = delegate
             destVC.model    = model
         }
     }
@@ -164,5 +161,5 @@ extension RentVC : UICollectionViewDelegateFlowLayout{
 
 
 public protocol RentDelegate {
-    
+    func showLoginMenu()
 }

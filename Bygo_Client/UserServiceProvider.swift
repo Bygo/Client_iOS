@@ -255,9 +255,6 @@ class UserServiceProvider: NSObject {
         
     }
     
-    
-    
-    
     // Handle the Bygo server login response
     private func loginServerResponseHandler(data:NSData?, response:NSURLResponse?, error:NSError?, completionHandler:(success:Bool)->Void) {
         if error != nil {
@@ -318,6 +315,7 @@ class UserServiceProvider: NSObject {
             }
             
         default:
+            print("/login : \(statusCode)")
             dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
         }
     }

@@ -11,7 +11,9 @@ import RealmSwift
 
 class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
+    @IBOutlet var meetingProposalContainer:UINavigationController!
     var listing:AdvertisedListing?
+    var delegate:RentDelegate?
     var model:Model?
     
     @IBOutlet var itemTitleLabel: UILabel!
@@ -222,44 +224,33 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     @IBAction func rentNowButtonTapped(sender: AnyObject) {
         // TODO: Send rent request for the item
         // TODO: If success present success pop-up
-//        guard let model = model else { return }
-//        if model.isLocalUserLoggedIn() {
-//            showMeetingProposal()
-//        } else {
-//            showLoginMenu()
-//        }
+        guard let model = model else { return }
+        if model.userServiceProvider.isLocalUserLoggedIn() {
+            showMeetingProposal()
+        } else {
+            showMeetingProposal()
+        }
     }
     
     func showLoginMenu() {
-//        guard let loginBundle = NSBundle(identifier: "com.NicholasGarfield.Login-iOS") else {
-//            print("Login bundle not found")
-//            return
-//        }
-//        let loginSB = UIStoryboard(name: "Login", bundle: loginBundle)
-//        let loginVC = loginSB.instantiateInitialViewController()
-//        presentViewController(loginVC!, animated: true, completion: nil)
+        delegate?.showLoginMenu()
     }
     
     func showMeetingProposal() {
-//        guard let meetingSchedulerBundler = NSBundle(identifier: "com.NicholasGarfield.MeetingScheduler-iOS") else {
-//            print("MeetingScheduler bundle not found")
-//            return
-//        }
-//        let meetingSchedulerSB = UIStoryboard(name: "MeetingScheduler", bundle: meetingSchedulerBundler)
-//        guard let navVC = meetingSchedulerSB.instantiateViewControllerWithIdentifier("MeetingProposal") as? UINavigationController else {
-//            print("Could not get the navVC")
-//            return
-//        }
-//        guard let meetingProposalVC = navVC.topViewController as? MeetingProposalVC else {
-//            print("Could not get the meeting proposalVC")
-//            return
-//        }
-//        meetingProposalVC.model = self.model
-//        meetingProposalVC.item = self.item
-//        meetingProposalVC.rentalRate = self.item?.dailyRate
-//        meetingProposalVC.timeFrame = .Day
-//        presentViewController(navVC, animated: true, completion: nil)
+        let meetingSB = UIStoryboard(name: "Meetings", bundle: NSBundle.mainBundle())
+        meetingProposalContainer = meetingSB.instantiateViewControllerWithIdentifier("MeetingProposal") as? UINavigationController
+        guard let rentalRate = listing?.dailyRate.value else {
+            return
+        }
+        
+        (meetingProposalContainer?.topViewController as? MeetingProposalVC)?.model      = model
+        (meetingProposalContainer?.topViewController as? MeetingProposalVC)?.listing    = listing
+        (meetingProposalContainer?.topViewController as? MeetingProposalVC)?.rentalRate = rentalRate
+        (meetingProposalContainer?.topViewController as? MeetingProposalVC)?.timeFrame  = .Day
+        presentViewController(meetingProposalContainer, animated: true, completion: nil)
     }
+    
+    
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

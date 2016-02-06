@@ -43,6 +43,9 @@ class DashboardVC: UITableViewController {
         fetchListings()
     }
     
+    func userDidLogout() {
+        tableView.reloadData()
+    }
     
     private func fetchListings() {
         guard let localUser = model?.getLocalUser() else { return }
@@ -158,25 +161,21 @@ class DashboardVC: UITableViewController {
             performSegueWithIdentifier("ShowListings", sender: nil)
             
         case kSHARED_ITEMS_INDEX:
-            break
-//            targetListType = .Shared
-//            performSegueWithIdentifier("ShowItems", sender: nil)
+            targetListType = .Shared
+            performSegueWithIdentifier("ShowListings", sender: nil)
             
         case kRENTED_ITEMS_INDEX:
-            break
-//            targetListType = .Rented
-//            performSegueWithIdentifier("ShowItems", sender: nil)
+            targetListType = .Rented
+            performSegueWithIdentifier("ShowListings", sender: nil)
             
         case kRENT_REQUESTS_INDEX:
-            break
-//            performSegueWithIdentifier("ShowRentRequests", sender: nil)
+            performSegueWithIdentifier("ShowRentRequests", sender: nil)
             
         case kMEETINGS_INDEX:
             break
             
         case kCREATE_LISTING_INDEX:
-            break
-//            performSegueWithIdentifier("ShowCreateNewItem", sender: nil)
+            performSegueWithIdentifier("ShowCreateNewListing", sender: nil)
             
         default:
             break
@@ -192,15 +191,14 @@ class DashboardVC: UITableViewController {
             guard let targetListType    = targetListType else { return }
             destVC.model                = model
             destVC.type                 = targetListType
-//
-//        } else if segue.identifier == "ShowCreateNewItem" {
-//            guard let navVC = segue.destinationViewController as? UINavigationController else { return }
-//            guard let destVC = navVC.topViewController as? NewItemNameVC else { return }
-//            destVC.model = model
-//            
-//        } else if segue.identifier == "ShowRentRequests" {
-//            guard let destVC = segue.destinationViewController as? RentRequestsVC else { return }
-//            destVC.model = model
+        } else if segue.identifier == "ShowCreateNewListing" {
+            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
+            guard let destVC    = navVC.topViewController as? NewListingNameVC else { return }
+            destVC.model        = model
+            
+        } else if segue.identifier == "ShowRentRequests" {
+            guard let destVC = segue.destinationViewController as? RentRequestsVC else { return }
+            destVC.model = model
         }
     }
     

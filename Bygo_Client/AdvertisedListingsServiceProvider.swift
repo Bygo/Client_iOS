@@ -106,8 +106,8 @@ class AdvertisedListingsServiceProvider: NSObject {
                 do {
                     // Parse the JSON response
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-                    guard let name      = json["name"] as? String else { return }
-                    guard let rating    = json["rating"] as? Double else { return }
+                    guard let name  = json["name"] as? String else { return }
+                    let rating      = json["rating"] as? Double
                         
                     // Update the AdvertisedListing
                     dispatch_async(GlobalMainQueue, {
@@ -159,7 +159,7 @@ class AdvertisedListingsServiceProvider: NSObject {
                     // Parse the JSON response
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let name              = json["name"] as? String               else { return }
-                    guard let rating            = json["rating"] as? Double             else { return }
+                    let rating                  = json["rating"] as? Double             
                     guard let ownerID           = json["owner_id"] as? String           else { return }
                     guard let categoryID        = json["category_id"] as? String        else { return }
                     guard let totalValue        = json["total_value"] as? Double        else { return }

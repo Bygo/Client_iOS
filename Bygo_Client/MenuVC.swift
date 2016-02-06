@@ -58,7 +58,6 @@ class MenuVC: UITableViewController {
     
     func configureUI() {
         guard let model = model else { return }
-        
         if model.userServiceProvider.isLocalUserLoggedIn() {
             configureUserSpecificUI()
         } else {
@@ -68,29 +67,28 @@ class MenuVC: UITableViewController {
     
     func configureUserSpecificUI() {
         // Setup the user profile imageview
-        profileImageView.hidden = false
-        usernameLabel.hidden = false
-        profileHeader.hidden = false
-        profileImageView.contentMode = UIViewContentMode.ScaleAspectFill
-        profileImageView.backgroundColor = .lightGrayColor()
-        profileImageView.clipsToBounds = true
-        profileImageView.layer.cornerRadius = 34.0
-        profileImageView.layer.masksToBounds = true
-        profileImageView.layer.borderWidth = 0.0
+        profileImageView.hidden                 = false
+        usernameLabel.hidden                    = false
+        profileHeader.hidden                    = false
+        profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
+        profileImageView.backgroundColor        = .lightGrayColor()
+        profileImageView.clipsToBounds          = true
+        profileImageView.layer.cornerRadius     = 34.0
+        profileImageView.layer.masksToBounds    = true
+        profileImageView.layer.borderWidth      = 0.0
         
         // Set the user profile name and image
-        guard let model = model else { return }
-        guard let user = model.userServiceProvider.getLocalUser() else { return }
-        guard let firstName = user.firstName else { return }
-        guard let lastName = user.lastName else { return }
-        usernameLabel.text = "\(firstName) \(lastName)"
+        guard let user      = model?.userServiceProvider.getLocalUser() else { return }
+        guard let firstName = user.firstName                            else { return }
+        guard let lastName  = user.lastName                             else { return }
+        usernameLabel.text  = "\(firstName) \(lastName)"
         tableView.layoutIfNeeded()
     }
     
     func configureDefaultUI() {
         profileImageView.hidden = true
-        usernameLabel.hidden = true
-        profileHeader.hidden = true
+        usernameLabel.hidden    = true
+        profileHeader.hidden    = true
         tableView.layoutIfNeeded()
     }
     
