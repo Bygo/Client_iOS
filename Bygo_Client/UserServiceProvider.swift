@@ -20,13 +20,12 @@ class UserServiceProvider: NSObject {
     
     // MARK: - Queries
     // Query for user with userID
-    func queryForUser(userID:String, completionHandler:(user:User?)->Void) {
+    func fetchUser(userID:String, completionHandler:(success:Bool)->Void) {
         let result:Results<User> = try! Realm().objects(User).filter("userID == \"\(userID)\"")
-        guard let user = result.first else {
-            downloadUserPublicData(userID, completionHandler: completionHandler)
-            return
+        if result.count == 0 {
+            downloadUserPublicData(userID, completionHandler: completionHandler); return
         }
-        completionHandler(user: user)
+        completionHandler(success: true)
     }
     
     // Get the local user
@@ -118,13 +117,13 @@ class UserServiceProvider: NSObject {
     
     
     // Download user public data from the server
-    private func downloadUserPublicData(userID:String, completionHandler:(user:User?)->Void) {
+    private func downloadUserPublicData(userID:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
         let urlString = "\(serverURL)/request/user_public_data"
         let params = ["user_id":userID]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(user: nil)
+            completionHandler(success: false)
             return
         }
         
@@ -135,7 +134,7 @@ class UserServiceProvider: NSObject {
             
             // Handle the response
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(user: nil) })
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
                 return
             }
             
@@ -153,28 +152,25 @@ class UserServiceProvider: NSObject {
                     guard let email         = json["email"] as? String else { return }
                     guard let phoneNumber   = json["phone_number"] as? String else { return }
                     
+                    // Create new user
+                    let user            = User()
+                    user.userID         = userID
+                    user.firstName      = firstName
+                    user.lastName       = lastName
+                    user.email          = email
+                    user.phoneNumber    = phoneNumber
                     
-                    dispatch_async(dispatch_get_main_queue(), {
-                        // Create new user
-                        let user            = User()
-                        user.userID         = userID
-                        user.firstName      = firstName
-                        user.lastName       = lastName
-                        user.email          = email
-                        user.phoneNumber    = phoneNumber
-                        
-                        let realm = try! Realm()
-                        try! realm.write {
-                            realm.add(user)
-                        }
-                        
-                        completionHandler(user: user)
-                    })
+                    let realm = try! Realm()
+                    try! realm.write {
+                        realm.add(user)
+                    }
+                    
+                    completionHandler(success: true)
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(user: nil) })
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
                 }
             default:
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(user: nil) })
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
             }
         })
         task.resume()

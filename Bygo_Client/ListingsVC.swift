@@ -43,6 +43,12 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
             title = "RENTED ITEMS"
             noListingsLabel.text = "You are not renting any Items"
         }
+        
+        if let navBarHeight = navigationController?.navigationBar.bounds.height {
+            let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+            collectionView?.contentInset             = UIEdgeInsetsMake(navBarHeight+statusBarHeight, 0, 0, 0)
+            collectionView?.scrollIndicatorInsets    = UIEdgeInsetsMake(navBarHeight+statusBarHeight, 0, 0, 0)
+        }
     }
     
     

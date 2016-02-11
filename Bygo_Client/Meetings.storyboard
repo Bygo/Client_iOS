@@ -155,10 +155,10 @@
             </objects>
             <point key="canvasLocation" x="2377" y="-947"/>
         </scene>
-        <!--View Controller-->
+        <!--Meeting ResponderVC-->
         <scene sceneID="6eN-zQ-x5j">
             <objects>
-                <viewController id="B5w-od-Hs8" sceneMemberID="viewController">
+                <viewController id="B5w-od-Hs8" customClass="MeetingResponderVC" customModule="Bygo_Client" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ZKJ-vR-git"/>
                         <viewControllerLayoutGuide type="bottom" id="Ptj-Lr-qZv"/>
@@ -234,7 +234,7 @@
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="odc-J5-qvy" customClass="MeetingTimeResponderView" customModule="Bygo_Client" customModuleProvider="target">
-                                                                        <rect key="frame" x="55.5" y="0.0" width="443" height="67"/>
+                                                                        <rect key="frame" x="55" y="0.0" width="443" height="67"/>
                                                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <gestureRecognizers/>
                                                                     </view>
@@ -304,6 +304,7 @@
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="pvJ-Zv-LnZ" firstAttribute="height" secondItem="mM8-tk-IQ8" secondAttribute="height" placeholder="YES" id="9RE-nu-9F1"/>
                                             <constraint firstItem="pvJ-Zv-LnZ" firstAttribute="width" secondItem="mM8-tk-IQ8" secondAttribute="width" placeholder="YES" id="9i8-YP-Htn"/>
@@ -326,14 +327,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="YLn-XA-g0T" firstAttribute="height" secondItem="SUK-9k-tKC" secondAttribute="height" id="2QP-28-Zmf"/>
                             <constraint firstItem="YLn-XA-g0T" firstAttribute="centerX" secondItem="SUK-9k-tKC" secondAttribute="centerX" id="9cS-RW-KY6"/>
-                            <constraint firstItem="YLn-XA-g0T" firstAttribute="centerY" secondItem="SUK-9k-tKC" secondAttribute="centerY" id="JSa-2g-v8A"/>
+                            <constraint firstItem="YLn-XA-g0T" firstAttribute="height" secondItem="SUK-9k-tKC" secondAttribute="height" id="Afk-2r-h0N"/>
+                            <constraint firstItem="YLn-XA-g0T" firstAttribute="centerY" secondItem="SUK-9k-tKC" secondAttribute="centerY" id="Cff-so-qdO"/>
                             <constraint firstItem="YLn-XA-g0T" firstAttribute="width" secondItem="SUK-9k-tKC" secondAttribute="width" id="pev-3j-H9S"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Mho-3h-u2u">
-                        <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="D31-DV-7zf">
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="B5w-od-Hs8" id="Sbm-VC-Drq"/>

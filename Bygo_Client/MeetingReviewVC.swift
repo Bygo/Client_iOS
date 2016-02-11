@@ -20,13 +20,12 @@ class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet var endHandoffInstructionLabel: UILabel!
     @IBOutlet var endHandoffScrollView: UIScrollView!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        endHandoffScrollView.contentSize = CGSizeMake(2.0*endHandoffScrollView.bounds.width, endHandoffScrollView.bounds.height)
-        endHandoffScrollView.contentOffset.x = endHandoffScrollView.bounds.width
+        endHandoffScrollView.contentSize        = CGSizeMake(2.0*endHandoffScrollView.bounds.width, endHandoffScrollView.bounds.height)
+        endHandoffScrollView.contentOffset.x    = endHandoffScrollView.bounds.width
         endHandoffScrollView.layer.cornerRadius = endHandoffScrollView.bounds.height/2.0
     }
     

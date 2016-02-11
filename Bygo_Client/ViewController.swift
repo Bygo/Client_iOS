@@ -150,6 +150,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     func didLogout() {
         ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.userDidLogout()
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.userDidLogout()
+        (menuContainer as? MenuContainerVC)?.userDidLogout()
 
         view.bringSubviewToFront(rentContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)

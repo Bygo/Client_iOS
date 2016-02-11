@@ -1409,14 +1409,14 @@
                                     <rect key="frame" x="0.0" y="0.0" width="539" height="77"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xrg-CE-IGJ">
-                                            <rect key="frame" x="8" y="8" width="523" height="26.5"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Listing Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xrg-CE-IGJ">
+                                            <rect key="frame" x="8" y="25.5" width="523" height="27"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Number of Requests" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q8l-5d-Yw5">
-                                            <rect key="frame" x="8" y="39" width="523" height="20.5"/>
+                                            <rect key="frame" x="8" y="56.5" width="523" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -1427,14 +1427,14 @@
                                 <constraints>
                                     <constraint firstItem="xrg-CE-IGJ" firstAttribute="centerX" secondItem="H6h-KS-VQm" secondAttribute="centerX" id="52z-QL-zLS"/>
                                     <constraint firstAttribute="leadingMargin" secondItem="xrg-CE-IGJ" secondAttribute="leading" id="F6L-Th-vfJ"/>
+                                    <constraint firstAttribute="bottom" secondItem="q8l-5d-Yw5" secondAttribute="bottom" id="FNM-9g-VkO"/>
                                     <constraint firstAttribute="trailingMargin" secondItem="q8l-5d-Yw5" secondAttribute="trailing" id="Vub-oV-VrX"/>
                                     <constraint firstItem="q8l-5d-Yw5" firstAttribute="top" secondItem="xrg-CE-IGJ" secondAttribute="bottom" constant="4.5" id="XXl-yE-SsY"/>
-                                    <constraint firstItem="xrg-CE-IGJ" firstAttribute="top" secondItem="H6h-KS-VQm" secondAttribute="topMargin" id="sZd-ru-uiG"/>
                                     <constraint firstAttribute="leadingMargin" secondItem="q8l-5d-Yw5" secondAttribute="leading" id="v4h-HN-B7z"/>
                                 </constraints>
                                 <size key="customSize" width="539" height="77"/>
                                 <connections>
-                                    <outlet property="itemNameLabel" destination="xrg-CE-IGJ" id="vHo-3N-V4i"/>
+                                    <outlet property="listingNameLabel" destination="xrg-CE-IGJ" id="OxG-8e-OM9"/>
                                     <outlet property="numRequestsLabel" destination="q8l-5d-Yw5" id="Z23-7i-t8w"/>
                                 </connections>
                             </collectionViewCell>

@@ -18,17 +18,6 @@ private let kSHAPE_3_HEIGHT_FACTOR:CGFloat = 1.0
 private let kSHAPE_4_WIDTH_FACTOR:CGFloat = 1.0
 private let kSHAPE_4_HEIGHT_FACTOR:CGFloat = 2.0
 
-var GlobalUserInteractiveQueue: dispatch_queue_t {
-    return dispatch_get_global_queue(Int(QOS_CLASS_USER_INTERACTIVE.rawValue), 0)
-}
-
-var GlobalUserInitiatedQueue: dispatch_queue_t {
-    return dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0)
-}
-
-var GlobalMainQueue: dispatch_queue_t {
-    return dispatch_get_main_queue()
-}
 
 class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     

@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class DashboardVC: UITableViewController {
+class DashboardVC: UITableViewController, RentRequestsDelegate {
     
     var model:Model?
     
@@ -31,7 +31,12 @@ class DashboardVC: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-        fetchListings()
+        refreshData({
+            (success:Bool) in
+            if success {
+                self.tableView.reloadData()
+            }
+        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -40,28 +45,52 @@ class DashboardVC: UITableViewController {
     }
     
     func userDidLogin() {
-        fetchListings()
+        refreshData({
+            (success:Bool) in
+            if success {
+                self.tableView.reloadData()
+            }
+        })
     }
     
     func userDidLogout() {
         tableView.reloadData()
     }
     
-    private func fetchListings() {
-        guard let localUser = model?.getLocalUser() else { return }
-        guard let userID    = localUser.userID else { return }
-        model?.listingServiceProvider.fetchUsersListings(userID, completionHandler: {
+    private func refreshData(completionHandler:(success:Bool)->Void) {
+        fetchListings({
             (success:Bool) in
             if success {
-                self.tableView.reloadData()
+                self.fetchRentRequests({
+                    (success:Bool) in
+                    if success {
+                        self.fetchMeetings(completionHandler)
+                    } else {
+                        print("Error fetching meetings")
+                    }
+                })
             } else {
-                print("Error fetching user's Listings")
+                print("Error fetching listings")
             }
         })
     }
     
-    // MARK: - Table view data source
+    private func fetchListings(completionHandler:(success:Bool)->Void) {
+        guard let userID = model?.getLocalUser()?.userID else { return }
+        model?.listingServiceProvider.fetchUsersListings(userID, completionHandler: completionHandler)
+    }
     
+    private func fetchRentRequests(completionHandler:(success:Bool)->Void) {
+        guard let userID = model?.getLocalUser()?.userID else { return }
+        model?.rentServiceProvider.fetchUsersRentEvents(userID, completionHandler: completionHandler)
+    }
+    
+    private func fetchMeetings(completionHandler:(success:Bool)->Void) {
+        guard let userID = model?.getLocalUser()?.userID else { return }
+        model?.meetingServiceProvider.fetchUsersMeetingEvents(userID, completionHandler: completionHandler)
+    }
+    
+    // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
@@ -84,9 +113,8 @@ class DashboardVC: UITableViewController {
             cell.accessoryType = .DisclosureIndicator
             
             // Configure the Cell
-            guard let localUser = model?.userServiceProvider.getLocalUser() else { return cell }
-            guard let userID    = localUser.userID else { return cell }
-            dispatch_async(GlobalUserInteractiveQueue, {
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
+            dispatch_async(GlobalBackgroundQueue, {
                 let realm       = try! Realm()
                 let sharedListings = realm.objects(Listing).filter("(ownerID == \"\(userID)\") AND (renterID != nil)")
                 let count = sharedListings.count
@@ -100,44 +128,42 @@ class DashboardVC: UITableViewController {
             })
             
         case kRENTED_ITEMS_INDEX:
-            cell.textLabel?.text = "No Rented Items"
-            cell.accessoryType = .DisclosureIndicator
+            cell.textLabel?.text    = "No Rented Items"
+            cell.accessoryType      = .DisclosureIndicator
             
-            // Configure the Cell
-            guard let localUser = model?.userServiceProvider.getLocalUser() else { return cell }
-            guard let userID    = localUser.userID else { return cell }
-            dispatch_async(GlobalUserInteractiveQueue, {
-                let realm       = try! Realm()
-                let sharedListings = realm.objects(Listing).filter("renterID == \"\(userID)\"")
-                let count = sharedListings.count
-                
-                if count > 0 {
+            // Configure the cell
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
+            dispatch_async(GlobalBackgroundQueue, {
+                let realm               = try! Realm()
+                let numSharedListings   = realm.objects(Listing).filter("renterID == \"\(userID)\"").count
+                if numSharedListings > 0 {
                     dispatch_async(GlobalMainQueue, {
-                        if count == 1 { cell.textLabel?.text = "1 Rented Item" }
-                        else { cell.textLabel?.text = "\(count) Rented Items" }
+                        if numSharedListings == 1 { cell.textLabel?.text = "1 Rented Item" }
+                        else { cell.textLabel?.text = "\(numSharedListings) Rented Items" }
                     })
                 }
             })
             
         case kRENT_REQUESTS_INDEX:
-            cell.textLabel?.text = "No New Rent Requests"
-            cell.accessoryType = .DisclosureIndicator
-//            if let localUser = model?.getLocalUser() {
-//                let fetchRequest = NSFetchRequest(entityName: "RentEvent")
-//                fetchRequest.predicate = NSPredicate(format: "(ownerID = %@) AND (status = %@)", localUser.userID, "Proposed")
-//                do {
-//                    let events = try model?.managedObjectContext?.executeFetchRequest(fetchRequest)
-//                    if events?.count > 0 {
-//                        cell.textLabel?.text = "\(events!.count) Rent Requests"
-//                    }
-//                } catch {
-//                    print("Error fetching proposed rent events")
-//                }
-//            }
+            cell.textLabel?.text    = "No Rent Requests"
+            cell.accessoryType      = .DisclosureIndicator
+            
+            // Configure the cell
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
+            dispatch_async(GlobalBackgroundQueue, {
+                let realm           = try! Realm()
+                let numRentRequests = realm.objects(RentEvent).filter("ownerID == \"\(userID)\" AND (status == \"Proposed\" OR status == \"Inquired\")").count
+                if numRentRequests > 0 {
+                    dispatch_async(GlobalMainQueue, {
+                        if numRentRequests == 1 { cell.textLabel?.text = "1 Rent Reqeust" }
+                        else { cell.textLabel?.text = "\(numRentRequests) Rent Requests" }
+                    })
+                }
+            })
             
         case kMEETINGS_INDEX:
-            cell.textLabel?.text = "No Upcoming Meetings"
-            cell.accessoryType = .DisclosureIndicator
+            cell.textLabel?.text    = "No Upcoming Meetings"
+            cell.accessoryType      = .DisclosureIndicator
             
         case kCREATE_LISTING_INDEX:
             cell.textLabel?.text            = "Create New Listing"
@@ -182,6 +208,11 @@ class DashboardVC: UITableViewController {
         }
     }
     
+    func rentRequestsDidUpdate() {
+        print("Dashboard: RentRequestsDidUpdate")
+        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0)], withRowAnimation: .Fade)
+    }
+    
     
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -191,14 +222,16 @@ class DashboardVC: UITableViewController {
             guard let targetListType    = targetListType else { return }
             destVC.model                = model
             destVC.type                 = targetListType
+            
         } else if segue.identifier == "ShowCreateNewListing" {
             guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
             guard let destVC    = navVC.topViewController as? NewListingNameVC else { return }
             destVC.model        = model
             
         } else if segue.identifier == "ShowRentRequests" {
-            guard let destVC = segue.destinationViewController as? RentRequestsVC else { return }
-            destVC.model = model
+            guard let destVC    = segue.destinationViewController as? RentRequestsVC else { return }
+            destVC.model        = model
+            destVC.delegate     = self
         }
     }
     

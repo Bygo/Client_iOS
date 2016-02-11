@@ -21,10 +21,7 @@ class ListingsServiceProvider: NSObject {
         // First check the local cache
         let realm = try! Realm()
         let cachedResults = realm.objects(Listing).filter("ownerID == \"\(userID)\"")
-        if cachedResults.count > 0 {
-            print("listings count : \(cachedResults.count)")
-            completionHandler(success: true); return
-        }
+        if cachedResults.count > 0 { completionHandler(success: true); return }
         
         // If no FavoriteMeetingLocations were found for this user, query the database
         

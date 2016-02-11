@@ -59,6 +59,10 @@
 		733621631C61327900893034 /* NewFavoriteMeetingLocationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */; };
 		7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */; };
 		73DD4C991C6575F90003698A /* RealmString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C981C6575F90003698A /* RealmString.swift */; };
+		73DD4C9B1C657F9C0003698A /* MeetingResponderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */; };
+		73DD4C9D1C6858B70003698A /* MeetingResponderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9C1C6858B70003698A /* MeetingResponderCollectionViewCell.swift */; };
+		73DD4C9F1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9E1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift */; };
+		73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */; };
 		73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73DE66A41C63867D006D9810 /* Dashboard.storyboard */; };
 		73DE66A91C6386DD006D9810 /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DE66A81C6386DD006D9810 /* DashboardVC.swift */; };
 		73DE66AB1C639519006D9810 /* ListingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DE66AA1C639519006D9810 /* ListingsVC.swift */; };
@@ -176,6 +180,10 @@
 		733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteMeetingLocationVC.swift; sourceTree = "<group>"; };
 		733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCompleteLocationSuggestionTableViewCell.swift; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
+		73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderVC.swift; sourceTree = "<group>"; };
+		73DD4C9C1C6858B70003698A /* MeetingResponderCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderCollectionViewCell.swift; sourceTree = "<group>"; };
+		73DD4C9E1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTimeResponderTableViewCell.swift; sourceTree = "<group>"; };
+		73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingServiceProvider.swift; sourceTree = "<group>"; };
 		73DE66A41C63867D006D9810 /* Dashboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Dashboard.storyboard; sourceTree = "<group>"; };
 		73DE66A81C6386DD006D9810 /* DashboardVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		73DE66AA1C639519006D9810 /* ListingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingsVC.swift; sourceTree = "<group>"; };
@@ -351,6 +359,7 @@
 				73147DC41C62F5E200FD70B8 /* AdvertisedListingsServiceProvider.swift */,
 				7336215A1C6108E700893034 /* FavoriteMeetingLocationServiceProvider.swift */,
 				73DE66F21C6408BB006D9810 /* RentServiceProvider.swift */,
+				73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */,
 				733621201C60755000893034 /* URLServiceProvider.swift */,
 				733621601C612E4300893034 /* DataValidator.swift */,
 			);
@@ -550,6 +559,7 @@
 			children = (
 				73DE66E41C63EF97006D9810 /* MeetingReviewVC.swift */,
 				73DE66E61C63EFBA006D9810 /* MeetingProposalVC.swift */,
+				73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -557,6 +567,8 @@
 		73DE66DC1C63EEA6006D9810 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				73DD4C9E1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift */,
+				73DD4C9C1C6858B70003698A /* MeetingResponderCollectionViewCell.swift */,
 				73DE66E81C63F0AB006D9810 /* MeetingTimeProposalTableViewCell.swift */,
 				73DE66EA1C63F0C7006D9810 /* MeetingLocationProposalTableViewCell.swift */,
 			);
@@ -814,7 +826,9 @@
 				7336211A1C60749B00893034 /* User.swift in Sources */,
 				7336215B1C6108E700893034 /* FavoriteMeetingLocationServiceProvider.swift in Sources */,
 				7336214A1C60F44700893034 /* SignUpVC.swift in Sources */,
+				73DD4C9B1C657F9C0003698A /* MeetingResponderVC.swift in Sources */,
 				73DE66C91C63D45A006D9810 /* EditListingDepartmentVC.swift in Sources */,
+				73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */,
 				73DE66CD1C63DC29006D9810 /* EditListingRentalRatesVC.swift in Sources */,
 				733620EA1C60743E00893034 /* ViewController.swift in Sources */,
 				73147DC51C62F5E200FD70B8 /* AdvertisedListingsServiceProvider.swift in Sources */,
@@ -827,11 +841,13 @@
 				73DE66C51C63B924006D9810 /* NewListingDescriptionVC.swift in Sources */,
 				73DE66E31C63EF4B006D9810 /* MeetingTimeResponderView.swift in Sources */,
 				73DE66D11C63E9F0006D9810 /* RentRequestsVC.swift in Sources */,
+				73DD4C9F1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift in Sources */,
 				73147DCD1C6313CA00FD70B8 /* RentItemUserProfileTableViewCell.swift in Sources */,
 				7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */,
 				73DE66A91C6386DD006D9810 /* DashboardVC.swift in Sources */,
 				733621581C6106A200893034 /* FavoriteMeetingLocation.swift in Sources */,
 				73147DC71C63119200FD70B8 /* RentItemDetailsVC.swift in Sources */,
+				73DD4C9D1C6858B70003698A /* MeetingResponderCollectionViewCell.swift in Sources */,
 				73DE66D31C63EA87006D9810 /* RentRequestsCollectionViewCell.swift in Sources */,
 				73DE66E11C63EF15006D9810 /* MeetingTimeProposalView.swift in Sources */,
 				73147DA21C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift in Sources */,
@@ -933,6 +949,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -977,6 +994,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

@@ -96,8 +96,8 @@ class MeetingTimeProposalView: UIView {
     }
     
     func panBeganAtLocation(loc:CGPoint) {
-        guard let dataSource = dataSource else { return }
-        guard let delegate = delegate else { return }
+        guard let dataSource    = dataSource else { return }
+        guard let delegate      = delegate else { return }
         
         for i in 0..<dataSource.numProposedMeetingTimes() {
             let timeSlotView = timeSlotViews[i]
@@ -118,8 +118,8 @@ class MeetingTimeProposalView: UIView {
     
     func panMovedToLocation(loc:CGPoint) {
         
-        guard let dataSource = dataSource else { return }
-        guard let delegate = delegate else { return }
+        guard let dataSource    = dataSource else { return }
+        guard let delegate      = delegate else { return }
         
         for i in 0..<dataSource.numProposedMeetingTimes() {
             let timeSlotView = timeSlotViews[i]

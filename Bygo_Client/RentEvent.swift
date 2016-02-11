@@ -20,5 +20,5 @@ class RentEvent: Object {
     dynamic var proposedBy:String?          = nil
     dynamic var startMeetingEventID:String? = nil
     dynamic var endMeetingEventID:String?   = nil
-    dynamic var dateLastModified:NSDate?    = nil
+    dynamic var dateCreated:NSDate?         = nil
 }

@@ -7,13 +7,17 @@
 //
 
 import UIKit
+import RealmSwift
 
-
-class RentRequestsVC: UICollectionViewController {
+class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
     
     var model:Model?
+    var delegate:RentRequestsDelegate?
+    
+    var listingIDsWithRentRequests:[String] = []
     
     @IBOutlet var noRentRequestsLabel:UILabel!
+    @IBOutlet var meetingResponderContainer:UINavigationController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,13 +31,13 @@ class RentRequestsVC: UICollectionViewController {
     }
     
     private func configureNoRentRequestsLabel() {
-        noRentRequestsLabel = UILabel(frame: CGRectMake(12.0, 0, view.bounds.width-24.0, view.bounds.height))
-        noRentRequestsLabel.font = UIFont.systemFontOfSize(18.0)
-        noRentRequestsLabel.textColor = .darkGrayColor()
-        noRentRequestsLabel.textAlignment = .Center
-        noRentRequestsLabel.numberOfLines = 0
-        noRentRequestsLabel.text = "None of your Listings\nhave any Rent Requests"
-        noRentRequestsLabel.hidden = true
+        noRentRequestsLabel                 = UILabel(frame: CGRectMake(12.0, 0, view.bounds.width-24.0, view.bounds.height))
+        noRentRequestsLabel.font            = UIFont.systemFontOfSize(18.0)
+        noRentRequestsLabel.textColor       = .darkGrayColor()
+        noRentRequestsLabel.textAlignment   = .Center
+        noRentRequestsLabel.numberOfLines   = 0
+        noRentRequestsLabel.text            = "None of your Listings\nhave any Rent Requests"
+        noRentRequestsLabel.hidden          = true
         view.addSubview(noRentRequestsLabel)
         view.sendSubviewToBack(noRentRequestsLabel)
     }
@@ -41,22 +45,40 @@ class RentRequestsVC: UICollectionViewController {
     // MARK: UICollectionViewDataSource
     
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 1
+        // FIXME: Should be the number of different Items that have RentRequests
+        listingIDsWithRentRequests = []
+        
+        guard let userID    = model?.userServiceProvider.getLocalUser()?.userID else { return 1 }
+        let realm           = try! Realm()
+        let rentEvents      = realm.objects(RentEvent).filter("ownerID == \"\(userID)\"  AND (status == \"Proposed\" OR status == \"Inquired\")")
+        for i in 0..<rentEvents.count {
+            let event = rentEvents[i]
+            if let listingID = event.listingID {
+                if !listingIDsWithRentRequests.contains(listingID) {
+                    listingIDsWithRentRequests.append(listingID)
+                }
+            }
+        }
+        print(listingIDsWithRentRequests)
+        
+        if listingIDsWithRentRequests.count == 0 {
+            noRentRequestsLabel.hidden = false
+            view.bringSubviewToFront(noRentRequestsLabel)
+            return 0
+        } else {
+            noRentRequestsLabel.hidden = true
+            view.sendSubviewToBack(noRentRequestsLabel)
+            return listingIDsWithRentRequests.count
+        }
     }
     
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = 0
+        let realm           = try! Realm()
+        let count           = realm.objects(RentEvent).filter("listingID == \"\(listingIDsWithRentRequests[section])\" AND (status == \"Proposed\" OR status == \"Inquired\")").count
         
-        if count == 0 {
-            noRentRequestsLabel.hidden = false
-            view.bringSubviewToFront(noRentRequestsLabel)
-        } else {
-            noRentRequestsLabel.hidden = true
-            view.sendSubviewToBack(noRentRequestsLabel)
-        }
-        
-        return count
+        if count == 0 { return 0 }
+        else { return count + 1 }
     }
     
     
@@ -65,49 +87,54 @@ class RentRequestsVC: UICollectionViewController {
         if indexPath.row == 0 {
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("HeaderCell", forIndexPath: indexPath) as? RentRequestsHeaderCollectionViewCell else { return UICollectionViewCell() }
             
-//            guard let rentEvent = fetchedResultsController.objectAtIndexPath(indexPath) as? RentEvent else { return cell }
-//            
-//            model?.queryForItems([rentEvent.itemID], completionHandler: {(success:Bool, items:[Item]) in
-//                if success {
-//                    if let item = items.first {
-//                        cell.itemNameLabel.text = item.name
-//                    }
-//                } else {
-//                    print("Error querying for item")
-//                }
-//            })
-//            
-//            let numRequests = collectionView.numberOfItemsInSection(indexPath.section) - 1
-//            
-//            if numRequests == 1 {
-//                cell.numRequestsLabel.text = "1 Request"
-//            } else {
-//                cell.numRequestsLabel.text = "\(numRequests) Requests"
-//            }
+            dispatch_async(GlobalUserInitiatedQueue, {
+                let realm           = try! Realm()
+                let listingID       = self.listingIDsWithRentRequests[indexPath.section]
+                guard let listing   = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first else { return }
+                guard let name      = listing.name else { return }
+                let numRequests     = realm.objects(RentEvent).filter("listingID == \"\(listingID)\" AND (status == \"Proposed\" OR status == \"Inquired\")").count
+                
+                dispatch_async(GlobalMainQueue, {
+                    cell.listingNameLabel.text = name
+                    if numRequests == 1 { cell.numRequestsLabel.text = "1 Request" }
+                    else                { cell.numRequestsLabel.text = "\(numRequests) Requests" }
+                })
+            })
+
             
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RequestCell", forIndexPath: indexPath) as? RentRequestsCollectionViewCell else { return UICollectionViewCell() }
             
-//            guard let rentEvent = fetchedResultsController.objectAtIndexPath(NSIndexPath(forItem: indexPath.item - 1, inSection: indexPath.section)) as? RentEvent else { return cell }
-//            
-//            model?.queryForUser(rentEvent.renterID, completionHandler: {(success:Bool, user:User?) in
-//                if success {
-//                    cell.userNameLabel.text = "\(user!.firstName) \(user!.lastName)"
-//                    cell.rentalRateLabel.text = String(format: "$%.2f", rentEvent.rentalRate)
-//                    
-//                    // Set cell image
-//                    cell.userProfileImageView.layer.cornerRadius = cell.userProfileImageView.bounds.width/2.0
-//                    cell.userProfileImageView.contentMode = UIViewContentMode.ScaleAspectFill
-//                    cell.userProfileImageView.clipsToBounds = true
-//                    cell.userProfileImageView.layer.masksToBounds = true
-//                    cell.userProfileImageView.layer.borderWidth = 0.0
-//                    
-//                    
-//                } else {
-//                    print("Error fetching user \(rentEvent.renterID)")
-//                }
-//            })
+            dispatch_async(GlobalUserInteractiveQueue, {
+                let realm                   = try! Realm()
+                let listingID               = self.listingIDsWithRentRequests[indexPath.section]
+                let rentEvent               = realm.objects(RentEvent).filter("listingID == \"\(listingID)\"").sorted("dateCreated")[indexPath.row-1]
+                guard let rentalRate        = rentEvent.rentalRate.value else { return }
+                cell.rentalRateLabel.text   = String(format: "$%.2f", rentalRate)
+                
+                guard let renterID  = rentEvent.renterID else { return }
+                self.model?.userServiceProvider.fetchUser(renterID, completionHandler: {
+                    (success:Bool) in
+                    let realm                   = try! Realm()
+                    let renter                  = realm.objects(User).filter("userID == \"\(renterID)\"").first
+                    guard let renterFirstName   = renter?.firstName else { return }
+                    guard let renterLastName    = renter?.lastName  else { return }
+                    
+                    
+                    dispatch_async(GlobalMainQueue, {
+                        // Configure cell image user image
+                        cell.userProfileImageView.layer.cornerRadius    = cell.userProfileImageView.bounds.width/2.0
+                        cell.userProfileImageView.contentMode           = UIViewContentMode.ScaleAspectFill
+                        cell.userProfileImageView.clipsToBounds         = true
+                        cell.userProfileImageView.layer.masksToBounds   = true
+                        cell.userProfileImageView.layer.borderWidth     = 0.0
+                
+                        // Configure cell text labels
+                        cell.userNameLabel.text = "\(renterFirstName) \(renterLastName)"
+                    })
+                })
+            })
             
             return cell
         }
@@ -115,12 +142,13 @@ class RentRequestsVC: UICollectionViewController {
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if indexPath.row != 0 {
-//            guard let rentEvent = fetchedResultsController.objectAtIndexPath(NSIndexPath(forItem: indexPath.item-1, inSection: indexPath.section)) as? RentEvent else { return }
-//            showMeetingResponder(rentEvent.itemID, proposalIndex: indexPath.item-1)
+            showMeetingResponder(indexPath)
         }
     }
     
-    func showMeetingResponder(focusItemID:String, proposalIndex:Int) {
+//    func showMeetingResponder(focusItemID:String, proposalIndex:Int) {
+    
+        
 //        guard let meetingSchedulerBundler = NSBundle(identifier: "com.NicholasGarfield.MeetingScheduler-iOS") else {
 //            print("MeetingScheduler bundle not found")
 //            return
@@ -142,12 +170,39 @@ class RentRequestsVC: UICollectionViewController {
 //        presentViewController(navVC, animated: true, completion: {
 //            meetingResponderVC.reload()
 //        })
+//    }
+    
+    private func showMeetingResponder(indexPath:NSIndexPath) {
+        let meetingSB               = UIStoryboard(name: "Meetings", bundle: NSBundle.mainBundle())
+        meetingResponderContainer   = meetingSB.instantiateViewControllerWithIdentifier("MeetingResponse") as? UINavigationController
+        let listingID               = listingIDsWithRentRequests[indexPath.section]
+        (meetingResponderContainer?.topViewController as? MeetingResponderVC)?.listingID = listingID
+        if (meetingResponderContainer?.topViewController as? MeetingResponderVC)?.model == nil {
+            (meetingResponderContainer?.topViewController as? MeetingResponderVC)?.model = model
+        }
+        (meetingResponderContainer?.topViewController as? MeetingResponderVC)?.currentPage = indexPath.row-1
+        (meetingResponderContainer?.topViewController as? MeetingResponderVC)?.delegate = self
+        presentViewController(meetingResponderContainer, animated: true, completion: nil)
     }
+    
+    
+    // MARK: - MeetingResponderDelegate
+    func didRejectProposal() {
+        collectionView?.reloadData()
+        delegate?.rentRequestsDidUpdate()
+    }
+    
+    func didAcceptProposal() {
+        collectionView?.reloadData()
+        delegate?.rentRequestsDidUpdate()
+    }
+    
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
     }
+    
 }
 
 
@@ -155,9 +210,9 @@ class RentRequestsVC: UICollectionViewController {
 extension RentRequestsVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         if indexPath.row == 0 {
-            return CGSizeMake(view.bounds.width, 64.0)
+            return CGSizeMake(view.bounds.width, 80.0)
         } else {
-            return CGSizeMake(view.bounds.width, view.bounds.height/4.0)
+            return CGSizeMake(view.bounds.width, view.bounds.height/5.0)
         }
     }
     
@@ -167,5 +222,5 @@ extension RentRequestsVC : UICollectionViewDelegateFlowLayout {
 }
 
 protocol RentRequestsDelegate {
-    
+    func rentRequestsDidUpdate()
 }

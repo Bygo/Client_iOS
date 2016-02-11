@@ -10,7 +10,7 @@ import UIKit
 
 class RentRequestsHeaderCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet var itemNameLabel: UILabel!
+    @IBOutlet var listingNameLabel: UILabel!
     @IBOutlet var numRequestsLabel: UILabel!
     
 }

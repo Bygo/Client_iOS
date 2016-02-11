@@ -138,11 +138,13 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             cell.profileImageView.layer.masksToBounds = true
             
             if let ownerID = listing.ownerID {
-                model?.userServiceProvider.queryForUser(ownerID, completionHandler: {
-                    (owner:User?) in
-                    if let owner = owner {
-                        guard let firstName = owner.firstName else { return }
-                        guard let lastName  = owner.lastName  else { return }
+                model?.userServiceProvider.fetchUser(ownerID, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        let realm           = try! Realm()
+                        let owner           = realm.objects(User).filter("userID == \"\(ownerID)\"").first
+                        guard let firstName = owner?.firstName  else { return }
+                        guard let lastName  = owner?.lastName   else { return }
                         cell.nameLabel.text = "\(firstName) \(lastName)"
                     }
                 })
@@ -160,6 +162,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             cell.setNeedsUpdateConstraints()
             cell.updateConstraintsIfNeeded()
             return cell
+            
         default:
             return UITableViewCell()
         }
@@ -232,11 +235,11 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
         }
     }
     
-    func showLoginMenu() {
+    private func showLoginMenu() {
         delegate?.showLoginMenu()
     }
     
-    func showMeetingProposal() {
+    private func showMeetingProposal() {
         let meetingSB = UIStoryboard(name: "Meetings", bundle: NSBundle.mainBundle())
         meetingProposalContainer = meetingSB.instantiateViewControllerWithIdentifier("MeetingProposal") as? UINavigationController
         guard let rentalRate = listing?.dailyRate.value else {

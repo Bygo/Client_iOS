@@ -94,7 +94,7 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
         task.resume()
     }
     
-    func queryForFavoriteMeetingLocations(locationIDs:[String], completionHandler:(favoriteMeetingLocations:[FavoriteMeetingLocation])->Void) {
+    func fetchFavoriteMeetingLocations(locationIDs:[String], completionHandler:(success:Bool)->Void) {
         
         let realm = try! Realm()
         
@@ -117,20 +117,14 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
         
         // If all of the locations were found in the local cache, just return
         if uncachedLocationIDs.count == 0 {
-            completionHandler(favoriteMeetingLocations: cachedFavoriteMeetingLocations)
+            completionHandler(success: true)
         }
         
         // Fetch all of the uncached FavoriteMeetingLocations from the server
-        downloadFavoriteMeetingLocations(uncachedLocationIDs, completionHandler: {
-            (fetchedFavoriteMeetingLocations:[FavoriteMeetingLocation])->Void in
-            
-            // Return the cached and fetch FavoriteMeetingLocations together
-            cachedFavoriteMeetingLocations.appendContentsOf(fetchedFavoriteMeetingLocations)
-            completionHandler(favoriteMeetingLocations: cachedFavoriteMeetingLocations)
-        })
+        downloadFavoriteMeetingLocations(uncachedLocationIDs, completionHandler: completionHandler)
     }
     
-    private func downloadFavoriteMeetingLocations(locationIDs:[String], completionHandler:(favoriteMeetingLocations:[FavoriteMeetingLocation])->Void) {
+    private func downloadFavoriteMeetingLocations(locationIDs:[String], completionHandler:(success:Bool)->Void) {
         
         var fetchedLocations:[FavoriteMeetingLocation] = []
         
@@ -138,7 +132,7 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
         let urlString = "\(serverURL)/request/favorite_meeting_locations"
         let params = ["location_ids":locationIDs]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(favoriteMeetingLocations: fetchedLocations)
+            completionHandler(success: false)
             return
         }
         
@@ -149,7 +143,7 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
             // Handle the response
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: fetchedLocations) })
+                completionHandler(success: false)
                 return
             }
             
@@ -161,7 +155,7 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
                     // Parse JSON response data
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let serverLocations = json["locations"] as? [[String:AnyObject]] else {
-                        dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: fetchedLocations) })
+                        completionHandler(success: false)
                         return
                     }
                     
@@ -195,15 +189,15 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
                             fetchedLocations.append(location)
                         }
                         
-                        completionHandler(favoriteMeetingLocations: fetchedLocations)
+                        completionHandler(success: true)
                     })
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: fetchedLocations) })
+                    completionHandler(success: false)
                 }
                 
             default: // Catching some unexpected status code
                 print("/request/favorite_meeting_locations – \(statusCode)")
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(favoriteMeetingLocations: fetchedLocations) })
+                completionHandler(success: false)
             }
         })
         task.resume()

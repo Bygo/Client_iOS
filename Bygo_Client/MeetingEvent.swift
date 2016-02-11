@@ -19,9 +19,9 @@ class MeetingEvent: Object {
     dynamic var status:String?                      = nil
     let proposedMeetingTimes                        = List<ProposedMeetingTime>()
     let proposedMeetingLocations                    = List<RealmString>()
-    dynamic let time:NSDate?                        = nil
-    dynamic var location: FavoriteMeetingLocation?  = nil
+    dynamic var time:NSDate?                        = nil
+    dynamic var locationID: String?                 = nil
     dynamic var ownerConfirmationTime: NSDate?      = nil
     dynamic var renterConfirmationTime: NSDate?     = nil
-    dynamic var dateLastModified: NSDate?           = nil
+    dynamic var dateCreated: NSDate?                = nil
 }

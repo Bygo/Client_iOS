@@ -21,22 +21,14 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
     @IBOutlet var timeProposalView: MeetingTimeProposalView!
     @IBOutlet var tableView: UITableView!
     
-    private let kSCHEDULER_SECTION = 0
-    private let kYOUR_FAV_PLACES_SECTION = 1
-    private let kTHEIR_FAV_PLACES_SECTION = 2
+    private let kSCHEDULER_SECTION          = 0
+    private let kYOUR_FAV_PLACES_SECTION    = 1
+    private let kTHEIR_FAV_PLACES_SECTION   = 2
     private let kRECOMMENDED_PLACES_SECTION = -1
-    private let kSEND_BUTTON_SECTION = 3
+    private let kSEND_BUTTON_SECTION        = 3
     
-//    var proposedLocations:[FavoriteMeetingLocation] = []
-//    var ownerFavLocations:[FavoriteMeetingLocation] = []
-//    var renterFavLocations:[FavoriteMeetingLocation] = []
-//    var numOwnerFavLocations:Int    = 0
-//    var ownerFavLocationIDs:[String:String] = [:]
-//    var renterFavLocationIDs:[String:String] = [:]
-//    var numRenterFavLocations:Int   = 0
-    var proposedMeetingLocationIDs:[String] = []
-
-    var proposedMeetingTimes:[ProposedMeetingTime] = []
+    private var proposedMeetingLocationIDs:[String] = []
+    private var proposedMeetingTimes:[ProposedMeetingTime] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -145,7 +137,6 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
         switch indexPath.section {
         case kSCHEDULER_SECTION:
             switch indexPath.row {
@@ -164,34 +155,34 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
                     timeFrameString = "week"
                 }
                 
-                guard let listingName = listing.name else { return cell }
-                cell.textLabel?.numberOfLines = 0
-                let formattedRentalRate = String(format: "$%.2f", rentalRate)
-                cell.textLabel?.text = "Create a requst to rent \(listingName) for \(formattedRentalRate) per \(timeFrameString)"
+                guard let listingName           = listing.name else { return cell }
+                cell.textLabel?.numberOfLines   = 0
+                let formattedRentalRate         = String(format: "$%.2f", rentalRate)
+                cell.textLabel?.text            = "Create a requst to rent \(listingName) for \(formattedRentalRate) per \(timeFrameString)"
                 return cell
                 
             case 1:
-                let cell = UITableViewCell()
-                cell.textLabel?.numberOfLines = 0
-                cell.textLabel?.text = "1. To begin, propose some times that you are available to pick up the item."
+                let cell                        = UITableViewCell()
+                cell.textLabel?.numberOfLines   = 0
+                cell.textLabel?.text            = "1. To begin, propose some times that you are available to pick up the item."
                 return cell
                 
             case 2:
                 guard let cell = tableView.dequeueReusableCellWithIdentifier("TimeProposalCell", forIndexPath: indexPath) as? MeetingTimeProposalTableViewCell else { return UITableViewCell() }
                 // FIXME: Pull from UI repo
-                cell.timeProposalView.delegate = self
-                cell.timeProposalView.dataSource = self
-                cell.timeProposalView.layer.cornerRadius = 0.0
-                timeProposalView = cell.timeProposalView
+                cell.timeProposalView.delegate              = self
+                cell.timeProposalView.dataSource            = self
+                cell.timeProposalView.layer.cornerRadius    = 0.0
+                timeProposalView                            = cell.timeProposalView
                 cell.timeProposalView.reload()
                 cell.layoutIfNeeded()
                 cell.updateConstraintsIfNeeded()
                 return cell
                 
             case 3:
-                let cell = UITableViewCell()
-                cell.textLabel?.numberOfLines = 0
-                cell.textLabel?.text = "\n\n2. Finally, select some locations where you could pick up the item."
+                let cell                        = UITableViewCell()
+                cell.textLabel?.numberOfLines   = 0
+                cell.textLabel?.text            = "\n\n2. Finally, select some locations where you could pick up the item."
                 return cell
                 
             default:
@@ -229,7 +220,9 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
         } else {
             proposedMeetingLocationIDs.append(locationID)
         }
+        tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        tableView.endUpdates()
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -266,7 +259,6 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
             let status      = "Proposed"
             let proposedBy  = "Renter"
             
-            // NOTE: Disabled for demo
             model?.rentServiceProvider.createRentRequest(ownerID, renterID: renterID, listingID: listingID, status: status, proposedBy: proposedBy, message: nil, rentalRate: rentalRate, timeFrame: timeFrame.rawValue, proposedMeetingTimes: proposedMeetingTimes, proposedMeetingLocationIDs: proposedMeetingLocationIDs, completionHandler: {
                 (success:Bool) in
                 if success {
@@ -275,16 +267,6 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
                     print("Error creating Rent Request")
                 }
             })
-            //            model?.proposeRentEvent(itemID, ownerID: ownerID, rentalRate: rentalRate, timeFrame: timeFrame, proposedMeetingTimes: proposedMeetingTimes, proposedMeetingLocations: proposedLocations, message: message, completionHandler: {(success:Bool)->Void in
-            //                if success {
-            //                    print("Success proposing new rent event")
-            //                    self.dismissViewControllerAnimated(true, completion: nil)
-            //                } else {
-            //                    print("Could not propose new rent event")
-            //                }
-            //            })
-            
-//            self.dismissViewControllerAnimated(true, completion: nil)
             
             
         default: break
