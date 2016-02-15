@@ -48,6 +48,9 @@ class UserServiceProvider: NSObject {
         // Create the request
         let urlString = "\(serverURL)/create_new/user"
         var params = ["first_name":firstName, "last_name":lastName, "email":email, "phone_number":"", "facebook_id":"", "password":"", "signup_method":signupMethod]
+        if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
+            params["notification_token"] = notificationToken
+        }
         if let phoneNumber = phoneNumber { params.updateValue(phoneNumber, forKey: "phone_number") }
         if let facebookID = facebookID { params.updateValue(facebookID, forKey: "facebook_id") }
         if let password = password { params.updateValue(password, forKey: "password") }
@@ -183,7 +186,10 @@ class UserServiceProvider: NSObject {
         
         // Create the request
         let urlString = "\(serverURL)/login/user"
-        let params = ["login_id":phoneNumber, "password":password]
+        var params = ["login_id":phoneNumber, "password":password]
+        if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
+            params["notification_token"] = notificationToken
+        }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
             completionHandler(success: false)
             return
@@ -235,7 +241,10 @@ class UserServiceProvider: NSObject {
         
         // Create the request
         let urlString = "\(serverURL)/login/facebook_user"
-        let params = ["facebook_id":facebookID]
+        var params = ["facebook_id":facebookID]
+        if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
+            params["notification_token"] = notificationToken
+        }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
             completionHandler(success: false)
             return
@@ -324,6 +333,9 @@ class UserServiceProvider: NSObject {
         try! realm.write {
             realm.deleteAll()
         }
+        
+        // TODO: Must also disable push notifications
+        // TODO: (Possibly) remove the registration token that this app registered for
         
         NSUserDefaults.standardUserDefaults().removeObjectForKey("LocalUserID")
         NSUserDefaults.standardUserDefaults().removeObjectForKey("DepartmentsDateLastFetched")

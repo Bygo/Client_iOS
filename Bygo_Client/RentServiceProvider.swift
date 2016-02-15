@@ -214,7 +214,9 @@ class RentServiceProvider: NSObject {
                             // Update the MeetingEvent
                             guard let meetingEvent = realm.objects(MeetingEvent).filter("meetingID == \"\(meetingID)\"").first else { return }
                             try! realm.write {
-                                meetingEvent.status = meetingStatus
+                                meetingEvent.status     = meetingStatus
+                                meetingEvent.locationID = locationID
+                                meetingEvent.time       = time
                             }
                             
                             // Update the Listing

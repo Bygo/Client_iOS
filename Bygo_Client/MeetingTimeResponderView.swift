@@ -22,6 +22,7 @@ private let k10_MINUTE_SPACING:CGFloat  = 60.0/6.0
 class MeetingTimeResponderView: UIView {
     
     private var timeSlotViews:[UIView]  = []
+    private var hourLabels:[UILabel]    = []
     var proposalIndex:Int               = 0
     
     
@@ -40,6 +41,11 @@ class MeetingTimeResponderView: UIView {
             view.removeFromSuperview()
         }
         timeSlotViews.removeAll()
+        
+        for hourLabel in hourLabels {
+            hourLabel.removeFromSuperview()
+        }
+        hourLabels.removeAll()
         
         for i in 0..<dataSource.numProposedMeetingTimes(proposalIndex) {
             let timeSlotView = UIView()
@@ -77,6 +83,7 @@ class MeetingTimeResponderView: UIView {
                 hourLabel.widthAnchor.constraintEqualToAnchor(widthAnchor).active       = true
                 hourLabel.centerXAnchor.constraintEqualToAnchor(centerXAnchor).active   = true
                 hourLabel.topAnchor.constraintEqualToAnchor(topAnchor, constant: (kHOUR_SPACING/2) + (CGFloat((i-1)/2)*kHOUR_SPACING) - hourLabel.bounds.height/2.0).active = true
+                hourLabels.append(hourLabel)
             }
             
             if i == dataSource.numProposedMeetingTimes(proposalIndex)-1 {

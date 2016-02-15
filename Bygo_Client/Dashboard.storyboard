@@ -78,6 +78,7 @@
                         <segue destination="nXa-Cv-HrY" kind="show" identifier="ShowListings" id="aUL-cE-XKp"/>
                         <segue destination="fwD-ZY-LEk" kind="presentation" identifier="ShowCreateNewListing" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="SyY-ed-B3V"/>
                         <segue destination="5R0-ak-6zi" kind="show" identifier="ShowRentRequests" id="4YO-ez-PkM"/>
+                        <segue destination="WxT-1Q-eTg" kind="show" identifier="ShowMeetings" id="RAW-XC-W6M"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="t0s-MY-E0u" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1386,6 +1387,76 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zsv-h2-pmD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5113" y="1580"/>
+        </scene>
+        <!--MeetingsVC-->
+        <scene sceneID="D4T-sO-0SD">
+            <objects>
+                <tableViewController id="WxT-1Q-eTg" customClass="MeetingsVC" customModule="Bygo_Client" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="111" sectionHeaderHeight="18" sectionFooterHeight="18" id="x88-LC-agx">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MeetingCell" rowHeight="111" id="MpS-e8-gja" customClass="MeetingTableViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="113.5" width="600" height="111"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MpS-e8-gja" id="Ua7-NZ-kI2">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="110.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="33F-0F-nXN">
+                                            <rect key="frame" x="8" y="8" width="90" height="94.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="90" id="PeA-Rs-OWo"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fdh-aH-Hbz">
+                                            <rect key="frame" x="106" y="8" width="486" height="47.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Listing Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SLq-GP-TRq">
+                                            <rect key="frame" x="106" y="55.5" width="486" height="47"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="fdh-aH-Hbz" firstAttribute="height" secondItem="33F-0F-nXN" secondAttribute="height" multiplier="1/2" id="2B9-pD-vaj"/>
+                                        <constraint firstAttribute="topMargin" secondItem="33F-0F-nXN" secondAttribute="top" id="40e-hc-6v5"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="SLq-GP-TRq" secondAttribute="trailing" id="7ty-zh-0xS"/>
+                                        <constraint firstAttribute="topMargin" secondItem="fdh-aH-Hbz" secondAttribute="top" id="ALV-1z-rO4"/>
+                                        <constraint firstAttribute="leadingMargin" secondItem="33F-0F-nXN" secondAttribute="leading" id="KrF-rc-7yB"/>
+                                        <constraint firstItem="SLq-GP-TRq" firstAttribute="height" secondItem="33F-0F-nXN" secondAttribute="height" multiplier="1/2" id="aCX-fN-Rfw"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="fdh-aH-Hbz" secondAttribute="trailing" id="hyu-Km-dmh"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="33F-0F-nXN" secondAttribute="bottom" id="o5U-bp-LC7"/>
+                                        <constraint firstItem="fdh-aH-Hbz" firstAttribute="leading" secondItem="33F-0F-nXN" secondAttribute="trailing" constant="8" id="pYG-u9-cek"/>
+                                        <constraint firstItem="SLq-GP-TRq" firstAttribute="leading" secondItem="33F-0F-nXN" secondAttribute="trailing" constant="8" id="pj4-By-QZ5"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="SLq-GP-TRq" secondAttribute="bottom" id="sfR-vP-PYs"/>
+                                        <constraint firstItem="33F-0F-nXN" firstAttribute="centerY" secondItem="Ua7-NZ-kI2" secondAttribute="centerY" id="v6B-oF-tEZ"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="listingLabel" destination="SLq-GP-TRq" id="7LR-VS-K5g"/>
+                                    <outlet property="locationLabel" destination="fdh-aH-Hbz" id="yOG-x3-ixV"/>
+                                    <outlet property="timeLabel" destination="33F-0F-nXN" id="mXk-Mx-2sK"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="WxT-1Q-eTg" id="Q9b-IS-2Am"/>
+                            <outlet property="delegate" destination="WxT-1Q-eTg" id="fZs-AT-3ZA"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wh9-pi-wyf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1717" y="-1750"/>
         </scene>
         <!--RENT REQUESTS-->
         <scene sceneID="ORe-z0-k6e">

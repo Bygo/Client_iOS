@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import RealmSwift
 
 class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
     
@@ -20,6 +21,9 @@ class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet var endHandoffInstructionLabel: UILabel!
     @IBOutlet var endHandoffScrollView: UIScrollView!
     
+    var model:Model?
+    var meetingID:String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,6 +31,21 @@ class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
         endHandoffScrollView.contentSize        = CGSizeMake(2.0*endHandoffScrollView.bounds.width, endHandoffScrollView.bounds.height)
         endHandoffScrollView.contentOffset.x    = endHandoffScrollView.bounds.width
         endHandoffScrollView.layer.cornerRadius = endHandoffScrollView.bounds.height/2.0
+        
+        guard let meetingID                 = meetingID else { return }
+        let realm                           = try! Realm()
+        guard let meeting                   = realm.objects(MeetingEvent).filter("meetingID == \"\(meetingID)\"").first else { return }
+        guard let locationID                = meeting.locationID else { return }
+        guard let time                      = meeting.time else { return }
+        guard let location                  = realm.objects(FavoriteMeetingLocation).filter("locationID == \"\(locationID)\"").first else { return }
+        guard let locationName              = location.name else { return }
+        meetingLocationDetailsLabel.text    = locationName
+        
+        let calendar                    = NSCalendar.currentCalendar()
+        let components                  = calendar.components([.Hour, .Minute], fromDate: time)
+        let hour                        = components.hour
+        let minutes                     = components.minute
+        meetingTimeDetailsLabel.text    = String(format: "%d:%02d", hour, minutes)
     }
     
     override func didReceiveMemoryWarning() {

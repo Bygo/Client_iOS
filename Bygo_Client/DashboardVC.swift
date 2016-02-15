@@ -165,6 +165,19 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             cell.textLabel?.text    = "No Upcoming Meetings"
             cell.accessoryType      = .DisclosureIndicator
             
+            // Configure the cell
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
+            dispatch_async(GlobalBackgroundQueue, {
+                let realm = try! Realm()
+                let numMeetings = realm.objects(MeetingEvent).filter("(ownerID == \"\(userID)\" OR renterID == \"\(userID)\") AND (status == \"Scheduled\" OR status == \"Delayed\")").count
+                if numMeetings > 0 {
+                    dispatch_async(GlobalMainQueue, {
+                        if numMeetings == 1 { cell.textLabel?.text = "1 Upcoming Meeting" }
+                        else { cell.textLabel?.text = "\(numMeetings) Upcoming Meetings" }
+                    })
+                }
+            })
+            
         case kCREATE_LISTING_INDEX:
             cell.textLabel?.text            = "Create New Listing"
             cell.textLabel?.textAlignment   = .Center
@@ -198,7 +211,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             performSegueWithIdentifier("ShowRentRequests", sender: nil)
             
         case kMEETINGS_INDEX:
-            break
+            performSegueWithIdentifier("ShowMeetings", sender: nil)
             
         case kCREATE_LISTING_INDEX:
             performSegueWithIdentifier("ShowCreateNewListing", sender: nil)
@@ -210,7 +223,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
     
     func rentRequestsDidUpdate() {
         print("Dashboard: RentRequestsDidUpdate")
-        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0)], withRowAnimation: .Fade)
+        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0), NSIndexPath(forRow: kMEETINGS_INDEX, inSection: 0)], withRowAnimation: .Fade)
     }
     
     
@@ -232,6 +245,10 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             guard let destVC    = segue.destinationViewController as? RentRequestsVC else { return }
             destVC.model        = model
             destVC.delegate     = self
+
+        } else if segue.identifier == "ShowMeetings" {
+            guard let destVC    = segue.destinationViewController as? MeetingsVC else { return }
+            destVC.model        = model
         }
     }
     

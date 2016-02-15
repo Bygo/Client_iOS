@@ -58,11 +58,15 @@
 		733621611C612E4300893034 /* DataValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621601C612E4300893034 /* DataValidator.swift */; };
 		733621631C61327900893034 /* NewFavoriteMeetingLocationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */; };
 		7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */; };
+		73CBA5431C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
+		73CBA5441C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
+		73CBA5451C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
 		73DD4C991C6575F90003698A /* RealmString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C981C6575F90003698A /* RealmString.swift */; };
 		73DD4C9B1C657F9C0003698A /* MeetingResponderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */; };
 		73DD4C9D1C6858B70003698A /* MeetingResponderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9C1C6858B70003698A /* MeetingResponderCollectionViewCell.swift */; };
 		73DD4C9F1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C9E1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift */; };
 		73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */; };
+		73DD4CAB1C6D64470003698A /* MeetingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4CAA1C6D64470003698A /* MeetingTableViewCell.swift */; };
 		73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73DE66A41C63867D006D9810 /* Dashboard.storyboard */; };
 		73DE66A91C6386DD006D9810 /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DE66A81C6386DD006D9810 /* DashboardVC.swift */; };
 		73DE66AB1C639519006D9810 /* ListingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DE66AA1C639519006D9810 /* ListingsVC.swift */; };
@@ -179,11 +183,14 @@
 		733621601C612E4300893034 /* DataValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataValidator.swift; sourceTree = "<group>"; };
 		733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteMeetingLocationVC.swift; sourceTree = "<group>"; };
 		733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCompleteLocationSuggestionTableViewCell.swift; sourceTree = "<group>"; };
+		73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
 		73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderVC.swift; sourceTree = "<group>"; };
 		73DD4C9C1C6858B70003698A /* MeetingResponderCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderCollectionViewCell.swift; sourceTree = "<group>"; };
 		73DD4C9E1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTimeResponderTableViewCell.swift; sourceTree = "<group>"; };
 		73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingServiceProvider.swift; sourceTree = "<group>"; };
+		73DD4CAA1C6D64470003698A /* MeetingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTableViewCell.swift; sourceTree = "<group>"; };
+		73DD4CC11C6FB1FD0003698A /* Bygo_Client-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bygo_Client-Bridging-Header.h"; sourceTree = "<group>"; };
 		73DE66A41C63867D006D9810 /* Dashboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Dashboard.storyboard; sourceTree = "<group>"; };
 		73DE66A81C6386DD006D9810 /* DashboardVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		73DE66AA1C639519006D9810 /* ListingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingsVC.swift; sourceTree = "<group>"; };
@@ -285,6 +292,7 @@
 		733620DB1C60743E00893034 = {
 			isa = PBXGroup;
 			children = (
+				73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */,
 				733620E61C60743E00893034 /* Bygo_Client */,
 				733620FE1C60743F00893034 /* Bygo_ClientTests */,
 				733621091C60743F00893034 /* Bygo_ClientUITests */,
@@ -307,6 +315,7 @@
 		733620E61C60743E00893034 /* Bygo_Client */ = {
 			isa = PBXGroup;
 			children = (
+				73DD4CC11C6FB1FD0003698A /* Bygo_Client-Bridging-Header.h */,
 				733620E71C60743E00893034 /* AppDelegate.swift */,
 				733620E91C60743E00893034 /* ViewController.swift */,
 				733620EB1C60743E00893034 /* Main.storyboard */,
@@ -507,6 +516,7 @@
 			isa = PBXGroup;
 			children = (
 				73DE66AC1C63959B006D9810 /* ListingsCollectionViewCell.swift */,
+				73DD4CAA1C6D64470003698A /* MeetingTableViewCell.swift */,
 				73DE66B11C639F5E006D9810 /* EditListingTableViewCell.swift */,
 				73DE66BE1C63B6C5006D9810 /* NewListingPhotoCollectionViewCell.swift */,
 				73DE66D21C63EA87006D9810 /* RentRequestsCollectionViewCell.swift */,
@@ -683,6 +693,9 @@
 							com.apple.Maps.iOS = {
 								enabled = 1;
 							};
+							com.apple.Push = {
+								enabled = 1;
+							};
 						};
 					};
 					733620FA1C60743F00893034 = {
@@ -727,6 +740,7 @@
 				73DE66DA1C63EE92006D9810 /* Meetings.storyboard in Resources */,
 				733621541C6104F200893034 /* Settings.storyboard in Resources */,
 				733621451C60F31A00893034 /* Login.storyboard in Resources */,
+				73CBA5431C6FF41200E3985F /* GoogleService-Info.plist in Resources */,
 				73147DA91C62EF8800FD70B8 /* Rent.storyboard in Resources */,
 				733621381C60764000893034 /* Menu.storyboard in Resources */,
 			);
@@ -736,6 +750,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73CBA5441C6FF41200E3985F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,6 +758,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73CBA5451C6FF41200E3985F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,6 +836,7 @@
 				73DE66E91C63F0AB006D9810 /* MeetingTimeProposalTableViewCell.swift in Sources */,
 				73DE66C31C63B82A006D9810 /* NewListingRentalRatesVC.swift in Sources */,
 				73DE66B41C63A4DD006D9810 /* EditListingNameVC.swift in Sources */,
+				73DD4CAB1C6D64470003698A /* MeetingTableViewCell.swift in Sources */,
 				73DE66F11C640453006D9810 /* MeetingEvent.swift in Sources */,
 				73DE66CF1C63DF9C006D9810 /* EditListingDescriptionVC.swift in Sources */,
 				7336213E1C6076B700893034 /* MenuContainerVC.swift in Sources */,
@@ -953,6 +970,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -998,6 +1016,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1082,6 +1101,7 @@
 		733621161C60743F00893034 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bygo_ClientUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NicholasGarfield.Bygo-ClientUITests";
@@ -1094,6 +1114,7 @@
 		733621171C60743F00893034 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bygo_ClientUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NicholasGarfield.Bygo-ClientUITests";

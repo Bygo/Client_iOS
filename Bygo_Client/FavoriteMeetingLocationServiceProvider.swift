@@ -163,12 +163,12 @@ class FavoriteMeetingLocationServiceProvider: NSObject {
                         let realm = try! Realm()
                         
                         for location in serverLocations {
-                            guard let locationID        = location["location_id"] as? String else { return }
-                            guard let googlePlacesID    = location["google_places_id"] as? String else { return }
-                            guard let address           = location["address"] as? String else { return }
-                            guard let name              = location["name"] as? String else { return }
-                            guard let userID            = location["user_id"] as? String else { return }
-                            guard let isPrivate         = location["is_private"] as? Bool else { return }
+                            guard let locationID        = location["location_id"]       as? String else { return }
+                            guard let googlePlacesID    = location["google_places_id"]  as? String else { return }
+                            guard let address           = location["address"]           as? String else { return }
+                            guard let name              = location["name"]              as? String else { return }
+                            guard let userID            = location["user_id"]           as? String else { return }
+                            guard let isPrivate         = location["is_private"]        as? Bool else { return }
                             let dateFormatter           = NSDateFormatter()
                             dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
                             guard let dateLastModified  = dateFormatter.dateFromString(location["date_last_modified"] as! String) else { return }
