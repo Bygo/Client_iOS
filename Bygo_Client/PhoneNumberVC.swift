@@ -23,6 +23,10 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        continueButton.backgroundColor = kCOLOR_ONE
+        navigationController?.navigationBar.barTintColor   = kCOLOR_ONE
+        navigationController?.navigationBar.translucent = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
     }
     
     override func didReceiveMemoryWarning() {
@@ -92,6 +96,10 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)
         if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {

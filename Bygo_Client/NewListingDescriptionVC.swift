@@ -70,6 +70,11 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
         continueButton.enabled = isDataValid()
     }
     
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
     
     // MARK: - UIActions
     @IBAction func continueButtonTapped(sender:AnyObject) {

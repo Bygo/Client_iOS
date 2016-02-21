@@ -7,23 +7,27 @@
 //
 
 import UIKit
+import Braintree
 import RealmSwift
+import Haneke
 
-class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMeetingLocationDelegate, EditFavoriteMeetingLocationDelegate {
+class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMeetingLocationDelegate, EditFavoriteMeetingLocationDelegate, BTDropInViewControllerDelegate {
+
     // MARK: - Properties
+    @IBOutlet var profileImageViewVerticalOffset: NSLayoutConstraint!
     @IBOutlet var profileImageView: UIImageView!
     @IBOutlet var usernameLabel: UILabel!
+    @IBOutlet var paymentMethodsContainer:UINavigationController!
     
-    private let kGENERAL_SECTION = 0
-    private let kFAV_MEETING_LOCATIONS_SECTION = 1
-    private let kLOGOUT_SECTION = 2
+    private let kGENERAL_SECTION                = 0
+    private let kFAV_MEETING_LOCATIONS_SECTION  = 1
+    private let kLOGOUT_SECTION                 = 2
     
     // FIXME: Pull text from some localized text repo
     let generalOptions = ["Account", "Payment"]
     
     var model:Model?
     var delegate:SettingsDelegate?
-    
     var targetLocation:FavoriteMeetingLocation?
     
     
@@ -31,16 +35,27 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.backgroundColor = kCOLOR_THREE
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
         // Configure the Settings view
         // FIXME: Pull UI constants from design repo
-        profileImageView.contentMode = UIViewContentMode.ScaleAspectFill
-        profileImageView.clipsToBounds = true
-        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2.0
-        profileImageView.layer.masksToBounds = true
-        profileImageView.layer.borderWidth = 0.0
+        profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
+        profileImageView.clipsToBounds          = true
+        profileImageView.layer.cornerRadius     = profileImageView.bounds.width / 2.0
+        profileImageView.layer.masksToBounds    = true
+        profileImageView.layer.borderWidth      = 0.0
         
         // Configure the user specific settings
         configureUserSpecificUI()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -70,7 +85,12 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
         guard let firstName = localUser.firstName else { return }
         guard let lastName  = localUser.lastName else { return }
-        usernameLabel.text = "\(firstName) \(lastName)"
+        usernameLabel.text  = "\(firstName) \(lastName)"
+        
+        guard let profileLink = localUser.profileImageLink else { return }
+        guard let url = NSURL(string: profileLink) else { return }
+        profileImageView.hnk_setImageFromURL(url)
+        print(url)
     }
     
     private func configureUserSpecificUI() {
@@ -78,7 +98,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         
         // Reload the user's favorite meeting locations
         guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
-        guard let userID = localUser.userID else { return }
+        guard let userID    = localUser.userID else { return }
         
         model?.favoriteMeetingLocationServiceProvider.fetchUsersFavoriteMeetingLocations(userID, completionHandler: {
             (success:Bool) in
@@ -104,8 +124,8 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             
         } else if section == kFAV_MEETING_LOCATIONS_SECTION {
             guard let localUser = model?.userServiceProvider.getLocalUser() else { return 0 }
-            guard let userID = localUser.userID else { return 0 }
-            let realm = try! Realm()
+            guard let userID    = localUser.userID else { return 0 }
+            let realm           = try! Realm()
             return realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").count + 1
             
         } else if section == kLOGOUT_SECTION {
@@ -116,17 +136,17 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     }
     
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        // FIXME: Pull text from some localized text repo
-        switch section {
-        case kGENERAL_SECTION:
-            return "General"
-        case kFAV_MEETING_LOCATIONS_SECTION:
-            return "Favorite Meeting Places"
-        default:
-            return ""
-        }
-    }
+//    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        // FIXME: Pull text from some localized text repo
+//        switch section {
+//        case kGENERAL_SECTION:
+//            return "General"
+//        case kFAV_MEETING_LOCATIONS_SECTION:
+//            return "Favorite Meeting Places"
+//        default:
+//            return ""
+//        }
+//    }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // FIXME: Pull text from some localized text repo
@@ -142,6 +162,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             if indexPath.row == indexOfNewFavoriteLocationButton {
                 let cell = UITableViewCell()
                 cell.textLabel?.text = "Add New Favorite Location"
+                cell.backgroundColor    = kCOLOR_FIVE
+                cell.textLabel?.textColor = .whiteColor()
+                cell.textLabel?.textAlignment = .Center
                 return cell
             }
             
@@ -160,6 +183,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             let cell = UITableViewCell()
             // FIXME: Pull text form some localized text repo
             cell.textLabel?.text = "Log Out"
+            cell.textLabel?.textAlignment = .Center
+            cell.textLabel?.textColor = .whiteColor()
+            cell.backgroundColor = kCOLOR_TWO
             return cell
             
         default:
@@ -173,6 +199,8 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             switch indexPath.row {
             case 0:
                 performSegueWithIdentifier("ShowAccountSettings", sender: nil)
+            case 1:
+                showPaymentMethods()
             default: break
             }
             
@@ -204,11 +232,64 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        if scrollView == tableView {
+            profileImageViewVerticalOffset.constant = 16.0 + scrollView.contentOffset.y/2.0
+        }
+    }
+    
     // MARK: - AccountSettingsDelegate
     func didUpdateAccountSettings() {
         delegate?.didUpdateAccountSettings()
         configureUsernameAndProfileImage()
     }
+    
+    // MARK: - Payments
+    private func showPaymentMethods() {
+        /*
+        let meetingSB = UIStoryboard(name: "Payments", bundle: NSBundle.mainBundle())
+        paymentMethodsContainer = meetingSB.instantiateViewControllerWithIdentifier("PaymentMethods") as? UINavigationController
+        (paymentMethodsContainer?.topViewController as? PaymentMethodsVC)?.model = model
+        presentViewController(paymentMethodsContainer, animated: true, completion: nil)
+        */
+        
+        // Create a BTDropInViewController
+        model?.paymentsServiceProvider.getBraintreeClient({
+            (braintreeClient:BTAPIClient?) in
+            print(braintreeClient)
+        })
+        
+        
+//        braintreeClient {
+//            let dropInViewController = BTDropInViewController(APIClient: braintreeClient)
+//            dropInViewController.delegate = self
+//            
+//            // This is where you might want to customize your view controller (see below)
+//            
+//            // The way you present your BTDropInViewController instance is up to you.
+//            // In this example, we wrap it in a new, modally-presented navigation controller:
+//            dropInViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
+//                barButtonSystemItem: UIBarButtonSystemItem.Cancel,
+//                target: self, action: "userDidCancelPayment")
+//            let navigationController = UINavigationController(rootViewController: dropInViewController)
+//            presentViewController(navigationController, animated: true, completion: nil)
+//        }
+    }
+    
+    func userDidCancelPayment() {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func dropInViewController(viewController: BTDropInViewController, didSucceedWithTokenization paymentMethodNonce: BTPaymentMethodNonce) {
+        // Send payment method nonce to your server for processing
+        // postNonceToServer(paymentMethodNonce.nonce)
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func dropInViewControllerDidCancel(viewController: BTDropInViewController) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
     
     // MARK: - NewFavoriteMeetingLocationDelegate 
     func didAddNewFavoriteMeetingLocation() {
@@ -224,6 +305,12 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     func didDeleteFavoriteMeetingLocation() {
         tableView.reloadSections(NSIndexSet(index: kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
     }
+    
+    // MARK: - UI Actions
+    @IBAction func menuButtonTapped(sender: AnyObject) {
+        delegate?.openMenu()
+    }
+
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -249,6 +336,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
 }
 
 public protocol SettingsDelegate {
+    func openMenu()
     func didUpdateAccountSettings()
     func didLogout()
 }

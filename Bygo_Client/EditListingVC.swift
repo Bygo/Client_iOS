@@ -27,13 +27,19 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
     private let kDAILY_RATE_SECTION_INDEX   = 4
     private let kWEEKLY_RATE_SECTION_INDEX  = 5
     private let kDESCRIPTION_SECTION_INDEX  = 6
-    private let kDELETE_SECTION_INDEX       = 7
+    private let kEDIT_PHOTOS_SECTION_INDEX  = 7
+    private let kDELETE_SECTION_INDEX       = 8
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
         tableView.rowHeight             = UITableViewAutomaticDimension
         tableView.estimatedRowHeight    = 44.0
@@ -45,6 +51,10 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
                 self.tableView.reloadSections(NSIndexSet(index: self.kCATEGORY_SECTION_INDEX), withRowAnimation: .None)
             }
         })
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {
@@ -128,6 +138,11 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
             }
             return cell
             
+        case kEDIT_PHOTOS_SECTION_INDEX:
+            guard let cell = tableView.dequeueReusableCellWithIdentifier("ItemInfoCell", forIndexPath: indexPath) as? EditListingTableViewCell else { return UITableViewCell() }
+            cell.infoLabel.text = "Edit Listing Photos"
+            return cell
+            
         case kDELETE_SECTION_INDEX:
             let cell = tableView.dequeueReusableCellWithIdentifier("DeleteButtonCell", forIndexPath: indexPath)
             cell.textLabel?.textAlignment   = .Center
@@ -156,6 +171,9 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
             
         case kDESCRIPTION_SECTION_INDEX:
             performSegueWithIdentifier("ShowEditDescription", sender: nil)
+            
+        case kEDIT_PHOTOS_SECTION_INDEX:
+            performSegueWithIdentifier("ShowEditPhotos", sender: nil)
             
         case kDELETE_SECTION_INDEX:
             // TODO: Throw secondary check before deleting listing
@@ -232,6 +250,10 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
             destVC.delegate = self
             destVC.model    = model
             destVC.listing  = listing
+        } else if segue.identifier == "ShowEditPhotos" {
+            guard let destVC = segue.destinationViewController as? EditListingPhotosVC else { return }
+            destVC.model = model
+            destVC.listing = listing
         }
     }
 }

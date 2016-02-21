@@ -1,4 +1,17 @@
 PODS:
+  - Braintree (4.1.2):
+    - Braintree/Card (= 4.1.2)
+    - Braintree/Core (= 4.1.2)
+    - Braintree/PayPal (= 4.1.2)
+    - Braintree/UI (= 4.1.2)
+  - Braintree/Card (4.1.2):
+    - Braintree/Core
+  - Braintree/Core (4.1.2)
+  - Braintree/PayPal (4.1.2):
+    - Braintree/Core
+  - Braintree/UI (4.1.2):
+    - Braintree/Card
+    - Braintree/Core
   - GGLInstanceID (1.1.4):
     - GoogleNetworkingUtilities (~> 1.0)
     - GoogleSymbolUtilities (~> 1.0)
@@ -33,6 +46,7 @@ PODS:
   - GoogleSymbolUtilities (1.0.3)
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
+  - HanekeSwift (0.10.0)
   - Realm (0.97.0):
     - Realm/Headers (= 0.97.0)
   - Realm/Headers (0.97.0)
@@ -40,12 +54,15 @@ PODS:
     - Realm (= 0.97.0)
 
 DEPENDENCIES:
+  - Braintree
   - Google/Analytics
   - Google/CloudMessaging
   - GoogleMaps
+  - HanekeSwift
   - RealmSwift
 
 SPEC CHECKSUMS:
+  Braintree: bb66f0a87e9809d36da89e698455e7e902aaeef6
   GGLInstanceID: 7a038b743bc8d14eac5819801ee103e8dc77161c
   Google: 97618e118111b998cce1d8dd1bd98b82301d72db
   GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
@@ -56,6 +73,7 @@ SPEC CHECKSUMS:
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
+  HanekeSwift: d6f5bdf9dbdbbc09d59623b2c1d533e46463dd4d
   Realm: b498a6fb9d288b171ff98d0e2d4384c295be8990
   RealmSwift: d014810dec75c9a3f1a33926d2dabfed855c582c
 

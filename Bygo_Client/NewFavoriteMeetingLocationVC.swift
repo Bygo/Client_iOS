@@ -27,6 +27,11 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
         // Setup Google API Key
         GMSServices.provideAPIKey("AIzaSyBMvGu6ZWAj8ZbAn1afQZI7pqC9amM9mw0")
         
@@ -53,6 +58,10 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
             //TODO: Display message to user that the app will not work without location services
             print("Location services disabled")
         }
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {

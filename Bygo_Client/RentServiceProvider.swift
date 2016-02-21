@@ -54,6 +54,7 @@ class RentServiceProvider: NSObject {
             params["proposed_meeting_locations"] = proposedMeetingLocationIDs
         }
         
+        // FIXME: Make this a PUT request
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
         
         // Execute the request
@@ -152,16 +153,11 @@ class RentServiceProvider: NSObject {
     }
     
     func acceptRentRequest(eventID:String, listingID:String, time:NSDate, locationID:String, completionHandler:(success:Bool)->Void) {
-        print("Accept request")
-        
         // Automatically reject all of the other rent requests for this Listing
-//        let realm           = try! Realm()
-//        let rentRequests    = realm.objects(RentEvent).filter("listingID == \"\(listingID)\" AND (status == \"Proposed\" OR status == \"Inquired\")").sorted("dateCreated")
         rejectAllRentRequestsExcept(eventID, listingID: listingID, completionHandler: {
             (success:Bool) in
             if success {
                 
-                print("Create request")
                 // Create the request
                 let urlString       = "\(self.serverURL)/rent/accept_rent_request"
                 let calendar        = NSCalendar.currentCalendar()
@@ -176,15 +172,12 @@ class RentServiceProvider: NSObject {
                 let params          = ["event_id":eventID, "time":timeStr, "location_id":locationID]
                 guard let request   = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
                 
-                print("Execute request")
-                
                 // Execute the request
                 let session = NSURLSession.sharedSession()
                 let task = session.dataTaskWithRequest(request, completionHandler: {
                     
                     // Handle the request
                     (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
-                    print("Handle response request")
                     if error != nil {
                         completionHandler(success: false)
                         return
@@ -218,6 +211,9 @@ class RentServiceProvider: NSObject {
                                 meetingEvent.locationID = locationID
                                 meetingEvent.time       = time
                             }
+                            
+                            // Schedule the local notification for the meeting
+                            MeetingServiceProvider(serverURL: self.serverURL).scheduleLocalNotificationForMeetingEvent(meetingEvent, userID: meetingEvent.ownerID!)
                             
                             // Update the Listing
                             guard let listing = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first else { return }
@@ -365,6 +361,135 @@ class RentServiceProvider: NSObject {
         task.resume()
     }
     
+    func fetchRentEvent(eventID:String, completionHandler:(success:Bool)->Void) {
+        
+        let realm   = try! Realm()
+        let results = realm.objects(RentEvent).filter("eventID == \"\(eventID)\"")
+        if results.count > 0 {
+            // We already have this RentEvent
+            completionHandler(success: true)
+            return
+        }
+        
+        
+        // Create the request
+        let urlString                   = "\(serverURL)/request/rent_event"
+        let params:[String:AnyObject]   = ["event_id":eventID]
+        guard let request               = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
+        
+        // Execute the reqeust
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: {
+            
+            // Handle the response
+            (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            
+            if error != nil {
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                return
+            }
+            
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            switch statusCode {
+            case 200: // Catching status code 200, success
+                do {
+                    let realm = try! Realm()
+                    
+                    // Parse the JSON response
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let eventID       = json["event_id"]                 as? String else { return }
+                    guard let ownerID       = json["owner_id"]                 as? String else { return }
+                    guard let renterID      = json["renter_id"]                as? String else { return }
+                    guard let listingID     = json["listing_id"]               as? String else { return }
+                    let rentalRate          = json["rental_rate"]              as? Double
+                    let timeFrame           = json["time_frame"]               as? String
+                    guard let proposedBy    = json["proposed_by"]              as? String else { return }
+                    guard let status        = json["status"]                   as? String else { return }
+                    let startMeetingEventID = json["start_meeting_event_id"]   as? String
+                    let endMeetingEventID   = json["end_meeting_event_id"]     as? String
+                    
+                    let rentEvent                   = RentEvent()
+                    rentEvent.eventID               = eventID
+                    rentEvent.ownerID               = ownerID
+                    rentEvent.renterID              = renterID
+                    rentEvent.listingID             = listingID
+                    rentEvent.rentalRate.value      = rentalRate
+                    rentEvent.timeFrame             = timeFrame
+                    rentEvent.proposedBy            = proposedBy
+                    rentEvent.status                = status
+                    rentEvent.startMeetingEventID   = startMeetingEventID
+                    rentEvent.endMeetingEventID     = endMeetingEventID
+                    
+                    try! realm.write { realm.add(rentEvent) }
+                    
+                    completionHandler(success: true)
+                } catch {
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                }
+            default:
+                print("/request/rent_event: \(statusCode)")
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+            }
+        })
+        task.resume()
+    }
+    
+    func rentRequestWasProposed(eventID:String, meetingID:String?, userID:String, completionHandler:(success:Bool)->Void) {
+        fetchRentEvent(eventID, completionHandler: {
+            (success:Bool) in
+            if success {
+                if let meetingID = meetingID {
+                    MeetingServiceProvider(serverURL: self.serverURL).fetchMeetingEvent(meetingID, userID: userID, completionHandler: completionHandler)
+                } else {
+                    completionHandler(success: true)
+                }
+            } else {
+                completionHandler(success: false)
+            }
+        })
+    }
+    
+    func rentRequestWasRejected(eventID:String, status:String, meetingID:String?, meetingStatus:String?, completionHandler:(success:Bool)->Void) {
+        let realm = try! Realm()
+        guard let rentEvent = realm.objects(RentEvent).filter("eventID == \"\(eventID)\"").first else { return }
+        
+        try! realm.write {
+            rentEvent.status = status
+        }
+        
+        if let meetingID = meetingID {
+            if let meetingStatus = meetingStatus {
+                guard let meeting = realm.objects(MeetingEvent).filter("meetingID == \"\(meetingID)\"").first else { completionHandler(success: true); return }
+                
+                try! realm.write {
+                    meeting.status = meetingStatus
+                }
+            }
+        }
+        
+        
+        completionHandler(success: true)
+    }
+    
+    func rentRequestWasAccepted(eventID:String, status:String, meetingID:String, listingID:String, userID:String, completionHandler:(success:Bool)->Void) {
+        
+        let realm = try! Realm()
+        
+        guard let rentEvent = realm.objects(RentEvent).filter("eventID == \"\(eventID)\"").first        else { return }
+        
+        try! realm.write {
+            rentEvent.status = status
+        }
+        
+        MeetingServiceProvider(serverURL: serverURL).refreshMeetingEvent(meetingID, userID: userID, completionHandler: {
+            (success:Bool) in
+            if success {
+                 ListingsServiceProvider(serverURL: self.serverURL).fetchListing(listingID, completionHandler: completionHandler)
+            } else {
+                completionHandler(success: false)
+            }
+        })
+    }
     
     func generateNewProposedMeetingTimes() -> [ProposedMeetingTime] {
         let numMeetingTimes     = 24    // Every half hour over the next 12 hours

@@ -407,22 +407,6 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v2j-1K-peh">
-                                <rect key="frame" x="20" y="520" width="559" height="60"/>
-                                <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="Y5M-VF-LXh"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="delegate" destination="aR6-aL-JJW" id="yUS-h9-NlP"/>
-                                </connections>
-                            </scrollView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swipe right after delivery" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x8f-O4-js3">
-                                <rect key="frame" x="20" y="520" width="559" height="60"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -430,19 +414,12 @@
                             <constraint firstAttribute="leadingMargin" secondItem="2AO-w7-W00" secondAttribute="leading" id="1uj-Fs-x4l"/>
                             <constraint firstItem="Xer-by-XKh" firstAttribute="top" secondItem="U7d-jV-Exr" secondAttribute="bottom" constant="4" id="4eA-r6-BXa"/>
                             <constraint firstItem="U7d-jV-Exr" firstAttribute="top" secondItem="M45-5w-5Mw" secondAttribute="bottom" constant="16" id="ANK-Hs-8Jo"/>
-                            <constraint firstItem="x8f-O4-js3" firstAttribute="width" secondItem="v2j-1K-peh" secondAttribute="width" id="AdF-j6-cW0"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Xer-by-XKh" secondAttribute="trailing" id="Ca7-Xo-WjG"/>
                             <constraint firstAttribute="leadingMargin" secondItem="XpE-ZY-ecJ" secondAttribute="leading" id="JTl-ov-xPv"/>
-                            <constraint firstItem="x8f-O4-js3" firstAttribute="centerX" secondItem="v2j-1K-peh" secondAttribute="centerX" id="PP7-GA-SWh"/>
-                            <constraint firstItem="v2j-1K-peh" firstAttribute="centerX" secondItem="tvv-Gm-eQu" secondAttribute="centerX" id="Psu-z4-EAd"/>
-                            <constraint firstItem="x8f-O4-js3" firstAttribute="height" secondItem="v2j-1K-peh" secondAttribute="height" id="UES-fw-Y14"/>
                             <constraint firstItem="M45-5w-5Mw" firstAttribute="width" secondItem="tvv-Gm-eQu" secondAttribute="width" id="Zbn-5M-9rv"/>
-                            <constraint firstAttribute="leadingMargin" secondItem="v2j-1K-peh" secondAttribute="leading" id="c56-yQ-1T4"/>
                             <constraint firstAttribute="trailingMargin" secondItem="2AO-w7-W00" secondAttribute="trailing" id="f5W-97-tOj"/>
                             <constraint firstItem="2AO-w7-W00" firstAttribute="top" secondItem="XpE-ZY-ecJ" secondAttribute="bottom" constant="4" id="gIv-Rg-70V"/>
                             <constraint firstItem="M45-5w-5Mw" firstAttribute="height" secondItem="tvv-Gm-eQu" secondAttribute="height" multiplier="1/2" id="h4Z-36-ihc"/>
-                            <constraint firstItem="XUn-Qi-VNA" firstAttribute="top" secondItem="v2j-1K-peh" secondAttribute="bottom" constant="20" id="hcW-MU-l7Q"/>
-                            <constraint firstItem="x8f-O4-js3" firstAttribute="centerY" secondItem="v2j-1K-peh" secondAttribute="centerY" id="il1-Qr-EKY"/>
                             <constraint firstItem="XpE-ZY-ecJ" firstAttribute="top" secondItem="Xer-by-XKh" secondAttribute="bottom" constant="32" id="k9g-aB-gKf"/>
                             <constraint firstItem="M45-5w-5Mw" firstAttribute="centerX" secondItem="tvv-Gm-eQu" secondAttribute="centerX" id="mFY-G0-iv5"/>
                             <constraint firstAttribute="leadingMargin" secondItem="U7d-jV-Exr" secondAttribute="leading" id="sEW-Hb-gLX"/>
@@ -458,8 +435,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cancelButton" destination="ylI-vU-J2E" id="UEb-s8-j2e"/>
-                        <outlet property="endHandoffInstructionLabel" destination="x8f-O4-js3" id="T9o-ZX-jgD"/>
-                        <outlet property="endHandoffScrollView" destination="v2j-1K-peh" id="Eu3-7I-14t"/>
                         <outlet property="mapView" destination="M45-5w-5Mw" id="uuQ-dm-sPe"/>
                         <outlet property="meetingLocationDetailsLabel" destination="Xer-by-XKh" id="FUO-NX-A7z"/>
                         <outlet property="meetingLocationLabel" destination="U7d-jV-Exr" id="Xr9-Og-Dgu"/>

@@ -22,33 +22,21 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var noListingsLabel: UILabel!
+    @IBOutlet var sharedBarButtonItem: UIBarButtonItem!
     
     private var focusIndex:NSIndexPath?
     
     var model:Model?
     var type:ListingsListType = .All
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        switch type {
-        case .All:
-            title = "ALL MY LISTINGS"
-            noListingsLabel.text = "You have not created any Listings"
-        case .Shared:
-            title = "SHARED ITEMS"
-            noListingsLabel.text = "You are not sharing any Items"
-        case .Rented:
-            title = "RENTED ITEMS"
-            noListingsLabel.text = "You are not renting any Items"
-        }
-        
-        if let navBarHeight = navigationController?.navigationBar.bounds.height {
-            let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
-            collectionView?.contentInset             = UIEdgeInsetsMake(navBarHeight+statusBarHeight, 0, 0, 0)
-            collectionView?.scrollIndicatorInsets    = UIEdgeInsetsMake(navBarHeight+statusBarHeight, 0, 0, 0)
-        }
+        collectionView.backgroundColor = kCOLOR_THREE
+
+        title = "Your Listings"
+        sharedBarButtonItem.tintColor = UIColor(colorLiteralRed: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
+        configureNoListingsLabel()
     }
     
     
@@ -57,6 +45,17 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         // Dispose of any resources that can be recreated.
     }
     
+    
+    private func configureNoListingsLabel() {
+        switch type {
+        case .All:
+            noListingsLabel.text = "You have not created any Listings"
+        case .Shared:
+            noListingsLabel.text = "You are not sharing any Items"
+        default:
+            break
+        }
+    }
     
     
     // MARK: - UICollectionViewDataSource
@@ -73,8 +72,10 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         switch type {
         case .All:
             return "ownerID == \"\(userID)\""
-        default:
-            return nullFilter
+        case .Shared:
+            return "(ownerID == \"\(userID)\") AND (renterID != nil)"
+        case .Rented:
+            return "(renterID == \"\(userID)\")"
         }
     }
     
@@ -94,28 +95,32 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     }
     
     func configureCell(cell:ListingsCollectionViewCell, atIndexPath indexPath:NSIndexPath) {
+        cell.renterImageView.layer.cornerRadius     = cell.renterImageView.bounds.width/2.0
+        cell.mainImageImageView.layer.cornerRadius  = 5.0
+        cell.mainImageImageView.contentMode         = UIViewContentMode.ScaleAspectFill
+        cell.mainImageImageView.clipsToBounds       = true
+        cell.mainImageImageView.backgroundColor     = .lightGrayColor()
+        cell.renterImageView.hidden = true
+        
+        if type == .All {
+            cell.meetingDetailLabel.hidden  = true
+            cell.rentalValueLabel.hidden    = true
+        }
+        
         dispatch_async(GlobalUserInteractiveQueue, {
             let realm   = try! Realm()
             let results = realm.objects(Listing).filter(self.getQueryFilter()).sorted("name", ascending: true)
             let listing = results[indexPath.item]
             
             guard let name = listing.name else { return }
-
+            let renterID = listing.renterID
+            
             dispatch_async(GlobalMainQueue, {
-                cell.itemTitleLabel.text = name
-                cell.rentalRateLabel.text = nil
-                
-                cell.mainImageImageView.contentMode = UIViewContentMode.ScaleAspectFill
-                cell.mainImageImageView.clipsToBounds = true
-                cell.mainImageImageView.backgroundColor = .lightGrayColor()
-                cell.ratingImageView.backgroundColor = .lightGrayColor()
-                
-                // FIXME: Does not display the Renter if non nil
-                cell.rentedByLabel.hidden           = true
-                cell.renterNameLabel.hidden         = true
-                cell.renterImageImageView.hidden    = true
-                cell.renterRatingImageView.hidden   = true
-                cell.blackTintView.hidden           = true
+                cell.itemTitleLabel.text    = name
+                if let _ = renterID {
+                    // TOOD: Grab the image of the renter
+                    cell.renterImageView.hidden = false
+                }
             })
         })
     }
@@ -123,17 +128,9 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ListingCell", forIndexPath: indexPath) as? ListingsCollectionViewCell else { return UICollectionViewCell() }
-        
-        // FIXME: Pull from global repo
-        cell.layer.borderColor  = UIColor.lightGrayColor().CGColor
-        cell.layer.borderWidth  = 1.0
-        cell.layer.cornerRadius = 0.0
-        
         configureCell(cell, atIndexPath: indexPath)
-        
         return cell
     }
-    
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         focusIndex = indexPath
@@ -142,7 +139,6 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         }
     }
     
-    
     // MARK: - EditListingsDelegate
     func didEditListing() {
         if let focusIndex = focusIndex {
@@ -150,6 +146,26 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         }
     }
 
+    
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    @IBAction func sharedButtonTapped(sender: AnyObject) {
+        switch type {
+        case .All:
+            sharedBarButtonItem.tintColor = .whiteColor()
+            type = .Shared
+        case .Shared:
+            sharedBarButtonItem.tintColor = UIColor(colorLiteralRed: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
+            type = .All
+        default: break
+        }
+        
+        configureNoListingsLabel()
+        collectionView.reloadData()
+    }
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -170,10 +186,10 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
 // MARK: - UICollectionViewDelegate
 extension ListingsVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width-16.0, view.bounds.height/2.0)
+        return CGSizeMake(view.bounds.width, view.bounds.height/6.0)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0)
+        return UIEdgeInsetsMake(8.0, 0.0, 8.0, 0.0)
     }
 }

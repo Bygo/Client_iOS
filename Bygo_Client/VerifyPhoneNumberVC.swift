@@ -37,15 +37,18 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
         
         let instructionText = "We will text a confirmation code to \(phoneNumber) in the next 30 seconds. Please retype the confirmation code below and press CONFIRM"
         instructionLabel.text = instructionText
-//        FIXME: DO NOT DELETE
-//        
-//        model?.sendPhoneNumberVerificationCode({ (success:Bool)->Void in
-//            if success {
-//                print("Success sending code")
-//            } else {
-//                print("Error sending code")
-//            }
-//        })
+        
+        confirmButton.backgroundColor   = kCOLOR_ONE
+        navigationItem.hidesBackButton  = true
+        
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
+            (success:Bool) in
+            if !success {
+                print("Error sending code")
+                // TODO: Show some error message to the user
+            }
+        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -59,15 +62,14 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
         let instructionText = "We will text a confirmation code to \(phoneNumber) in the next 30 seconds. Please retype the confirmation code below and press CONFIRM"
         instructionLabel.text = instructionText
         
-//        FIXME: DO NOT DELETE
-//        
-//        model?.sendPhoneNumberVerificationCode({ (success:Bool)->Void in
-//            if success {
-//                print("Success sending code")
-//            } else {
-//                print("Error sending code")
-//            }
-//        })
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
+            (success:Bool) in
+            if !success {
+                print("Error sending code")
+                // TODO: Show some error message to the user
+            }
+        })
         
     }
     
@@ -81,29 +83,27 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
     
     @IBAction func confirmButtonTapped(sender: AnyObject) {
         guard let code = codeTextField.text else { return }
-        
-//        FIXME: DO NOT DELETE
-//
-//        model?.checkPhoneNumberVerificationCode(code, completionHandler: { (success:Bool)->Void in
-//            if success {
-//                self.delegate?.phoneNumberDidVerify(true)
-//            } else {
-//                print("Error while checking phone verification code")
-//            }
-//        })
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.phoneNumberServiceProvider.checkPhoneNumberVerificationCode(userID, code: code, completionHandler: {
+            (success:Bool) in
+            if success {
+                self.delegate?.phoneNumberDidVerify(true)
+            } else {
+                print("Error while checking phone verification code")
+                // TODO: Show some error message to the user
+            }
+        })
     }
     
     @IBAction func resendCodeButtonTapped(sender: AnyObject) {
-        
-//      FIXME: DO NOT DELETE
-//        
-//        model?.sendPhoneNumberVerificationCode({ (success:Bool)->Void in
-//            if success {
-//                print("Success sending code")
-//            } else {
-//                print("Error sending code")
-//            }
-//        })
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
+            (success:Bool) in
+            if !success {
+                print("Error sending code")
+                // TODO: Show some error message to the user
+            }
+        })
     }
     
     @IBAction func changePhoneNumberButtonTapped(sender: AnyObject) {

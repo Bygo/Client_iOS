@@ -21,6 +21,8 @@ class MeetingsVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasAccepted:", name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
+        
         configureNoRentRequestsLabel()
     }
 
@@ -80,16 +82,22 @@ class MeetingsVC: UITableViewController {
         guard let listingID     = meetings[indexPath.row].listingID     else { return cell }
         
         dispatch_async(GlobalBackgroundQueue, {
-            let realm = try! Realm()
-            guard let location  = realm.objects(FavoriteMeetingLocation).filter("locationID == \"\(locationID)\"").first    else { return }
-            guard let listing   = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first                      else { return }
+            self.model?.favoriteMeetingLocationServiceProvider.fetchFavoriteMeetingLocations([locationID], completionHandler: {
+                (success:Bool) in
+                let realm = try! Realm()
+                guard let location      = realm.objects(FavoriteMeetingLocation).filter("locationID == \"\(locationID)\"").first else { return }
+                guard let locationName  = location.name else { return }
+                dispatch_async(GlobalMainQueue, {
+                    cell.locationLabel.text = locationName
+                })
+            })
             
-            guard let locationName    = location.name else { return }
-            guard let listingName     = listing.name  else { return }
+            let realm = try! Realm()
+            guard let listing       = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first  else { return }
+            guard let listingName   = listing.name  else { return }
             
             dispatch_async(GlobalMainQueue, {
-                cell.locationLabel.text =   locationName
-                cell.listingLabel.text  =   listingName
+                cell.listingLabel.text = listingName
             })
         })
         
@@ -111,5 +119,18 @@ class MeetingsVC: UITableViewController {
             (meetingReviewContainer?.topViewController as? MeetingReviewVC)?.model = model
         }
         presentViewController(meetingReviewContainer, animated: true, completion: nil)
+    }
+    
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    
+    // MARK: - Notification Handlers
+    func rentRequestWasAccepted(notification:NSNotification) {
+        dispatch_async(GlobalMainQueue, {
+            self.tableView.reloadData()
+        })
     }
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--PAYMENT METHODS-->
+        <scene sceneID="QlJ-7j-kJW">
+            <objects>
+                <tableViewController id="BSh-Yl-M7q" customClass="PaymentMethodsVC" customModule="Bygo_Client" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="zzB-cy-g8y">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PaymentMethodCell" id="ZbX-I7-KMM" customClass="PaymentMethodTableViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="113.5" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZbX-I7-KMM" id="xAY-dg-6ga">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1DW-l8-4o5">
+                                            <rect key="frame" x="8" y="8" width="28" height="28"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="1DW-l8-4o5" secondAttribute="height" multiplier="1:1" id="bkR-PE-PP1"/>
+                                            </constraints>
+                                        </view>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Payment Method" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="034-J5-y5f">
+                                            <rect key="frame" x="44" y="11" width="548" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="034-J5-y5f" firstAttribute="centerY" secondItem="xAY-dg-6ga" secondAttribute="centerY" id="6N6-c1-FbL"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="034-J5-y5f" secondAttribute="trailing" id="Bwn-zw-0HJ"/>
+                                        <constraint firstAttribute="topMargin" secondItem="1DW-l8-4o5" secondAttribute="top" id="D9X-dZ-aDU"/>
+                                        <constraint firstItem="034-J5-y5f" firstAttribute="leading" secondItem="1DW-l8-4o5" secondAttribute="trailing" constant="8" id="Gda-wI-emu"/>
+                                        <constraint firstItem="1DW-l8-4o5" firstAttribute="centerY" secondItem="xAY-dg-6ga" secondAttribute="centerY" id="Mco-jb-A2z"/>
+                                        <constraint firstAttribute="leadingMargin" secondItem="1DW-l8-4o5" secondAttribute="leading" id="oGd-HQ-8x5"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="isSelectedIndicatorView" destination="1DW-l8-4o5" id="vFV-Gz-Spp"/>
+                                    <outlet property="paymentMethodLabel" destination="034-J5-y5f" id="mnr-cB-bjr"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Default" id="k7f-zW-M7Y" customClass="PaymentMethodTableViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="157.5" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="k7f-zW-M7Y" id="2xn-ZA-otq">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="BSh-Yl-M7q" id="GtS-dR-BZz"/>
+                            <outlet property="delegate" destination="BSh-Yl-M7q" id="Hdm-Xk-tm3"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="PAYMENT METHODS" id="pkd-bH-z3K"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UDP-iV-TbZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1121" y="440"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="W3X-1f-NLG">
+            <objects>
+                <navigationController storyboardIdentifier="PaymentMethods" automaticallyAdjustsScrollViewInsets="NO" id="7Vv-ys-jAt" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="djT-V8-f9y">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BSh-Yl-M7q" kind="relationship" relationship="rootViewController" id="GRc-Sc-bNM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2nQ-l9-2jG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="309" y="440"/>
+        </scene>
+    </scenes>
+</document>

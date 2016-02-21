@@ -22,7 +22,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     @IBOutlet var weeklyRateLabel: UILabel!
     @IBOutlet var ratingImageView: UIImageView!
     @IBOutlet var rentNowButton: UIButton!
-    @IBOutlet var itemImagesScrollView: UIScrollView!
+    @IBOutlet var listingImagesCollectionView: UICollectionView!
     @IBOutlet var headerView: UIView!
     
     private let kITEM_DESCRIPTION_SECTION = 0
@@ -35,8 +35,9 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        listingImagesCollectionView.backgroundColor = .lightGrayColor()
+        
         // TODO: Load scroll view with item images
-        itemImagesScrollView.backgroundColor = UIColor.lightGrayColor()
         ratingImageView.backgroundColor = UIColor.lightGrayColor()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 80.0
@@ -72,12 +73,14 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
         dailyRateLabel.text     = String(format: "$%.2f/day", dailyRate)
         weeklyRateLabel.text    = String(format: "$%.2f/week", weeklyRate)
         
-        let imageView = UIImageView(frame: CGRectMake(0, 0, view.bounds.width, itemImagesScrollView.bounds.height))
-        imageView.contentMode           = UIViewContentMode.ScaleAspectFill
-        imageView.clipsToBounds         = true
-        imageView.layer.masksToBounds   = true
+        headerView.bringSubviewToFront(listingImagesCollectionView)
         
-        self.headerView.addSubview(imageView)
+//        let imageView = UIImageView(frame: CGRectMake(0, 0, view.bounds.width, itemImagesScrollView.bounds.height))
+//        imageView.contentMode           = UIViewContentMode.ScaleAspectFill
+//        imageView.clipsToBounds         = true
+//        imageView.layer.masksToBounds   = true
+        
+//        self.headerView.addSubview(imageView)
     }
     
     // MARK: - Table view data source
@@ -254,6 +257,12 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     }
     
     
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popToRootViewControllerAnimated(true)
+    }
+    
+    
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -276,3 +285,6 @@ extension RentItemDetailsVC : UICollectionViewDelegateFlowLayout {
         return UIEdgeInsetsMake(sectionInset, sectionInset, sectionInset, sectionInset)
     }
 }
+
+
+

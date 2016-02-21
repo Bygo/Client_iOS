@@ -18,6 +18,8 @@ class DepartmentsServiceProvider: NSObject {
     
     func refreshDepartments(completionHandler:(success:Bool)->Void) {
         
+        print("Refreshing departments")
+        
         // If there are Departments in the local cache, return success
         // FIXME: Bad assumptions here. Need to check some dateLastModified attribute
         let realm = try! Realm()
@@ -46,16 +48,21 @@ class DepartmentsServiceProvider: NSObject {
             case 200: // Catching status code 200, success
                 do {
                     
+                    print("Caught 200")
+                    
                     // Parse the JSON response object
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let departmentsData = json["departments"] as? [[String:AnyObject]] else { return }
+                    
+                    print(json)
                     
                     dispatch_async(GlobalMainQueue, {
                         let realm = try! Realm()
                         
                         for departmentData in departmentsData {
-                            guard let name          = departmentData["name"] as? String else { return }
-                            guard let departmentID  = departmentData["department_id"] as? String else { return }
+                            
+                            guard let name          = departmentData["name"]            as? String else { return }
+                            guard let departmentID  = departmentData["department_id"]   as? String else { return }
                             
                             // Create the new Department entity
                             let department          = Department()

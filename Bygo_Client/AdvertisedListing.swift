@@ -10,8 +10,9 @@ import UIKit
 
 class AdvertisedListing: Listing {
     
-    dynamic var isPartialSnapshot:Bool  = true
     dynamic var isSnapshot:Bool         = true
     dynamic var score:Double            = 0.0
+    dynamic var distance:Double         = 0.0
+    
 
 }

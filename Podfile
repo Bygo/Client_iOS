@@ -7,6 +7,8 @@ pod 'RealmSwift'
 pod 'GoogleMaps'
 pod 'Google/CloudMessaging'
 pod 'Google/Analytics'
+pod 'Braintree'
+pod 'HanekeSwift'
 end
 
 target 'Bygo_ClientTests' do

@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Haneke
 
 private let kSHAPE_1_WIDTH_FACTOR:CGFloat = 2.0
 private let kSHAPE_1_HEIGHT_FACTOR:CGFloat = 2.0
@@ -23,6 +24,8 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     
     // MARK: - Outlets
     @IBOutlet var collectionView:UICollectionView!
+    @IBOutlet var refreshControl:UIRefreshControl!
+    
     lazy var searchBar: UISearchBar = UISearchBar(frame: CGRectMake(0,0,0,0))
     
     var delegate:RentDelegate?
@@ -34,7 +37,22 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Add refresh control
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "refreshListings", forControlEvents: .ValueChanged)
+        collectionView.addSubview(refreshControl)
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        collectionView.backgroundColor = kCOLOR_THREE
+        
         refreshListings()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,11 +69,19 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     func refreshListings() {
-        model?.advertisedListingServiceProvider.refreshAdvertisedListingsPartialSnapshots({
+        model?.advertisedListingServiceProvider.refreshAdvertisedListingsSnapshots({
             (success:Bool) in
-            if success { self.collectionView.reloadData() }
-            else { print("Error loading AdvertisedListing snapshot") }
+            if success {
+                self.refreshControl.endRefreshing()
+                self.collectionView.reloadData()
+            }
+            else { print("Error loading AdvertisedListing snapshots") }
         })
+//        model?.advertisedListingServiceProvider.refreshAdvertisedListingsPartialSnapshots({
+//            (success:Bool) in
+//            if success { self.collectionView.reloadData() }
+//            else { print("Error loading AdvertisedListing snapshot") }
+//        })
     }
     
     
@@ -72,14 +98,36 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     
     
     private func configureCell(cell:RentCollectionViewCell, indexPath:NSIndexPath) {
-        let realm = try! Realm()
-        let updatedListings = realm.objects(AdvertisedListing).sorted("score", ascending: false)
-        let updatedListing = updatedListings[indexPath.item]
-        
-        guard let name = updatedListing.name else { return }
-        
-        dispatch_async(GlobalMainQueue, {
-            cell.titleLabel.text = name
+        dispatch_async(GlobalUserInteractiveQueue, {
+            let realm           = try! Realm()
+            let listings = realm.objects(AdvertisedListing).sorted("score", ascending: false)
+            let listing  = listings[indexPath.item]
+            
+            guard let name          = listing.name else { return }
+            guard let rentalRate    = listing.dailyRate.value else { return }
+            let distance            = listing.distance
+            guard let rating        = listing.rating.value else { return }
+            
+            
+            dispatch_async(GlobalMainQueue, {
+                cell.rentalRateLabel.text               = String(format: "$%0.2f", rentalRate)
+                cell.distanceLabel.text                 = String(format: "%0.1f miles", distance)
+                cell.titleLabel.text                    = name
+                if rating < 0.0 {
+                    cell.noRatingLabel.hidden = false
+                    cell.ratingImageView.image = nil
+                } else if rating >= 0.0 && rating < 1.0 {
+                    cell.ratingImageView.image = UIImage(named: "1-Star")
+                } else if rating >= 1.0 && rating < 2.0 {
+                    cell.ratingImageView.image = UIImage(named: "2-Star")
+                } else if rating >= 2.0 && rating < 3.0 {
+                    cell.ratingImageView.image = UIImage(named: "3-Star")
+                } else if rating >= 3.0 && rating < 4.0 {
+                    cell.ratingImageView.image = UIImage(named: "4-Star")
+                } else if rating >= 4.0 {
+                    cell.ratingImageView.image = UIImage(named: "5-Star")
+                }
+            })
         })
     }
     
@@ -87,34 +135,35 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("AdvertisedListingSnapshot", forIndexPath: indexPath) as? RentCollectionViewCell else { return UICollectionViewCell() }
         
         // FIXME: Pull UI elements from centralized repo
-        cell.layer.borderColor = UIColor.lightGrayColor().CGColor
-        cell.layer.borderWidth = 1.0
         cell.layer.cornerRadius = 0.0
         
-        cell.mainImageImageView.backgroundColor = UIColor.lightGrayColor()
-        cell.mainImageImageView.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.mainImageImageView.clipsToBounds = true
+        cell.mainImageImageView.backgroundColor     = UIColor.lightGrayColor()
+        cell.noRatingLabel.hidden                   = true
+        cell.mainImageImageView.layer.cornerRadius  = kCORNER_RADIUS
+        cell.mainImageImageView.contentMode         = UIViewContentMode.ScaleAspectFill
+        cell.mainImageImageView.clipsToBounds       = true
         cell.mainImageImageView.layer.masksToBounds = true
         
         // Make an asynchronous request to grab the Listing data from the local cache
-        dispatch_async(GlobalUserInteractiveQueue, {
-            let realm = try! Realm()
-            let advertisedListings = realm.objects(AdvertisedListing).sorted("score", ascending: false)
-            let listing = advertisedListings[indexPath.item]
+//        dispatch_async(GlobalUserInteractiveQueue, {
+//            let realm               = try! Realm()
+//            let advertisedListings  = realm.objects(AdvertisedListing).sorted("score", ascending: false)
+//            let listing             = advertisedListings[indexPath.item]
             
             // If the Listing is a partial snapshot, grab more data to advertise the Listing
-            if listing.isPartialSnapshot {
-                guard let listingID = listing.listingID else { return }
-                self.model?.advertisedListingServiceProvider.downloadAdvertisedListingSnapshot(listingID, completionHandler: {
-                    (success:Bool) in
-                    if success { self.configureCell(cell, indexPath: indexPath) }
-                })
-            } else {
-                self.configureCell(cell, indexPath: indexPath)
-            }
-        })
+//            if listing.isPartialSnapshot {
+//                guard let listingID = listing.listingID else { return }
+//                self.model?.advertisedListingServiceProvider.downloadAdvertisedListingSnapshot(listingID, completionHandler: {
+//                    (success:Bool) in
+//                    if success {
+        configureCell(cell, indexPath: indexPath)
+//                    }
+//                })
+//            } else {
+//                self.configureCell(cell, indexPath: indexPath)
+//            }
+//        })
     
-        cell.ratingImageView.backgroundColor = UIColor.lightGrayColor()
         return cell
     }
     
@@ -124,6 +173,12 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         focusListing            = advertisedListings[indexPath.item]
         performSegueWithIdentifier("ShowRentItemDetails", sender: nil)
     }
+    
+    // MARK: - UI Actions
+    @IBAction func menuButtonTapped(sender: AnyObject) {
+        delegate?.openMenu()
+    }
+    
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -139,11 +194,11 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
 // MARK: - UICollectionViewDelegate
 extension RentVC : UICollectionViewDelegateFlowLayout{
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width-16.0, view.bounds.height/2.0)
+        return CGSizeMake(view.bounds.width, view.bounds.height/6.0)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0)
+        return UIEdgeInsetsMake(8.0, 0.0, 8.0, 0.0)
     }
     
 }
@@ -151,4 +206,5 @@ extension RentVC : UICollectionViewDelegateFlowLayout{
 
 public protocol RentDelegate {
     func showLoginMenu()
+    func openMenu()
 }

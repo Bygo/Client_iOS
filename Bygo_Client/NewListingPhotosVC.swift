@@ -31,6 +31,9 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         // Do any additional setup after loading the view.
         continueButton.enabled = isDataValid()
         addImageButton.enabled = shouldAddMoreImages()
+        
+        continueButton.backgroundColor = kCOLOR_ONE
+        addImageButton.backgroundColor = kCOLOR_FIVE
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -64,11 +67,13 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoCell", forIndexPath: indexPath) as? NewListingPhotoCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.image.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.image.clipsToBounds = true
-        cell.image.layer.masksToBounds = true
-        cell.image.image = listingImages[indexPath.row]
-        cell.deleteButton.tag = indexPath.row
+        cell.image.contentMode          = UIViewContentMode.ScaleAspectFill
+        cell.image.clipsToBounds        = true
+        cell.image.layer.masksToBounds  = true
+        cell.image.image                = listingImages[indexPath.row]
+        cell.image.layer.cornerRadius   = kCORNER_RADIUS
+        cell.deleteButton.tag           = indexPath.row
+        cell.deleteButton.titleLabel?.textColor = kCOLOR_TWO
         cell.deleteButton.addTarget(self, action: "deleteImageButtonTapped:", forControlEvents: .TouchUpInside)
         
         return cell
@@ -82,6 +87,7 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         continueButton.enabled = isDataValid()
         addImageButton.enabled = shouldAddMoreImages()
         collectionView.reloadData()
+        collectionView.scrollToItemAtIndexPath(NSIndexPath(forItem: collectionView.numberOfItemsInSection(0)-1, inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
     }
     
     
@@ -91,7 +97,9 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         listingImages.removeAtIndex(idx)
         continueButton.enabled = isDataValid()
         addImageButton.enabled = shouldAddMoreImages()
-        collectionView.reloadData()
+        collectionView.performBatchUpdates({
+            self.collectionView.deleteItemsAtIndexPaths([NSIndexPath(forItem: idx, inSection: 0)])
+        }, completion: nil)
     }
     
     @IBAction func newImageButtonTapped(sender: AnyObject) {
@@ -99,19 +107,19 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         let photoLibraryAction = UIAlertAction(title: "Photo Library", style: .Default, handler: {
             (alert: UIAlertAction!) -> Void in
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary) {
-                self.imagePicker.sourceType = .PhotoLibrary
-                self.imagePicker.delegate = self
-                self.imagePicker.allowsEditing = false
+                self.imagePicker.sourceType     = .PhotoLibrary
+                self.imagePicker.delegate       = self
+                self.imagePicker.allowsEditing  = false
                 self.presentViewController(self.imagePicker, animated: true, completion: nil)
             }
         })
         let cameraAction = UIAlertAction(title: "Camera", style: .Default, handler: {
             (alert: UIAlertAction!) -> Void in
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
-                self.imagePicker.sourceType = .Camera
-                self.imagePicker.cameraDevice = UIImagePickerControllerCameraDevice.Rear
-                self.imagePicker.delegate = self
-                self.imagePicker.allowsEditing = false
+                self.imagePicker.sourceType     = .Camera
+                self.imagePicker.cameraDevice   = UIImagePickerControllerCameraDevice.Rear
+                self.imagePicker.delegate       = self
+                self.imagePicker.allowsEditing  = false
                 self.presentViewController(self.imagePicker, animated: false, completion: nil)
             }
         })
@@ -131,6 +139,13 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         }
     }
     
+    
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowSetItemValue" {
@@ -142,5 +157,15 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
             destVC.listingImages        = listingImages
         }
     }
+}
+
+// MARK: - UICollectionViewDelegate
+extension NewListingPhotosVC : UICollectionViewDelegateFlowLayout {
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        return CGSizeMake(view.bounds.width-16.0, view.bounds.width-16.0)
+    }
     
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(0.0, 8.0, 0.0, 8.0)
+    }
 }

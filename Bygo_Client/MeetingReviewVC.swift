@@ -18,8 +18,6 @@ class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet var meetingLocationDetailsLabel: UILabel!
     @IBOutlet var meetingTimeDetailsLabel: UILabel!
     @IBOutlet var meetingTimeLabel: UILabel!
-    @IBOutlet var endHandoffInstructionLabel: UILabel!
-    @IBOutlet var endHandoffScrollView: UIScrollView!
     
     var model:Model?
     var meetingID:String?
@@ -27,25 +25,31 @@ class MeetingReviewVC: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-        endHandoffScrollView.contentSize        = CGSizeMake(2.0*endHandoffScrollView.bounds.width, endHandoffScrollView.bounds.height)
-        endHandoffScrollView.contentOffset.x    = endHandoffScrollView.bounds.width
-        endHandoffScrollView.layer.cornerRadius = endHandoffScrollView.bounds.height/2.0
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
+        // Do any additional setup after loading the view.
         guard let meetingID                 = meetingID else { return }
         let realm                           = try! Realm()
-        guard let meeting                   = realm.objects(MeetingEvent).filter("meetingID == \"\(meetingID)\"").first else { return }
-        guard let locationID                = meeting.locationID else { return }
-        guard let time                      = meeting.time else { return }
-        guard let location                  = realm.objects(FavoriteMeetingLocation).filter("locationID == \"\(locationID)\"").first else { return }
-        guard let locationName              = location.name else { return }
-        meetingLocationDetailsLabel.text    = locationName
+        guard let meeting                   = realm.objects(MeetingEvent).filter("meetingID == \"\(meetingID)\"").first                 else { return }
+        guard let locationID                = meeting.locationID                                                                        else { return }
+        guard let time                      = meeting.time                                                                              else { return }
+        let location                        = realm.objects(FavoriteMeetingLocation).filter("locationID == \"\(locationID)\"").first
+        if let locationName                 = location?.name {
+            meetingLocationDetailsLabel.text    = locationName
+        }
         
         let calendar                    = NSCalendar.currentCalendar()
         let components                  = calendar.components([.Hour, .Minute], fromDate: time)
         let hour                        = components.hour
         let minutes                     = components.minute
         meetingTimeDetailsLabel.text    = String(format: "%d:%02d", hour, minutes)
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {

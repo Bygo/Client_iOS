@@ -37,6 +37,18 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        signUpButton.backgroundColor = kCOLOR_ONE
+        loginButton.titleLabel?.textColor = kCOLOR_ONE
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {
@@ -148,7 +160,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func signUpButtonTapped(sender: AnyObject) {
         if isUserDataValid() {
-            model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: phoneNumberTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "phone_number", completionHandler: { (success:Bool)->Void in
+            model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: phoneNumberTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "Phone Number", completionHandler: { (success:Bool)->Void in
                 if success {
                     self.delegate?.userDidLogin(false)
                     self.performSegueWithIdentifier("ShowPhoneNumberVerification", sender: nil)
@@ -171,12 +183,16 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                 
                 self.model?.userServiceProvider.login(facebookID, completionHandler: { (loginSuccess:Bool)->Void in
                     if loginSuccess {
-                        self.delegate?.userDidLogin(true)
+                        dispatch_async(GlobalMainQueue, {
+                            self.delegate?.userDidLogin(true)
+                        })
                     } else {
                         self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: { (success:Bool)->Void in
                             if success {
-                                self.delegate?.userDidLogin(false)
-                                self.performSegueWithIdentifier("ShowRequestPhoneNumber", sender: nil)
+                                dispatch_async(GlobalMainQueue, {
+                                    self.delegate?.userDidLogin(false)
+                                    self.performSegueWithIdentifier("ShowRequestPhoneNumber", sender: nil)
+                                })
                             } else {
                                 print("Error creating new user")
                             }

@@ -21,23 +21,28 @@ class MenuContainerVC: UIViewController, MenuDelegate {
         didSet { menuVC?.model = model }
     }
     
-    let MAX_MENU_ANIMATION_DURATION = 0.4
-    let OPEN_MENU_LEADING_SPACE_TO_CONTAINER:CGFloat = -UIScreen.mainScreen().bounds.width/3.0
-    let CLOSED_MENU_LEADING_SPACE_TO_CONTAINER:CGFloat = -UIScreen.mainScreen().bounds.width
-    let OPEN_MENU_BLACK_TINT_VIEW_ALPHA:CGFloat = 0.5
+    let MAX_MENU_ANIMATION_DURATION                     = 0.4
+    let OPEN_MENU_LEADING_SPACE_TO_CONTAINER:CGFloat    = -UIScreen.mainScreen().bounds.width/3.0
+    let CLOSED_MENU_LEADING_SPACE_TO_CONTAINER:CGFloat  = -UIScreen.mainScreen().bounds.width
+    let OPEN_MENU_BLACK_TINT_VIEW_ALPHA:CGFloat         = 0.5
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        menuLeadingSpace.constant = -view.bounds.width
-        backgroundTintView.alpha = 0.0
-        self.view.hidden = true
+        menuLeadingSpace.constant   = -view.bounds.width
+        backgroundTintView.alpha    = 0.0
+        self.view.hidden            = true
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func openMenu() {
+        self.view.hidden = false
+        openMenuAnimationWithVelocity(-1.0)
     }
     
     @IBAction private func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
@@ -89,15 +94,14 @@ class MenuContainerVC: UIViewController, MenuDelegate {
         
         // Calculate the animation duration
         var animationDuration = min(MAX_MENU_ANIMATION_DURATION, Double((OPEN_MENU_LEADING_SPACE_TO_CONTAINER - menuLeadingSpace.constant)/velocity))
-        if velocity == 0.0 {
+        if velocity <= 0.0 {
             animationDuration = MAX_MENU_ANIMATION_DURATION
         }
         
         // Run the animation
-        menuLeadingSpace.constant = OPEN_MENU_LEADING_SPACE_TO_CONTAINER
+        self.menuLeadingSpace.constant = self.OPEN_MENU_LEADING_SPACE_TO_CONTAINER
         UIView.animateWithDuration(animationDuration,
             animations: {
-                self.setNeedsStatusBarAppearanceUpdate()
                 self.view.layoutIfNeeded()
                 self.backgroundTintView.alpha = self.OPEN_MENU_BLACK_TINT_VIEW_ALPHA
             }, completion: { (complete:Bool) -> Void in
@@ -109,7 +113,6 @@ class MenuContainerVC: UIViewController, MenuDelegate {
     
     // Animate close the side menu with a given velocity
     private func closeMenuAnimationWithVelocity(velocity:CGFloat) {
-        
         view.layoutIfNeeded()
         
         // Calculate the animation duration
@@ -142,9 +145,9 @@ class MenuContainerVC: UIViewController, MenuDelegate {
         menuVC?.userDidLogout()
     }
     
-    func userDidUpdateAccountSettings() {
-        menuVC?.userDidUpdateAccountSettings()
-    }
+//    func userDidUpdateAccountSettings() {
+//        menuVC?.userDidUpdateAccountSettings()
+//    }
     
     
     // MARK: - MenuDelegate
@@ -162,10 +165,10 @@ class MenuContainerVC: UIViewController, MenuDelegate {
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "EmbedSideBarMenu" {
-            guard let destVC = segue.destinationViewController as? MenuVC else { return }
-            menuVC = destVC
-            destVC.delegate = self
-            destVC.model = model
+            guard let destVC    = segue.destinationViewController as? MenuVC else { return }
+            menuVC              = destVC
+            destVC.delegate     = self
+            destVC.model        = model
         }
     }
 }

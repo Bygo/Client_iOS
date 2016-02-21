@@ -22,6 +22,8 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchNewRentRequest:", name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
+        
         configureNoRentRequestsLabel()
     }
     
@@ -106,12 +108,18 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
         } else {
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RequestCell", forIndexPath: indexPath) as? RentRequestsCollectionViewCell else { return UICollectionViewCell() }
             
+            // Configure cell image user image
+            cell.userProfileImageView.layer.cornerRadius    = cell.userProfileImageView.bounds.width/2.0
+            cell.userProfileImageView.contentMode           = UIViewContentMode.ScaleAspectFill
+            cell.userProfileImageView.clipsToBounds         = true
+            cell.userProfileImageView.layer.masksToBounds   = true
+            cell.userProfileImageView.layer.borderWidth     = 0.0
+            
             dispatch_async(GlobalUserInteractiveQueue, {
                 let realm                   = try! Realm()
                 let listingID               = self.listingIDsWithRentRequests[indexPath.section]
                 let rentEvent               = realm.objects(RentEvent).filter("listingID == \"\(listingID)\"").sorted("dateCreated")[indexPath.row-1]
                 guard let rentalRate        = rentEvent.rentalRate.value else { return }
-                cell.rentalRateLabel.text   = String(format: "$%.2f", rentalRate)
                 
                 guard let renterID  = rentEvent.renterID else { return }
                 self.model?.userServiceProvider.fetchUser(renterID, completionHandler: {
@@ -123,15 +131,9 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
                     
                     
                     dispatch_async(GlobalMainQueue, {
-                        // Configure cell image user image
-                        cell.userProfileImageView.layer.cornerRadius    = cell.userProfileImageView.bounds.width/2.0
-                        cell.userProfileImageView.contentMode           = UIViewContentMode.ScaleAspectFill
-                        cell.userProfileImageView.clipsToBounds         = true
-                        cell.userProfileImageView.layer.masksToBounds   = true
-                        cell.userProfileImageView.layer.borderWidth     = 0.0
-                
                         // Configure cell text labels
-                        cell.userNameLabel.text = "\(renterFirstName) \(renterLastName)"
+                        cell.userNameLabel.text     = "\(renterFirstName) \(renterLastName)"
+                        cell.rentalRateLabel.text   = String(format: "$%.2f", rentalRate)
                     })
                 })
             })
@@ -197,6 +199,19 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
         delegate?.rentRequestsDidUpdate()
     }
     
+    
+    // MARK: - Notification Handlers
+    func didFetchNewRentRequest(notification:NSNotification) {
+        dispatch_async(GlobalMainQueue, {
+            self.collectionView?.reloadData()
+        })
+    }
+    
+    
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

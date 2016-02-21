@@ -22,5 +22,6 @@ class User: Object {
     dynamic var isEmailVerified:Bool        = false
     dynamic var credit:Double               = 0.0
     dynamic var debit:Double                = 0.0
+    dynamic var profileImageLink:String?    = nil
     dynamic var dateLastModified:NSDate?    = nil
 }

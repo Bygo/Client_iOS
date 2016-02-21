@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate {
+class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate, RentDelegate, DashboardDelegate {
 
     let model = Model()
     
@@ -27,6 +27,8 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.model = model
         
         refreshModules()
         
@@ -67,7 +69,10 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         ((settingsContainer as? UINavigationController)?.topViewController as? SettingsVC)?.model       = model
     
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.model = model
-        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.model = model
+        ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.delegate = self
+        
+        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.model           = model
+        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.delegate        = self
         
         view.bringSubviewToFront(rentContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)
@@ -118,6 +123,11 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     }
     
     
+    // MARK: - Rent Delegate    
+    func openMenu() {
+        (menuContainer as? MenuContainerVC)?.openMenu()
+    }
+    
     // MARK: - Login Delegate
     func userDidLogin(shouldDismissLogin:Bool) {
         (menuContainer as? MenuContainerVC)?.userDidLogin()
@@ -144,7 +154,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     
     // MARK: - Settings Delegate
     func didUpdateAccountSettings() {
-        (menuContainer as? MenuContainerVC)?.userDidUpdateAccountSettings()
+//        (menuContainer as? MenuContainerVC)?.userDidUpdateAccountSettings()
     }
     
     func didLogout() {

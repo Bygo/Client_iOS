@@ -34,11 +34,14 @@ class NewListingRentalRatesVC: UIViewController {
     var suggestedDailyRate:Double?
     var suggestedWeeklyRate:Double?
     
+    var kORIGINAL_OFFSET:CGFloat = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         
+        kORIGINAL_OFFSET = self.view.frame.origin.y
         
         // TODO: Send request to server to get the suggested rates for the itemValue
         suggestedHourlyRate = 2.40
@@ -57,6 +60,9 @@ class NewListingRentalRatesVC: UIViewController {
         hourlyRateTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
         dailyRateTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
         weeklyRateTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        
+        continueButton.backgroundColor  = kCOLOR_ONE
+        resetButton.backgroundColor     = kCOLOR_FIVE
         
     }
     
@@ -77,20 +83,20 @@ class NewListingRentalRatesVC: UIViewController {
     
     // MARK: - Data
     func isDataValid() -> Bool {
-        let isHourlyRateValid = hourlyRateTextField.text?.characters.count > 0
-        let isDailyRateValid = dailyRateTextField.text?.characters.count > 0
-        let isWeeklyRateValid = weeklyRateTextField.text?.characters.count > 0
+        let isHourlyRateValid   = hourlyRateTextField.text?.characters.count > 0
+        let isDailyRateValid    = dailyRateTextField.text?.characters.count > 0
+        let isWeeklyRateValid   = weeklyRateTextField.text?.characters.count > 0
         
         return isHourlyRateValid && isDailyRateValid && isWeeklyRateValid
     }
     
     func areRatesTheSuggestedRates() -> Bool {
-        let hourlyRate = NSString(string: hourlyRateTextField.text!).doubleValue
-        let dailyRate = NSString(string: dailyRateTextField.text!).doubleValue
-        let weeklyRate = NSString(string: weeklyRateTextField.text!).doubleValue
-        let isHourlyRateSuggested = hourlyRate == suggestedHourlyRate
-        let isDailyRateSuggested = dailyRate == suggestedDailyRate
-        let isWeeklyRateSuggested = weeklyRate == suggestedWeeklyRate
+        let hourlyRate  = NSString(string: hourlyRateTextField.text!).doubleValue
+        let dailyRate   = NSString(string: dailyRateTextField.text!).doubleValue
+        let weeklyRate  = NSString(string: weeklyRateTextField.text!).doubleValue
+        let isHourlyRateSuggested   = hourlyRate == suggestedHourlyRate
+        let isDailyRateSuggested    = dailyRate == suggestedDailyRate
+        let isWeeklyRateSuggested   = weeklyRate == suggestedWeeklyRate
         return isHourlyRateSuggested && isDailyRateSuggested && isWeeklyRateSuggested
     }
     
@@ -103,7 +109,10 @@ class NewListingRentalRatesVC: UIViewController {
     
     func keyboardWillHide(notification: NSNotification) {
         if let _ = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            self.view.frame.origin.y = 0.0
+            if let navBarHeight = navigationController?.navigationBar.bounds.height {
+                let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+                self.view.frame.origin.y = navBarHeight + statusBarHeight
+            }
         }
     }
     
@@ -132,12 +141,17 @@ class NewListingRentalRatesVC: UIViewController {
     }
     
     @IBAction func resetButtonTapped(sender:AnyObject) {
-        guard let suggestedHourlyRate = suggestedHourlyRate else { return }
-        guard let suggestedDailyRate = suggestedDailyRate else { return }
-        guard let suggestedWeeklyRate = suggestedWeeklyRate else { return }
-        hourlyRateTextField.text = String(format: "%.2f", suggestedHourlyRate)
-        dailyRateTextField.text = String(format: "%.2f", suggestedDailyRate)
-        weeklyRateTextField.text = String(format: "%.2f", suggestedWeeklyRate)
+        guard let suggestedHourlyRate   = suggestedHourlyRate else { return }
+        guard let suggestedDailyRate    = suggestedDailyRate else { return }
+        guard let suggestedWeeklyRate   = suggestedWeeklyRate else { return }
+        hourlyRateTextField.text    = String(format: "%.2f", suggestedHourlyRate)
+        dailyRateTextField.text     = String(format: "%.2f", suggestedDailyRate)
+        weeklyRateTextField.text    = String(format: "%.2f", suggestedWeeklyRate)
+    }
+    
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
     }
     
     // MARK: - Navigation

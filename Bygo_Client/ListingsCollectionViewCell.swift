@@ -12,12 +12,8 @@ class ListingsCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var mainImageImageView: UIImageView!
     @IBOutlet var itemTitleLabel: UILabel!
-    @IBOutlet var rentalRateLabel: UILabel!
-    @IBOutlet var ratingImageView: UIImageView!
-    @IBOutlet var rentedByLabel: UILabel!
-    @IBOutlet var renterImageImageView: UIImageView!
-    @IBOutlet var renterNameLabel: UILabel!
-    @IBOutlet var renterRatingImageView: UIImageView!
-    @IBOutlet var blackTintView: UIView!
+    @IBOutlet var meetingDetailLabel: UILabel!
+    @IBOutlet var rentalValueLabel: UILabel!
+    @IBOutlet var renterImageView: UIImageView!
     
 }

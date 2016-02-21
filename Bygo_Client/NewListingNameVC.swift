@@ -23,6 +23,15 @@ class NewListingNameVC: UIViewController, UITableViewDataSource, UITableViewDele
         
         // Do any additional setup after loading the view.
         nameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {

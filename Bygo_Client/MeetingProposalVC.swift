@@ -33,6 +33,11 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
         // Do any additional setup after loading the view.
         tableView.rowHeight             = UITableViewAutomaticDimension
         tableView.estimatedRowHeight    = 80.0
@@ -59,6 +64,7 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
             }
         })
         
+        
 //        model.queryUsersFavoriteMeetingLocations(item.ownerID!, completionHandler:{(success:Bool, ownersMeetingLocations:[FavoriteMeetingLocation]) in
 //            if success {
 //                self.ownerFavLocations.appendContentsOf(ownersMeetingLocations)
@@ -78,6 +84,10 @@ class MeetingProposalVC: UIViewController, UITableViewDataSource, UITableViewDel
 //            }
 //        })
         
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {

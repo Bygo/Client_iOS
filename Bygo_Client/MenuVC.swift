@@ -21,9 +21,7 @@ class MenuVC: UITableViewController {
     @IBOutlet var profileHeader: UIView!
     
     var delegate:MenuDelegate?
-    var model:Model? {
-        didSet { configureUI() }
-    }
+    var model:Model? 
     
     
     // MARK: - View Controller Life Cycle
@@ -31,7 +29,12 @@ class MenuVC: UITableViewController {
         super.viewDidLoad()
         
         // Configure the user specific settings
-        configureUI()
+//        configureUI()
+        
+        view.clipsToBounds          = false
+        view.layer.shadowColor      = UIColor.blackColor().CGColor
+        view.layer.shadowOffset     = CGSizeMake(1.5, 0.0)
+        view.layer.shadowOpacity    = 0.25
     }
     
     override func didReceiveMemoryWarning() {
@@ -42,56 +45,56 @@ class MenuVC: UITableViewController {
     
     // MARK: - Updating UI
     func userDidLogin() {
-        configureUI()
+//        configureUI()
         tableView.reloadData()
     }
     
     func userDidLogout() {
-        configureUI()
+//        configureUI()
         tableView.reloadData()
     }
     
-    func userDidUpdateAccountSettings() {
-        configureUI()
-        tableView.reloadData()
-    }
+//    func userDidUpdateAccountSettings() {
+////        configureUI()
+//        tableView.reloadData()
+//    }
     
-    func configureUI() {
-        guard let model = model else { return }
-        if model.userServiceProvider.isLocalUserLoggedIn() {
-            configureUserSpecificUI()
-        } else {
-            configureDefaultUI()
-        }
-    }
+//    func configureUI() {
+//        guard let model = model else { return }
+//        if model.userServiceProvider.isLocalUserLoggedIn() {
+//            configureUserSpecificUI()
+//        } else {
+//            configureDefaultUI()
+//        }
+//    }
     
-    func configureUserSpecificUI() {
-        // Setup the user profile imageview
-        profileImageView.hidden                 = false
-        usernameLabel.hidden                    = false
-        profileHeader.hidden                    = false
-        profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
-        profileImageView.backgroundColor        = .lightGrayColor()
-        profileImageView.clipsToBounds          = true
-        profileImageView.layer.cornerRadius     = 34.0
-        profileImageView.layer.masksToBounds    = true
-        profileImageView.layer.borderWidth      = 0.0
-        
-        // Set the user profile name and image
-        guard let user      = model?.userServiceProvider.getLocalUser() else { return }
-        guard let firstName = user.firstName                            else { return }
-        guard let lastName  = user.lastName                             else { return }
-        usernameLabel.text  = "\(firstName) \(lastName)"
-        tableView.layoutIfNeeded()
-    }
-    
-    func configureDefaultUI() {
-        profileImageView.hidden = true
-        usernameLabel.hidden    = true
-        profileHeader.hidden    = true
-        tableView.layoutIfNeeded()
-    }
-    
+//    func configureUserSpecificUI() {
+//        // Setup the user profile imageview
+//        profileImageView.hidden                 = false
+//        usernameLabel.hidden                    = false
+//        profileHeader.hidden                    = false
+//        profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
+//        profileImageView.backgroundColor        = .lightGrayColor()
+//        profileImageView.clipsToBounds          = true
+//        profileImageView.layer.cornerRadius     = 34.0
+//        profileImageView.layer.masksToBounds    = true
+//        profileImageView.layer.borderWidth      = 0.0
+//        
+//        // Set the user profile name and image
+//        guard let user      = model?.userServiceProvider.getLocalUser() else { return }
+//        guard let firstName = user.firstName                            else { return }
+//        guard let lastName  = user.lastName                             else { return }
+//        usernameLabel.text  = "\(firstName) \(lastName)"
+//        tableView.layoutIfNeeded()
+//    }
+//    
+//    func configureDefaultUI() {
+//        profileImageView.hidden = true
+//        usernameLabel.hidden    = true
+//        profileHeader.hidden    = true
+//        tableView.layoutIfNeeded()
+//    }
+//    
     
     // MARK: - TableView Data Source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -111,13 +114,40 @@ class MenuVC: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCellWithIdentifier("MenuOption", forIndexPath: indexPath) as? MenuOptionTableViewCell else { return UITableViewCell() }
         
+        cell.textLabel?.font = UIFont.systemFontOfSize(20.0)
+        
         // Configure the cell
         guard let model = model else { return UITableViewCell() }
         if model.userServiceProvider.isLocalUserLoggedIn() {
             cell.textLabel?.text = stringForMenuOption(menuOptions[indexPath.row])
+            switch indexPath.row {
+            case 0:
+                cell.iconImageView.image = UIImage(named: "Rent")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            case 1:
+                cell.iconImageView.image = UIImage(named: "Dashboard")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            case 2:
+                cell.iconImageView.image = UIImage(named: "History")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            case 3:
+                cell.iconImageView.image = UIImage(named: "Settings")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            case 4:
+                cell.iconImageView.image = UIImage(named: "Help")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            default:
+                break
+            }
         } else {
             cell.textLabel?.text = stringForMenuOption(nonUserMenuOptions[indexPath.row])
+            switch indexPath.row {
+            case 0:
+                cell.iconImageView.image = UIImage(named: "Rent")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            case 1:
+                cell.iconImageView.image = UIImage(named: "Login")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            default:
+                break
+            }
         }
+        cell.iconImageView.tintColor = .blackColor()
+        cell.tag = indexPath.row
+        
         return cell
     }
     
@@ -125,9 +155,22 @@ class MenuVC: UITableViewController {
     // MARK: - TableView Delegate
     // Select the correct menu option based on wether or not the user is logged in. There are different menu options in each of these cases.
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        print("\n\n\nSELECT\n\(indexPath)\n\n")
         guard let model = model else { return }
         if model.userServiceProvider.isLocalUserLoggedIn() {
             delegate?.didSelectMenuOption(menuOptions[indexPath.row])
+            for i in 0..<tableView.numberOfRowsInSection(indexPath.section) {
+                guard let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: i, inSection: 0)) as? MenuOptionTableViewCell else { return }
+                if indexPath.row != i {
+                    cell.selectionIndicator.hidden  = true
+                    cell.iconImageView.tintColor    = .blackColor()
+                    cell.textLabel?.textColor       = .blackColor()
+                } else {
+                    cell.selectionIndicator.hidden  = false
+                    cell.iconImageView.tintColor    = kCOLOR_ONE
+                    cell.textLabel?.textColor       = kCOLOR_ONE
+                }
+            }
         } else {
             delegate?.didSelectMenuOption(nonUserMenuOptions[indexPath.row])
         }

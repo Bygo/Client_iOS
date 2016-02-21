@@ -51,14 +51,13 @@ class UserServiceProvider: NSObject {
         if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
             params["notification_token"] = notificationToken
         }
-        if let phoneNumber = phoneNumber { params.updateValue(phoneNumber, forKey: "phone_number") }
-        if let facebookID = facebookID { params.updateValue(facebookID, forKey: "facebook_id") }
-        if let password = password { params.updateValue(password, forKey: "password") }
+        if let phoneNumber  = phoneNumber { params.updateValue(phoneNumber, forKey: "phone_number") }
+        if let facebookID   = facebookID { params.updateValue(facebookID, forKey: "facebook_id") }
+        if let password     = password { params.updateValue(password, forKey: "password") }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
             completionHandler(success: false)
             return
         }
-        
         
         // Execute the request
         let session = NSURLSession.sharedSession()
@@ -99,7 +98,7 @@ class UserServiceProvider: NSObject {
                         
                         let realm = try! Realm()
                         try! realm.write {
-                            realm.add(user, update: true)
+                            realm.add(user)
                         }
                         
                         // Save the LocalUserID to user defaults for easy login when the user closes and reopens the app
@@ -112,12 +111,71 @@ class UserServiceProvider: NSObject {
                     dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
                 }
             default:
+                print("/create_new/user \(statusCode)")
                 dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
             }
         })
         task.resume()
     }
     
+    
+    func setUserProfileImage(userID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
+        let filename = "profile_picture.jpg"
+        
+        let url = NSURL(string: "\(serverURL)/create_new/user_image/user_id=\(userID)")!
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        let boundary = "---------------------------Boundary Line---------------------------"
+        let contentTpe = "multipart/form-data; boundary=\(boundary)"
+        request.addValue(contentTpe, forHTTPHeaderField: "Content-Type")
+        
+        let body = NSMutableData()
+        body.appendData("\r\n--\(boundary)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        body.appendData("Content-Disposition: form-data; name=\"userfile\"; filename=\"\(filename)\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        body.appendData("Content-Type: application/octet-stream\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        body.appendData(UIImageJPEGRepresentation(image, 90)!)
+        body.appendData("\r\n--\(boundary)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        
+        request.HTTPBody = body
+        request.addValue("\(body.length)", forHTTPHeaderField: "Content-Length")
+        
+        
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            if error != nil {
+                completionHandler(success: false)
+                return
+            }
+            
+            print(response)
+            
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            switch statusCode {
+            case 201:
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let mediaImage = json["image_media_link"] as? String else { return }
+                    guard let user = self.getLocalUser() else { return }
+                    
+                    
+                    let realm = try! Realm()
+                    try! realm.write {
+                        user.profileImageLink = mediaImage
+                    }
+                    
+                    completionHandler(success: true)
+                } catch {
+                    completionHandler(success: false)
+                }
+            
+            default:
+                print("/create_new/user_image : \(statusCode)")
+                completionHandler(success: false)
+            }
+        })
+        task.resume()
+    }
     
     // Download user public data from the server
     private func downloadUserPublicData(userID:String, completionHandler:(success:Bool)->Void) {
@@ -185,8 +243,8 @@ class UserServiceProvider: NSObject {
     func login(phoneNumber:String, password:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/login/user"
-        var params = ["login_id":phoneNumber, "password":password]
+        let urlString   = "\(serverURL)/login/user"
+        var params      = ["login_id":phoneNumber, "password":password]
         if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
             params["notification_token"] = notificationToken
         }
@@ -201,8 +259,7 @@ class UserServiceProvider: NSObject {
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             self.loginServerResponseHandler(data, response: response, error: error, completionHandler: completionHandler)
         })
-        task.resume()
-        
+        task.resume()   
     }
     
     // Send call to Facebook to get user data
@@ -290,38 +347,37 @@ class UserServiceProvider: NSObject {
                 dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
                 guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                 
-                dispatch_async(dispatch_get_main_queue(), {
-                    // Create new user
-                    let user                    = User()
-                    user.userID                 = userID
-                    user.firstName              = firstName
-                    user.lastName               = lastName
-                    user.password               = password
-                    user.facebookID             = facebookID
-                    user.phoneNumber            = phoneNumber
-                    user.isPhoneNumberVerified  = isPhoneNumberVerified
-                    user.email                  = email
-                    user.isEmailVerified        = isEmailVerified
-                    user.credit                 = credit
-                    user.debit                  = debit
-                    user.dateLastModified       = dateLastModified
-                    
-                    let realm = try! Realm()
-                    try! realm.write { realm.add(user) }
-                    
-                    // Save the LocalUserID to user defaults for easy login when the user closes and reopens the app
-                    NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
-                    NSUserDefaults.standardUserDefaults().synchronize()
-                    
-                    completionHandler(success: true)
-                })
+                // Create new user
+                let user                    = User()
+                user.userID                 = userID
+                user.firstName              = firstName
+                user.lastName               = lastName
+                user.password               = password
+                user.facebookID             = facebookID
+                user.phoneNumber            = phoneNumber
+                user.isPhoneNumberVerified  = isPhoneNumberVerified
+                user.email                  = email
+                user.isEmailVerified        = isEmailVerified
+                user.credit                 = credit
+                user.debit                  = debit
+                user.dateLastModified       = dateLastModified
+                
+                let realm = try! Realm()
+                try! realm.write { realm.add(user) }
+                
+                // Save the LocalUserID to user defaults for easy login when the user closes and reopens the app
+                NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
+                NSUserDefaults.standardUserDefaults().synchronize()
+                
+                completionHandler(success: true)
+                
             } catch {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false)
             }
             
         default:
             print("/login : \(statusCode)")
-            dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+            completionHandler(success: false)
         }
     }
     

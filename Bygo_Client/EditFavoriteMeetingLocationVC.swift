@@ -29,6 +29,12 @@ class EditFavoriteMeetingLocationVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        
         // Do any additional setup after loading the view.
         saveButton.enabled = false
         
@@ -38,6 +44,10 @@ class EditFavoriteMeetingLocationVC: UIViewController, UITextFieldDelegate {
         let addressComponents = location.address?.componentsSeparatedByString(", ")
         guard let address = addressComponents?.joinWithSeparator("\n") else { return }
         addressDetailLabel.text = address
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {

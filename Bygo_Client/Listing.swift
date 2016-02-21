@@ -20,6 +20,8 @@ class Listing: Object {
     let hourlyRate  = RealmOptional<Double>()
     let dailyRate   = RealmOptional<Double>()
     let weeklyRate  = RealmOptional<Double>()
+    let imageLinks = List<RealmString>()
+    
     dynamic var dateLastModified:NSDate? = nil
     
     

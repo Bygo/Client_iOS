@@ -1,4 +1,3 @@
-//
 //  AppDelegate.swift
 //  Bygo_Client
 //
@@ -27,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GGLInstanceIDDelegate, GC
     var gcmSenderID: String?
     var registrationToken: String?
     var registrationOptions = [String: AnyObject]()
+    var model:Model?
     
     private let registrationKey     = "onRegistrationCompleted"
     private let messageKey          = "onMessageReceived"
@@ -37,8 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GGLInstanceIDDelegate, GC
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         // Configure Google Messaging
-        let settings: UIUserNotificationSettings =
-        UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+        let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
         
@@ -52,8 +51,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GGLInstanceIDDelegate, GC
             NSUserDefaults.standardUserDefaults().setInteger(0, forKey: IconBadgeFields.UnseenRentRequests.rawValue)
             NSUserDefaults.standardUserDefaults().setInteger(0, forKey: IconBadgeFields.UnseenScheduledMeetings.rawValue)
             NSUserDefaults.standardUserDefaults().synchronize()
-            
         }
+        
+        UIApplication.sharedApplication().statusBarStyle = .LightContent
         
         return true
     }
@@ -162,6 +162,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GGLInstanceIDDelegate, GC
     // [START ack_message_reception]
     func application( application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         print("Notification A Received: \(userInfo)")
+        
         // This works only if the app started the GCM service
         GCMService.sharedInstance().appDidReceiveMessage(userInfo);
         
@@ -179,15 +180,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GGLInstanceIDDelegate, GC
         // Handle the received message
         if let type = userInfo["type"] as? String {
             if type == "Rent_Request_Proposed" {
-                let unseenRentRequests = NSUserDefaults.standardUserDefaults().integerForKey(IconBadgeFields.UnseenRentRequests.rawValue)
-                NSUserDefaults.standardUserDefaults().setInteger(unseenRentRequests+1, forKey: IconBadgeFields.UnseenRentRequests.rawValue)
+                guard let eventID   = userInfo["event_id"]      as? String else { return }
+                let meetingID       = userInfo["meeting_id"]    as? String
+                guard let userID    = model?.userServiceProvider.getLocalUser()?.userID else { return }
+                
+                model?.rentServiceProvider.rentRequestWasProposed(eventID, meetingID: meetingID, userID: userID, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.DidFetchNewRentRequest.rawValue, object: nil)
+                    }
+                })
                 
             } else if type == "Rent_Request_Accepted" {
-                let unseenScheduledMeetings = NSUserDefaults.standardUserDefaults().integerForKey(IconBadgeFields.UnseenScheduledMeetings.rawValue)
-                NSUserDefaults.standardUserDefaults().setInteger(unseenScheduledMeetings+1, forKey: IconBadgeFields.UnseenScheduledMeetings.rawValue)
+                guard let eventID   = userInfo["event_id"]          as? String else { return }
+                guard let status    = userInfo["status"]            as? String else { return }
+                guard let meetingID = userInfo["meeting_id"]        as? String else { return }
+                guard let listingID = userInfo["listing_id"]        as? String else { return }
+                guard let userID    = model?.userServiceProvider.getLocalUser()?.userID else { return }
+                
+                model?.rentServiceProvider.rentRequestWasAccepted(eventID, status: status, meetingID: meetingID, listingID: listingID, userID: userID, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        print("POST NOTIFICATION")
+                        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.RentRequestWasAccepted.rawValue, object: nil)
+                    }
+                })
                 
             } else if type == "Rent_Request_Rejected" {
+                guard let eventID = userInfo["event_id"]          as? String else { return }
+                guard let status  = userInfo["status"]            as? String else { return }
+                let meetingID     = userInfo["meeting_id"]        as? String
+                let meetingStatus = userInfo["meeting_status"]    as? String
                 
+                model?.rentServiceProvider.rentRequestWasRejected(eventID, status: status, meetingID: meetingID, meetingStatus: meetingStatus, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.RentRequestWasRejected.rawValue, object: nil)
+                    }
+                })
             }
             
             NSUserDefaults.standardUserDefaults().synchronize()

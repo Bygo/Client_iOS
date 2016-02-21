@@ -23,7 +23,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        loginButton.backgroundColor = kCOLOR_ONE
     }
     
     override func didReceiveMemoryWarning() {
@@ -92,6 +92,10 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)
         if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {

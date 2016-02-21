@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7303C3E91C724F5E00EDD317 /* RentedListingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7303C3E81C724F5E00EDD317 /* RentedListingsVC.swift */; };
+		7303C3EB1C727DB800EDD317 /* RentedListingsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7303C3EA1C727DB700EDD317 /* RentedListingsCollectionViewCell.swift */; };
+		730CAA3C1C762F44000BE681 /* Payments.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730CAA3B1C762F43000BE681 /* Payments.storyboard */; };
+		730CAA401C76300F000BE681 /* PaymentMethodTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CAA3F1C76300F000BE681 /* PaymentMethodTableViewCell.swift */; };
+		730CAA421C76307A000BE681 /* PaymentMethodsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CAA411C76307A000BE681 /* PaymentMethodsVC.swift */; };
+		730CAA441C766128000BE681 /* PaymentsServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CAA431C766128000BE681 /* PaymentsServiceProvider.swift */; };
+		730CAA461C7822B1000BE681 /* UIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CAA451C7822B1000BE681 /* UIElements.swift */; };
 		73147D961C61AAD800FD70B8 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73147D951C61AAD800FD70B8 /* MapKit.framework */; };
 		73147DA21C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73147DA11C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift */; };
 		73147DA51C62EBB500FD70B8 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73147DA31C62EBB500FD70B8 /* FBSDKCoreKit.framework */; };
@@ -33,7 +40,6 @@
 		733620ED1C60743E00893034 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733620EB1C60743E00893034 /* Main.storyboard */; };
 		733620F01C60743E00893034 /* Bygo_Client.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 733620EE1C60743E00893034 /* Bygo_Client.xcdatamodeld */; };
 		733620F21C60743F00893034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 733620F11C60743F00893034 /* Assets.xcassets */; };
-		733620F51C60743F00893034 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733620F31C60743F00893034 /* LaunchScreen.storyboard */; };
 		733621001C60743F00893034 /* Bygo_ClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733620FF1C60743F00893034 /* Bygo_ClientTests.swift */; };
 		7336210B1C60743F00893034 /* Bygo_ClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336210A1C60743F00893034 /* Bygo_ClientUITests.swift */; };
 		7336211A1C60749B00893034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621191C60749B00893034 /* User.swift */; };
@@ -58,6 +64,8 @@
 		733621611C612E4300893034 /* DataValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621601C612E4300893034 /* DataValidator.swift */; };
 		733621631C61327900893034 /* NewFavoriteMeetingLocationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */; };
 		7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */; };
+		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
+		73386BC21C79C7B2005140C7 /* EditListingPhotosVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BC11C79C7B2005140C7 /* EditListingPhotosVC.swift */; };
 		73CBA5431C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
 		73CBA5441C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
 		73CBA5451C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
@@ -126,6 +134,13 @@
 		02000F982C7B19F6966CF7BB /* Pods-Bygo_Client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bygo_Client.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Bygo_Client/Pods-Bygo_Client.debug.xcconfig"; sourceTree = "<group>"; };
 		0B40FB4B97106A698CA079DB /* Pods_Bygo_Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bygo_Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C084957ADF2117A7464CC94 /* Pods-Bygo_Client.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bygo_Client.release.xcconfig"; path = "Pods/Target Support Files/Pods-Bygo_Client/Pods-Bygo_Client.release.xcconfig"; sourceTree = "<group>"; };
+		7303C3E81C724F5E00EDD317 /* RentedListingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RentedListingsVC.swift; sourceTree = "<group>"; };
+		7303C3EA1C727DB700EDD317 /* RentedListingsCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RentedListingsCollectionViewCell.swift; sourceTree = "<group>"; };
+		730CAA3B1C762F43000BE681 /* Payments.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Payments.storyboard; sourceTree = "<group>"; };
+		730CAA3F1C76300F000BE681 /* PaymentMethodTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentMethodTableViewCell.swift; sourceTree = "<group>"; };
+		730CAA411C76307A000BE681 /* PaymentMethodsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentMethodsVC.swift; sourceTree = "<group>"; };
+		730CAA431C766128000BE681 /* PaymentsServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentsServiceProvider.swift; sourceTree = "<group>"; };
+		730CAA451C7822B1000BE681 /* UIElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIElements.swift; sourceTree = "<group>"; };
 		73147D951C61AAD800FD70B8 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		73147DA11C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditFavoriteMeetingLocationVC.swift; sourceTree = "<group>"; };
 		73147DA31C62EBB500FD70B8 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
@@ -153,7 +168,6 @@
 		733620EC1C60743E00893034 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		733620EF1C60743E00893034 /* Bygo_Client.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Bygo_Client.xcdatamodel; sourceTree = "<group>"; };
 		733620F11C60743F00893034 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		733620F41C60743F00893034 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		733620F61C60743F00893034 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		733620FB1C60743F00893034 /* Bygo_ClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Bygo_ClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		733620FF1C60743F00893034 /* Bygo_ClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bygo_ClientTests.swift; sourceTree = "<group>"; };
@@ -183,6 +197,8 @@
 		733621601C612E4300893034 /* DataValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataValidator.swift; sourceTree = "<group>"; };
 		733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteMeetingLocationVC.swift; sourceTree = "<group>"; };
 		733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCompleteLocationSuggestionTableViewCell.swift; sourceTree = "<group>"; };
+		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
+		73386BC11C79C7B2005140C7 /* EditListingPhotosVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditListingPhotosVC.swift; sourceTree = "<group>"; };
 		73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
 		73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderVC.swift; sourceTree = "<group>"; };
@@ -257,6 +273,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		730CAA3A1C762F35000BE681 /* Payments */ = {
+			isa = PBXGroup;
+			children = (
+				730CAA3B1C762F43000BE681 /* Payments.storyboard */,
+				730CAA3D1C762FF4000BE681 /* Controllers */,
+				730CAA3E1C762FF9000BE681 /* Cells */,
+			);
+			name = Payments;
+			sourceTree = "<group>";
+		};
+		730CAA3D1C762FF4000BE681 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				730CAA411C76307A000BE681 /* PaymentMethodsVC.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		730CAA3E1C762FF9000BE681 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				730CAA3F1C76300F000BE681 /* PaymentMethodTableViewCell.swift */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
 		73147DA71C62EF6200FD70B8 /* Rent */ = {
 			isa = PBXGroup;
 			children = (
@@ -318,12 +360,11 @@
 				73DD4CC11C6FB1FD0003698A /* Bygo_Client-Bridging-Header.h */,
 				733620E71C60743E00893034 /* AppDelegate.swift */,
 				733620E91C60743E00893034 /* ViewController.swift */,
-				733620EB1C60743E00893034 /* Main.storyboard */,
+				730CAA451C7822B1000BE681 /* UIElements.swift */,
 				733621391C60766600893034 /* Modules */,
 				733621181C60745100893034 /* Model */,
 				733621431C60F30B00893034 /* Storyboards */,
 				733620F11C60743F00893034 /* Assets.xcassets */,
-				733620F31C60743F00893034 /* LaunchScreen.storyboard */,
 				733620F61C60743F00893034 /* Info.plist */,
 				733620EE1C60743E00893034 /* Bygo_Client.xcdatamodeld */,
 			);
@@ -362,13 +403,15 @@
 			isa = PBXGroup;
 			children = (
 				7336211E1C6074E200893034 /* UserServiceProvider.swift */,
-				73147DBA1C62F36300FD70B8 /* CategoriesServiceProvider.swift */,
 				73147DBC1C62F36D00FD70B8 /* DepartmentsServiceProvider.swift */,
 				73147DBE1C62F37700FD70B8 /* ListingsServiceProvider.swift */,
 				73147DC41C62F5E200FD70B8 /* AdvertisedListingsServiceProvider.swift */,
 				7336215A1C6108E700893034 /* FavoriteMeetingLocationServiceProvider.swift */,
 				73DE66F21C6408BB006D9810 /* RentServiceProvider.swift */,
 				73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */,
+				730CAA431C766128000BE681 /* PaymentsServiceProvider.swift */,
+				73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */,
+				73147DBA1C62F36300FD70B8 /* CategoriesServiceProvider.swift */,
 				733621201C60755000893034 /* URLServiceProvider.swift */,
 				733621601C612E4300893034 /* DataValidator.swift */,
 			);
@@ -378,6 +421,7 @@
 		733621391C60766600893034 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				730CAA3A1C762F35000BE681 /* Payments */,
 				73147DA71C62EF6200FD70B8 /* Rent */,
 				73DE66A31C63864E006D9810 /* Dashboard */,
 				733621521C6104E600893034 /* Settings */,
@@ -401,6 +445,7 @@
 		733621431C60F30B00893034 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				733620EB1C60743E00893034 /* Main.storyboard */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -504,6 +549,7 @@
 			children = (
 				73DE66A81C6386DD006D9810 /* DashboardVC.swift */,
 				73DE66AA1C639519006D9810 /* ListingsVC.swift */,
+				7303C3E81C724F5E00EDD317 /* RentedListingsVC.swift */,
 				73DE66D01C63E9F0006D9810 /* RentRequestsVC.swift */,
 				73DE66D61C63ED14006D9810 /* MeetingsVC.swift */,
 				73DE66B51C63AB51006D9810 /* New Listing */,
@@ -516,6 +562,7 @@
 			isa = PBXGroup;
 			children = (
 				73DE66AC1C63959B006D9810 /* ListingsCollectionViewCell.swift */,
+				7303C3EA1C727DB700EDD317 /* RentedListingsCollectionViewCell.swift */,
 				73DD4CAA1C6D64470003698A /* MeetingTableViewCell.swift */,
 				73DE66B11C639F5E006D9810 /* EditListingTableViewCell.swift */,
 				73DE66BE1C63B6C5006D9810 /* NewListingPhotoCollectionViewCell.swift */,
@@ -531,6 +578,7 @@
 				73DE66AF1C639EEF006D9810 /* EditListingVC.swift */,
 				73DE66B31C63A4DD006D9810 /* EditListingNameVC.swift */,
 				73DE66C81C63D45A006D9810 /* EditListingDepartmentVC.swift */,
+				73386BC11C79C7B2005140C7 /* EditListingPhotosVC.swift */,
 				73DE66C61C63D43F006D9810 /* EditListingCategoryVC.swift */,
 				73DE66CA1C63DB68006D9810 /* EditListingValueVC.swift */,
 				73DE66CC1C63DC29006D9810 /* EditListingRentalRatesVC.swift */,
@@ -733,7 +781,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				733620F51C60743F00893034 /* LaunchScreen.storyboard in Resources */,
 				733620F21C60743F00893034 /* Assets.xcassets in Resources */,
 				733620ED1C60743E00893034 /* Main.storyboard in Resources */,
 				73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */,
@@ -743,6 +790,7 @@
 				73CBA5431C6FF41200E3985F /* GoogleService-Info.plist in Resources */,
 				73147DA91C62EF8800FD70B8 /* Rent.storyboard in Resources */,
 				733621381C60764000893034 /* Menu.storyboard in Resources */,
+				730CAA3C1C762F44000BE681 /* Payments.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -851,23 +899,28 @@
 				73147DC51C62F5E200FD70B8 /* AdvertisedListingsServiceProvider.swift in Sources */,
 				7336211F1C6074E200893034 /* UserServiceProvider.swift in Sources */,
 				73147DAE1C62F0F900FD70B8 /* RentCollectionViewCell.swift in Sources */,
+				73386BC21C79C7B2005140C7 /* EditListingPhotosVC.swift in Sources */,
 				73DE66BD1C63B5F8006D9810 /* NewListingPhotosVC.swift in Sources */,
 				733621401C6076D500893034 /* MenuVC.swift in Sources */,
 				73DE66AD1C63959B006D9810 /* ListingsCollectionViewCell.swift in Sources */,
 				73147DCB1C63135100FD70B8 /* RelatedRentItemsTableViewCell.swift in Sources */,
 				73DE66C51C63B924006D9810 /* NewListingDescriptionVC.swift in Sources */,
+				7303C3EB1C727DB800EDD317 /* RentedListingsCollectionViewCell.swift in Sources */,
 				73DE66E31C63EF4B006D9810 /* MeetingTimeResponderView.swift in Sources */,
 				73DE66D11C63E9F0006D9810 /* RentRequestsVC.swift in Sources */,
 				73DD4C9F1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift in Sources */,
 				73147DCD1C6313CA00FD70B8 /* RentItemUserProfileTableViewCell.swift in Sources */,
 				7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */,
 				73DE66A91C6386DD006D9810 /* DashboardVC.swift in Sources */,
+				730CAA461C7822B1000BE681 /* UIElements.swift in Sources */,
 				733621581C6106A200893034 /* FavoriteMeetingLocation.swift in Sources */,
+				730CAA421C76307A000BE681 /* PaymentMethodsVC.swift in Sources */,
 				73147DC71C63119200FD70B8 /* RentItemDetailsVC.swift in Sources */,
 				73DD4C9D1C6858B70003698A /* MeetingResponderCollectionViewCell.swift in Sources */,
 				73DE66D31C63EA87006D9810 /* RentRequestsCollectionViewCell.swift in Sources */,
 				73DE66E11C63EF15006D9810 /* MeetingTimeProposalView.swift in Sources */,
 				73147DA21C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift in Sources */,
+				73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */,
 				73DE66CB1C63DB68006D9810 /* EditListingValueVC.swift in Sources */,
 				7336215D1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift in Sources */,
 				73147DC91C63132D00FD70B8 /* RentItemDescriptionTableViewCell.swift in Sources */,
@@ -885,16 +938,19 @@
 				73147DAB1C62EFAB00FD70B8 /* RentVC.swift in Sources */,
 				733621611C612E4300893034 /* DataValidator.swift in Sources */,
 				733621211C60755000893034 /* URLServiceProvider.swift in Sources */,
+				730CAA441C766128000BE681 /* PaymentsServiceProvider.swift in Sources */,
 				7336214C1C60F48600893034 /* LoginVC.swift in Sources */,
 				733620F01C60743E00893034 /* Bygo_Client.xcdatamodeld in Sources */,
 				73DE66B91C63AC81006D9810 /* NewListingDepartmentVC.swift in Sources */,
 				73DD4C991C6575F90003698A /* RealmString.swift in Sources */,
 				73DE66B01C639EEF006D9810 /* EditListingVC.swift in Sources */,
 				73147DC31C62F4C300FD70B8 /* AdvertisedListing.swift in Sources */,
+				730CAA401C76300F000BE681 /* PaymentMethodTableViewCell.swift in Sources */,
 				733620E81C60743E00893034 /* AppDelegate.swift in Sources */,
 				73147DBD1C62F36D00FD70B8 /* DepartmentsServiceProvider.swift in Sources */,
 				733621561C61053200893034 /* SettingsVC.swift in Sources */,
 				73147DB51C62F2D300FD70B8 /* Category.swift in Sources */,
+				7303C3E91C724F5E00EDD317 /* RentedListingsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -936,14 +992,6 @@
 				733620EC1C60743E00893034 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		733620F31C60743F00893034 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				733620F41C60743F00893034 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

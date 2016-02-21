@@ -75,6 +75,11 @@ class NewListingCategoryVC: UITableViewController {
         performSegueWithIdentifier("ShowTakePhotos", sender: nil)
     }
     
+    // MARK: - UI Actions
+    @IBAction func backButtonTapped(sender: AnyObject) {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowTakePhotos" {

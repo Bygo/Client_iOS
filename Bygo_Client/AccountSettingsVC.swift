@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Haneke
 
 class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -36,8 +37,17 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         profileImageView.layer.masksToBounds = true
         profileImageView.layer.borderWidth = 0.0
         
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
         // Set user specific UI
         configureUserSpecificUI()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     override func didReceiveMemoryWarning() {
@@ -55,6 +65,10 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         if let lastName     = user.lastName     { lastNameTextField.text = lastName }
         if let email        = user.email        { emailTextField.text = email }
         if let phoneNumber  = user.phoneNumber  { phoneNumberTextField.text = phoneNumber }
+        
+        guard let profileLink = user.profileImageLink   else { print("No profile link"); return }
+        guard let url = NSURL(string: profileLink)      else { print("No url"); return }
+        profileImageView.hnk_setImageFromURL(url)
     }
     
     
@@ -188,8 +202,19 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     // MARK: - Image Picker Delegate
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
-        profileImageView.image = image
-        // TODO: Update the local user object
+        
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.userServiceProvider.setUserProfileImage(userID, image: image, completionHandler: {
+            (success:Bool) in
+            if success {
+                dispatch_async(GlobalMainQueue, {
+                    self.configureUserSpecificUI()
+                    self.delegate?.didUpdateAccountSettings()
+                })
+            } else {
+                print("FAILED")
+            }
+        })
     }
  
     
@@ -203,5 +228,5 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
 }
 
 protocol AccountSettingsDelegate {
-    func didUpdateAccountSettings();
+    func didUpdateAccountSettings()
 }

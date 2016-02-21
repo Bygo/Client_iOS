@@ -8,16 +8,22 @@
 
 import UIKit
 
-private let serverURL = "https://spartan-1131.appspot.com"
+private let serverURL = "https://bygo-client-server.appspot.com"
+
+enum Notifications:String {
+    case DidFetchNewRentRequest = "DidFetchNewRentRequest"
+    case RentRequestWasRejected = "RentRequestWasRejected"
+    case RentRequestWasAccepted = "RentRequestWasAccepted"
+}
 
 enum RentalTimeFrame:String {
-    case Hour = "Hour"
-    case Day = "Day"
-    case Week = "Week"
+    case Hour   = "Hour"
+    case Day    = "Day"
+    case Week   = "Week"
 }
 
 class Model: NSObject, AdvertisedListingsServiceProviderDataSource {
-    let userServiceProvider = UserServiceProvider(serverURL: serverURL)
+    let userServiceProvider                     = UserServiceProvider(serverURL: serverURL)
     let favoriteMeetingLocationServiceProvider  = FavoriteMeetingLocationServiceProvider(serverURL: serverURL)
     let advertisedListingServiceProvider        = AdvertisedListingsServiceProvider(serverURL: serverURL)
     let listingServiceProvider                  = ListingsServiceProvider(serverURL: serverURL)
@@ -25,6 +31,8 @@ class Model: NSObject, AdvertisedListingsServiceProviderDataSource {
     let categoryServiceProvider                 = CategoriesServiceProvider(serverURL: serverURL)
     let rentServiceProvider                     = RentServiceProvider(serverURL: serverURL)
     let meetingServiceProvider                  = MeetingServiceProvider(serverURL: serverURL)
+    let paymentsServiceProvider                 = PaymentsServiceProvider(serverURL: serverURL)
+    let phoneNumberServiceProvider              = PhoneNumberVerificationServiceProvider(serverURL: serverURL)
     let dataValidator = DataValidator()
 
     override init() {
