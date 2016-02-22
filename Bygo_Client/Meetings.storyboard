@@ -113,6 +113,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="CREATE REQUEST" id="jfP-ku-OZj">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="a6r-Ny-hiv">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="bJF-Y1-dxA" id="NVE-gY-BtE"/>
                             </connections>
@@ -335,6 +336,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Mho-3h-u2u">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="D31-DV-7zf">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="B5w-od-Hs8" id="Sbm-VC-Drq"/>
                             </connections>
@@ -428,6 +430,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="aFe-IA-vVj">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="ylI-vU-J2E">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="aR6-aL-JJW" id="uyL-fk-hTg"/>
                             </connections>

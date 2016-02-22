@@ -181,12 +181,13 @@ class UserServiceProvider: NSObject {
     private func downloadUserPublicData(userID:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/request/user_public_data"
-        let params = ["user_id":userID]
-        guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
-            return
-        }
+        let urlString = "\(serverURL)/request/user_public_data/user_id=\(userID)"
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
+//        let params = ["user_id":userID]
+//        guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
+//            completionHandler(success: false)
+//            return
+//        }
         
         // Execute the request
         let session = NSURLSession.sharedSession()
@@ -212,6 +213,7 @@ class UserServiceProvider: NSObject {
                     guard let lastName      = json["last_name"] as? String else { return }
                     guard let email         = json["email"] as? String else { return }
                     guard let phoneNumber   = json["phone_number"] as? String else { return }
+                    let imageMediaLink      = json["image_media_link"] as? String
                     
                     // Create new user
                     let user            = User()
@@ -220,6 +222,7 @@ class UserServiceProvider: NSObject {
                     user.lastName       = lastName
                     user.email          = email
                     user.phoneNumber    = phoneNumber
+                    user.profileImageLink = imageMediaLink
                     
                     let realm = try! Realm()
                     try! realm.write {
@@ -330,8 +333,13 @@ class UserServiceProvider: NSObject {
             
         case 200: // Catch status code 200, SUCCESS
             do {
+                
+                print("Catching 200")
                 // Parse JSON response data
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                
+                print(json)
+                
                 guard let userID                = json["user_id"] as? String else { return }
                 guard let firstName             = json["first_name"] as? String else { return }
                 guard let lastName              = json["last_name"] as? String else { return }
@@ -343,6 +351,7 @@ class UserServiceProvider: NSObject {
                 guard let isEmailVerified       = json["is_phone_number_verified"] as? Bool else { return }
                 guard let credit                = json["credit"] as? Double else { return }
                 guard let debit                 = json["debit"] as? Double else { return }
+                let mediaImageLink              = json["image_media_link"] as? String
                 let dateFormatter               = NSDateFormatter()
                 dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
                 guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
@@ -361,6 +370,7 @@ class UserServiceProvider: NSObject {
                 user.credit                 = credit
                 user.debit                  = debit
                 user.dateLastModified       = dateLastModified
+                user.profileImageLink       = mediaImageLink
                 
                 let realm = try! Realm()
                 try! realm.write { realm.add(user) }

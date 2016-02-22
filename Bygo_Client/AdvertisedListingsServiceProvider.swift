@@ -55,6 +55,8 @@ class AdvertisedListingsServiceProvider: NSObject {
                         let realm = try! Realm()
                         
                         for listing in listings {
+                            print(listing)
+                            
                             guard let listingID     = listing["listing_id"]     as? String else { return }
                             guard let dailyRate     = listing["daily_rate"]     as? Double else { return }
                             // guard let location      = listing["location"]       as? String else { return }
@@ -63,6 +65,7 @@ class AdvertisedListingsServiceProvider: NSObject {
                             guard let rating        = listing["rating"]         as? Double else { return }
                             guard let score         = listing["score"]          as? Double else { return }
                             guard let categoryID    = listing["category_id"]    as? String else { return }
+                            let imageMediaLinks = listing["image_media_links"] as? [String]
                             
                             // Add a new AdvertisedListing snapshot
                             let snapshot = AdvertisedListing()
@@ -74,6 +77,15 @@ class AdvertisedListingsServiceProvider: NSObject {
                             snapshot.dailyRate.value    = dailyRate
                             snapshot.categoryID         = categoryID
                             snapshot.listingID          = listingID
+                            
+                            if let imageMediaLinks = imageMediaLinks {
+                                for imageMediaLink in imageMediaLinks {
+                                    let realmString = RealmString()
+                                    realmString.value = imageMediaLink
+                                    snapshot.imageLinks.append(realmString)
+                                }
+                            }
+                            
                             try! realm.write { realm.add(snapshot) }
                         }
                         
@@ -145,9 +157,10 @@ class AdvertisedListingsServiceProvider: NSObject {
     func downloadAdvertisedListingComplete(listingID:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString       = "\(serverURL)/advertised_listings/complete"
-        let params          = ["listing_id": listingID]
-        guard let request   = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
+        let urlString       = "\(serverURL)/advertised_listings/complete/listing_id=\(listingID)"
+//        let params          = ["listing_id": listingID]
+//        guard let request   = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
         
         // Execute the request
         let session = NSURLSession.sharedSession()
@@ -167,7 +180,7 @@ class AdvertisedListingsServiceProvider: NSObject {
                     // Parse the JSON response
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let name              = json["name"] as? String               else { return }
-                    let rating                  = json["rating"] as? Double             
+//                    let rating                  = json["rating"] as? Double             
                     guard let ownerID           = json["owner_id"] as? String           else { return }
                     guard let categoryID        = json["category_id"] as? String        else { return }
                     guard let totalValue        = json["total_value"] as? Double        else { return }
@@ -184,7 +197,7 @@ class AdvertisedListingsServiceProvider: NSObject {
                         try! realm.write {
                             listing?.name               = name
                             listing?.ownerID            = ownerID
-                            listing?.rating.value       = rating
+//                            listing?.rating.value       = rating
                             listing?.categoryID         = categoryID
                             listing?.totalValue.value   = totalValue
                             listing?.dailyRate.value    = dailyRate

@@ -77,11 +77,6 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             }
             else { print("Error loading AdvertisedListing snapshots") }
         })
-//        model?.advertisedListingServiceProvider.refreshAdvertisedListingsPartialSnapshots({
-//            (success:Bool) in
-//            if success { self.collectionView.reloadData() }
-//            else { print("Error loading AdvertisedListing snapshot") }
-//        })
     }
     
     
@@ -107,12 +102,14 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             guard let rentalRate    = listing.dailyRate.value else { return }
             let distance            = listing.distance
             guard let rating        = listing.rating.value else { return }
+            let imageLink           = listing.imageLinks.first?.value
             
             
             dispatch_async(GlobalMainQueue, {
                 cell.rentalRateLabel.text               = String(format: "$%0.2f", rentalRate)
                 cell.distanceLabel.text                 = String(format: "%0.1f miles", distance)
                 cell.titleLabel.text                    = name
+
                 if rating < 0.0 {
                     cell.noRatingLabel.hidden = false
                     cell.ratingImageView.image = nil
@@ -126,6 +123,11 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                     cell.ratingImageView.image = UIImage(named: "4-Star")
                 } else if rating >= 4.0 {
                     cell.ratingImageView.image = UIImage(named: "5-Star")
+                }
+                
+                if let imageLink = imageLink {
+                    let imageURL = NSURL(string: imageLink)!
+                    cell.mainImageImageView.hnk_setImageFromURL(imageURL)
                 }
             })
         })
@@ -144,26 +146,8 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         cell.mainImageImageView.clipsToBounds       = true
         cell.mainImageImageView.layer.masksToBounds = true
         
-        // Make an asynchronous request to grab the Listing data from the local cache
-//        dispatch_async(GlobalUserInteractiveQueue, {
-//            let realm               = try! Realm()
-//            let advertisedListings  = realm.objects(AdvertisedListing).sorted("score", ascending: false)
-//            let listing             = advertisedListings[indexPath.item]
-            
-            // If the Listing is a partial snapshot, grab more data to advertise the Listing
-//            if listing.isPartialSnapshot {
-//                guard let listingID = listing.listingID else { return }
-//                self.model?.advertisedListingServiceProvider.downloadAdvertisedListingSnapshot(listingID, completionHandler: {
-//                    (success:Bool) in
-//                    if success {
         configureCell(cell, indexPath: indexPath)
-//                    }
-//                })
-//            } else {
-//                self.configureCell(cell, indexPath: indexPath)
-//            }
-//        })
-    
+
         return cell
     }
     

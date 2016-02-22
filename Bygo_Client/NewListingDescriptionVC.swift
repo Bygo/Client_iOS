@@ -94,7 +94,7 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
         guard let itemDescription   = descriptionTextView.text      else { return }
         
         // Create the new Listing
-        model?.listingServiceProvider.createNewListing(userID, name: name, categoryID: categoryID, totalValue: totalValue, hourlyRate: hourlyRate, dailyRate: dailyRate, weeklyRate: weeklyRate, itemDescription: itemDescription, completionHandler: {
+        model?.listingServiceProvider.createNewListing(userID, name: name, categoryID: categoryID, totalValue: totalValue, hourlyRate: hourlyRate, dailyRate: dailyRate, weeklyRate: weeklyRate, itemDescription: itemDescription, images:listingImages,  completionHandler: {
             (success:Bool) in
             if success {
                 self.navigationController?.topViewController?.dismissViewControllerAnimated(true, completion: nil)

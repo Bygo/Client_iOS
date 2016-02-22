@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Haneke
 
 class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
@@ -21,6 +22,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     @IBOutlet var dailyRateLabel: UILabel!
     @IBOutlet var weeklyRateLabel: UILabel!
     @IBOutlet var ratingImageView: UIImageView!
+    @IBOutlet var noRatingLabel: UILabel!
     @IBOutlet var rentNowButton: UIButton!
     @IBOutlet var listingImagesCollectionView: UICollectionView!
     @IBOutlet var headerView: UIView!
@@ -35,15 +37,12 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        listingImagesCollectionView.backgroundColor = .lightGrayColor()
-        
         // TODO: Load scroll view with item images
-        ratingImageView.backgroundColor = UIColor.lightGrayColor()
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 80.0
+        tableView.rowHeight             = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight    = 80.0
         
         // Download the complete AdvertisedListing
-        guard let listing   = listing else { return }
+        guard let listing   = listing           else { return }
         guard let listingID = listing.listingID else { return }
         if listing.isSnapshot {
             model?.advertisedListingServiceProvider.downloadAdvertisedListingComplete(listingID, completionHandler: {
@@ -57,6 +56,9 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             })
         }
         
+        rentNowButton.backgroundColor = kCOLOR_FIVE
+        tableView.backgroundColor = kCOLOR_THREE
+        
         loadHeaderView()
     }
     
@@ -66,21 +68,35 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
         guard let listing = listing else { return }
         if listing.isSnapshot { return }
         itemTitleLabel.text     = listing.name
-        guard let hourlyRate    = listing.hourlyRate.value else { return }
-        guard let dailyRate     = listing.dailyRate.value  else { return }
-        guard let weeklyRate    = listing.weeklyRate.value else { return }
-        hourlyRateLabel.text    = String(format: "$%.2f/hour", hourlyRate)
-        dailyRateLabel.text     = String(format: "$%.2f/day", dailyRate)
-        weeklyRateLabel.text    = String(format: "$%.2f/week", weeklyRate)
+        
+        noRatingLabel.hidden = true
+        if let rating = listing.rating.value {
+            if rating < 0.0 {
+                noRatingLabel.hidden = false
+            }else if rating >= 0.0 && rating < 1.0 {
+                ratingImageView.image = UIImage(named: "1-Star")
+            } else if rating >= 1.0 && rating < 2.0 {
+                ratingImageView.image = UIImage(named: "2-Star")
+            } else if rating >= 2.0 && rating < 3.0 {
+                ratingImageView.image = UIImage(named: "3-Star")
+            } else if rating >= 3.0 && rating < 4.0 {
+                ratingImageView.image = UIImage(named: "4-Star")
+            } else if rating >= 4.0 {
+                ratingImageView.image = UIImage(named: "5-Star")
+            }
+        } else {
+            noRatingLabel.hidden = false
+        }
+        
+        
+//        guard let hourlyRate    = listing.hourlyRate.value else { return }
+//        guard let dailyRate     = listing.dailyRate.value  else { return }
+//        guard let weeklyRate    = listing.weeklyRate.value else { return }
+//        hourlyRateLabel.text    = String(format: "$%.2f/hour", hourlyRate)
+//        dailyRateLabel.text     = String(format: "$%.2f/day", dailyRate)
+//        weeklyRateLabel.text    = String(format: "$%.2f/week", weeklyRate)
         
         headerView.bringSubviewToFront(listingImagesCollectionView)
-        
-//        let imageView = UIImageView(frame: CGRectMake(0, 0, view.bounds.width, itemImagesScrollView.bounds.height))
-//        imageView.contentMode           = UIViewContentMode.ScaleAspectFill
-//        imageView.clipsToBounds         = true
-//        imageView.layer.masksToBounds   = true
-        
-//        self.headerView.addSubview(imageView)
     }
     
     // MARK: - Table view data source
@@ -130,6 +146,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             // TODO: Load top 5 related items from server
             return cell
             
+            
         case kOWNER_PROFILE_SECTION:
             // FIXME: Create an actual user profile cell
             guard let cell = tableView.dequeueReusableCellWithIdentifier("UserProfileCell", forIndexPath: indexPath) as? RentItemUserProfileTableViewCell else { return UITableViewCell() }
@@ -146,9 +163,16 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
                     if success {
                         let realm           = try! Realm()
                         let owner           = realm.objects(User).filter("userID == \"\(ownerID)\"").first
+                        print(owner)
                         guard let firstName = owner?.firstName  else { return }
                         guard let lastName  = owner?.lastName   else { return }
-                        cell.nameLabel.text = "\(firstName) \(lastName)"
+                        guard let imageMediaLink = owner?.profileImageLink else { return }
+                        guard let url = NSURL(string: imageMediaLink) else { return }
+                        
+                        dispatch_async(GlobalMainQueue, {
+                            cell.nameLabel.text = "\(firstName) \(lastName)"
+                            cell.profileImageView.hnk_setImageFromURL(url)
+                        })
                     }
                 })
             }
@@ -183,13 +207,14 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case kITEM_DESCRIPTION_SECTION:
-            return "Description"
-        case kOWNER_PROFILE_SECTION:
-            return "Owner"
-        case kRELATED_ITEMS_SECTION:
-            return "Related Items"
-        case kCOMMENTS_SECTION:
-            return "Reviews"
+//            return "Description"
+            return " "
+//        case kOWNER_PROFILE_SECTION:
+//            return "Owner"
+//        case kRELATED_ITEMS_SECTION:
+//            return "Related Items"
+//        case kCOMMENTS_SECTION:
+//            return "Reviews"
         default:
             return ""
         }
@@ -206,18 +231,41 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        if collectionView == listingImagesCollectionView {
+            if let count = listing?.imageLinks.count {
+                return count
+            } else {
+                return 0
+            }
+        } else {
+            return 5
+        }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RelatedItemCell", forIndexPath: indexPath) as? RelatedRentItemCollectionViewCell else { return UICollectionViewCell() }
-        cell.layer.borderColor = UIColor.lightGrayColor().CGColor
-        cell.layer.borderWidth = 1.0
-        // FIXME: Pull from global UI repo
-        cell.layer.cornerRadius = 0.0
-        cell.imageView.backgroundColor = .lightGrayColor()
-        cell.itemTitleLabel.text = "PlayStation 4"
-        return cell
+        if collectionView == listingImagesCollectionView {
+            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ListingImageCell", forIndexPath: indexPath) as? ListingImageCollectionViewCell else { return UICollectionViewCell() }
+            
+            
+            guard let imgLink = listing?.imageLinks[indexPath.row].value else { return cell }
+            guard let url = NSURL(string: imgLink) else { return cell }
+            cell.imageView.contentMode          = UIViewContentMode.ScaleAspectFill
+            cell.imageView.clipsToBounds        = true
+            cell.imageView.layer.masksToBounds  = true
+            cell.layer.cornerRadius             = kCORNER_RADIUS
+            cell.imageView.hnk_setImageFromURL(url)
+            return cell
+            
+        } else {
+            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RelatedItemCell", forIndexPath: indexPath) as? RelatedRentItemCollectionViewCell else { return UICollectionViewCell() }
+//            cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+//            cell.layer.borderWidth = 1.0
+            // FIXME: Pull from global UI repo
+            cell.layer.cornerRadius = 0.0
+            cell.imageView.backgroundColor = .lightGrayColor()
+            cell.itemTitleLabel.text = "Related Item \(indexPath.row)"
+            return cell
+        }
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
@@ -277,12 +325,22 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
 private let sectionInset:CGFloat = 8.0
 extension RentItemDetailsVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width/2.0, 150.0)
+        
+        if collectionView == listingImagesCollectionView {
+            return CGSizeMake(collectionView.bounds.width-16.0, collectionView.bounds.width-16.0)
+        } else {
+            return CGSizeMake(view.bounds.width/2.0, view.bounds.width/2.0)
+        }
     }
     
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(sectionInset, sectionInset, sectionInset, sectionInset)
+        
+        if collectionView == listingImagesCollectionView {
+            return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
+        } else {
+            return UIEdgeInsetsMake(0.0, sectionInset, 0.0, sectionInset)
+        }
     }
 }
 

@@ -65,17 +65,16 @@ class ListingsServiceProvider: NSObject {
                         guard let name              = listingData["name"] as? String else { return }
                         guard let ownerID           = listingData["owner_id"] as? String else { return }
                         let renterID                = listingData["renter_id"] as? String
-                        print("renterID")
                         guard let status            = listingData["status"] as? String else { return }
                         guard let itemDescription   = listingData["item_description"] as? String else { return }
                         let rating                  = listingData["rating"] as? Double
-                        print("Rating")
                         guard let totalValue        = listingData["total_value"] as? Double else { return }
                         guard let hourlyRate        = listingData["hourly_rate"] as? Double else { return }
                         guard let dailyRate         = listingData["daily_rate"] as? Double else { return }
                         guard let weeklyRate        = listingData["weekly_rate"] as? Double else { return }
-                        print("weekly rate")
                         guard let categoryID        = listingData["category_id"] as? String else { return }
+                        guard let mediaLinks        = listingData["image_media_link"] as? [String] else { return }
+                        
                         let dateFormatter           = NSDateFormatter()
                         dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
                         guard let dateLastModified  = dateFormatter.dateFromString(listingData["date_last_modified"] as! String) else { return }
@@ -98,6 +97,12 @@ class ListingsServiceProvider: NSObject {
                         listing.categoryID          = categoryID
                         listing.dateLastModified    = dateLastModified
                         
+                        for link in mediaLinks {
+                            let realmLink   = RealmString()
+                            realmLink.value = link
+                            listing.imageLinks.append(realmLink)
+                        }
+                        
                         try! realm.write {
                             realm.add(listing)
                         }
@@ -115,7 +120,7 @@ class ListingsServiceProvider: NSObject {
         task.resume()
     }
     
-    func createNewListing(userID:String, name:String, categoryID:String, totalValue:Double, hourlyRate:Double, dailyRate:Double, weeklyRate:Double, itemDescription:String, completionHandler:(success:Bool)->Void) {
+    func createNewListing(userID:String, name:String, categoryID:String, totalValue:Double, hourlyRate:Double, dailyRate:Double, weeklyRate:Double, itemDescription:String, images:[UIImage], completionHandler:(success:Bool)->Void) {
         
         // Create the request
         print("Create the request")
@@ -166,7 +171,9 @@ class ListingsServiceProvider: NSObject {
                         listing.dateLastModified    = dateLastModified
                         try! realm.write { realm.add(listing) }
                     
-                        completionHandler(success: true)
+                        if images.count > 0 {
+                            self.addImageForListing(listingID, image: images[0], completionHandler: completionHandler)
+                        }
                     })
                 } catch {
                     dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
