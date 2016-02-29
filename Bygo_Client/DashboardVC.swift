@@ -54,6 +54,10 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
         })
     }
     
+    override func viewDidAppear(animated: Bool) {
+        delegate?.didReturnToBaseLevelOfNavigation()
+    }
+    
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
@@ -334,6 +338,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             guard let destVC    = segue.destinationViewController as? MeetingsVC else { return }
             destVC.model        = model
         }
+        delegate?.didMoveOneLevelIntoNavigation()
     }
     
 }
@@ -341,6 +346,8 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
 
 protocol DashboardDelegate {
     func openMenu()
+    func didMoveOneLevelIntoNavigation()
+    func didReturnToBaseLevelOfNavigation()
 }
 
 

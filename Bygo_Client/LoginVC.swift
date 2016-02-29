@@ -10,12 +10,19 @@ import UIKit
 
 class LoginVC: UIViewController, UITextFieldDelegate {
     
-    @IBOutlet var phoneNumberLabel: UILabel!
-    @IBOutlet var phoneNumberTextField: UITextField!
+    @IBOutlet var mobileView: UIView!
+    @IBOutlet var passwordView: UIView!
+    
+    @IBOutlet var mobileLabel: UILabel!
     @IBOutlet var passwordLabel: UILabel!
+    @IBOutlet var orLabel:UILabel!
+    
+    @IBOutlet var mobileTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
-    @IBOutlet var loginButton: UIButton!
+    
     @IBOutlet var facebookButton: UIButton!
+    @IBOutlet var backButton: UIButton!
+    @IBOutlet var doneButton: UIButton!
     
     var delegate:LoginDelegate?
     var model:Model?
@@ -23,33 +30,54 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loginButton.backgroundColor = kCOLOR_ONE
+        backButton.setImage(UIImage(named: "Back")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+        backButton.tintColor = .whiteColor()
+        
+        mobileTextField.tintColor   = kCOLOR_ONE
+        passwordTextField.tintColor = kCOLOR_ONE
+        
+        mobileView.backgroundColor      = kCOLOR_THREE
+        passwordView.backgroundColor    = kCOLOR_THREE
+        
+        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        passwordTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        
+        doneButton.alpha = 0.0
     }
     
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    func isValidPhoneNumber(str:String) -> Bool {
-        var digits = str.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-        digits = digits.filter({$0 != ""})
-        if digits.count != 4 { return false }
-        let countryCode = digits[0]
-        let areaCode = digits[1]
-        let prefix = digits[2]
-        let suffix = digits[3]
-        if countryCode != "1" { return false }
-        if areaCode.characters.count != 3 { return false }
-        if prefix.characters.count != 3 { return false }
-        if suffix.characters.count != 4 { return false }
+    func isUserDataValid() -> Bool {
+        guard let model = model else { return false }
+        
+        guard let mobile    = mobileTextField.text      else { return false }
+        guard let password  = passwordTextField.text    else { return false }
+        
+        if !model.dataValidator.isValidPhoneNumber(mobile)  { return false }
+        if !model.dataValidator.isValidPassword(password)   { return false }
+        
         return true
+    }
+    
+    func enableDoneButtonIfNeeded() {
+        if isUserDataValid() {
+            UIView.animateWithDuration(0.5, animations: {
+                self.doneButton.alpha = 1.0
+            })
+        } else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.doneButton.alpha = 0.0
+            })
+        }
     }
     
     // MARK: - TextField Delegate
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        if textField == phoneNumberTextField
-        {
+        if textField == mobileTextField {
             if let text = textField.text {
                 let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
                 let components = newString.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
@@ -80,35 +108,71 @@ class LoginVC: UIViewController, UITextFieldDelegate {
                 let remainder = decimalString.substringFromIndex(index)
                 formattedString.appendString(remainder)
                 textField.text = formattedString as String
+                enableDoneButtonIfNeeded()
                 return false
             }
         }
         return true
     }
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        var targetView:UIView?
+        switch textField {
+        case mobileTextField:
+            targetView = mobileView
+        case passwordTextField:
+            targetView = passwordView
+        default:
+            break
+        }
+        
+        mobileView.backgroundColor = kCOLOR_THREE
+        passwordView.backgroundColor = kCOLOR_THREE
+        targetView?.backgroundColor = .whiteColor()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        mobileView.backgroundColor = kCOLOR_THREE
+        passwordView.backgroundColor = kCOLOR_THREE
+    }
+    
+    func textFieldDidChange(textfield: UITextField) {
+        enableDoneButtonIfNeeded()
+    }
+    
     func textFieldShouldClear(textField: UITextField) -> Bool {
-        textField.text = "+1 "
-        return false
+        doneButton.alpha = 0.0
+        isUserDataValid()
+        if textField == mobileTextField {
+            textField.text = "+1 "
+            return false
+        }
+        return true
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        switch textField {
+        case mobileTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            passwordTextField.resignFirstResponder()
+        default:
+            break
+        }
+        return true
     }
     
     // MARK: - UI Actions
     @IBAction func backButtonTapped(sender: AnyObject) {
         navigationController?.popViewControllerAnimated(true)
     }
-
-    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translationInView(view)
-        if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
-            phoneNumberTextField.resignFirstResponder()
-            passwordTextField.resignFirstResponder()
-        }
-    }
     
     
-    @IBAction func loginButtonTapped(sender: AnyObject) {
-        if isValidPhoneNumber(phoneNumberTextField.text!) {
-            if passwordTextField.text?.characters.count > 4 {
-                model?.userServiceProvider.login(phoneNumberTextField.text!, password: passwordTextField.text!, completionHandler: { (success:Bool)->Void in
+    @IBAction func doneButtonTapped(sender: AnyObject) {
+        guard let model = model else { return }
+        if model.dataValidator.isValidPhoneNumber(mobileTextField.text!) {
+            if model.dataValidator.isValidPassword(passwordTextField.text!) {
+                model.userServiceProvider.login(mobileTextField.text!, password: passwordTextField.text!, completionHandler: { (success:Bool)->Void in
                     if success {
                         self.delegate?.userDidLogin(true)
                     } else {
@@ -141,7 +205,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
                         self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: { (success:Bool)->Void in
                             if success {
                                 self.delegate?.userDidLogin(false)
-                                self.performSegueWithIdentifier("ShowRequestPhoneNumber", sender: nil)
+                                self.performSegueWithIdentifier("MobileSegue", sender: nil)
                             } else {
                                 print("Error creating new user")
                             }
@@ -152,5 +216,22 @@ class LoginVC: UIViewController, UITextFieldDelegate {
                 print("Error while logging in (signing up) with facebook")
             }
         })
+    }
+    
+    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translationInView(view)
+        if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
+            mobileTextField.resignFirstResponder()
+            passwordTextField.resignFirstResponder()
+        }
+    }
+    
+    // MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "MobileSegue" {
+            guard let destVC = segue.destinationViewController as? PhoneNumberVC else { return }
+            destVC.delegate = delegate
+            destVC.model = model
+        }
     }
 }

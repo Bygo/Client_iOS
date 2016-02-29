@@ -43,8 +43,6 @@ class ListingsServiceProvider: NSObject {
                 return
             }
             
-            print(response)
-            
             let realm = try! Realm()
             
             let statusCode = (response as? NSHTTPURLResponse)!.statusCode
@@ -56,11 +54,9 @@ class ListingsServiceProvider: NSObject {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let listingsData = json["listings"] as? [[String:AnyObject]] else { return }
                     
-                    print("LISTING DATA: \(listingsData)")
+                    print("\n\nLISTINGS DATA\n\(listingsData)")
                     
                     for listingData in listingsData {
-                        print("Parsing Listing JSON data")
-                        
                         guard let listingID         = listingData["listing_id"] as? String else { return }
                         guard let name              = listingData["name"] as? String else { return }
                         guard let ownerID           = listingData["owner_id"] as? String else { return }
@@ -73,13 +69,12 @@ class ListingsServiceProvider: NSObject {
                         guard let dailyRate         = listingData["daily_rate"] as? Double else { return }
                         guard let weeklyRate        = listingData["weekly_rate"] as? Double else { return }
                         guard let categoryID        = listingData["category_id"] as? String else { return }
-                        guard let mediaLinks        = listingData["image_media_link"] as? [String] else { return }
+                        let mediaLinks              = listingData["image_media_links"] as? [String]
                         
                         let dateFormatter           = NSDateFormatter()
                         dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
                         guard let dateLastModified  = dateFormatter.dateFromString(listingData["date_last_modified"] as! String) else { return }
                         
-                        print("Success parsing Listing JSON data")
                         
                         // Add the FavoriteMeetingLocation entity to the local cache
                         let listing                 = Listing()
@@ -97,10 +92,12 @@ class ListingsServiceProvider: NSObject {
                         listing.categoryID          = categoryID
                         listing.dateLastModified    = dateLastModified
                         
-                        for link in mediaLinks {
-                            let realmLink   = RealmString()
-                            realmLink.value = link
-                            listing.imageLinks.append(realmLink)
+                        if let mediaLinks = mediaLinks {
+                            for link in mediaLinks {
+                                let realmLink   = RealmString()
+                                realmLink.value = link
+                                listing.imageLinks.append(realmLink)
+                            }
                         }
                         
                         try! realm.write {
@@ -123,7 +120,6 @@ class ListingsServiceProvider: NSObject {
     func createNewListing(userID:String, name:String, categoryID:String, totalValue:Double, hourlyRate:Double, dailyRate:Double, weeklyRate:Double, itemDescription:String, images:[UIImage], completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        print("Create the request")
         let urlString = "\(serverURL)/create_new/listing"
         let params:[String:AnyObject] = ["owner_id":userID, "name":name, "item_description":itemDescription, "total_value":totalValue, "hourly_rate":hourlyRate, "daily_rate":dailyRate, "weekly_rate":weeklyRate, "category_id":categoryID]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
@@ -171,8 +167,12 @@ class ListingsServiceProvider: NSObject {
                         listing.dateLastModified    = dateLastModified
                         try! realm.write { realm.add(listing) }
                     
-                        if images.count > 0 {
-                            self.addImageForListing(listingID, image: images[0], completionHandler: completionHandler)
+                        print("NUM IMAGES: \(images.count)")
+                        var i = 0
+                        for image in images {
+                            print("Sending... \(i)")
+                            i++
+                            self.addImageForListing(listingID, image: image, completionHandler: completionHandler)
                         }
                     })
                 } catch {
@@ -207,7 +207,7 @@ class ListingsServiceProvider: NSObject {
         body.appendData("\r\n--\(boundary)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Disposition: form-data; name=\"userfile\"; filename=\"\(filename).jpg\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Type: application/octet-stream\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-        body.appendData(UIImageJPEGRepresentation(image, 90)!)
+        body.appendData(UIImageJPEGRepresentation(image, 0.5)!)
         body.appendData("\r\n--\(boundary)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         
         request.HTTPBody = body
@@ -229,9 +229,6 @@ class ListingsServiceProvider: NSObject {
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let mediaImageLink = json["image_media_link"] as? String else { return }
-                    
-//                    guard let user = self.getLocalUser() else { return }
-                    
                     
                     let realm = try! Realm()
                     guard let listing = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first else { return }

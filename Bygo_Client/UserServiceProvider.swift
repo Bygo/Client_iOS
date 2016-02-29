@@ -134,7 +134,7 @@ class UserServiceProvider: NSObject {
         body.appendData("\r\n--\(boundary)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Disposition: form-data; name=\"userfile\"; filename=\"\(filename)\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Type: application/octet-stream\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-        body.appendData(UIImageJPEGRepresentation(image, 90)!)
+        body.appendData(UIImageJPEGRepresentation(image, 0.4)!)
         body.appendData("\r\n--\(boundary)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         
         request.HTTPBody = body
@@ -162,9 +162,8 @@ class UserServiceProvider: NSObject {
                     let realm = try! Realm()
                     try! realm.write {
                         user.profileImageLink = mediaImage
+                        completionHandler(success: true)
                     }
-                    
-                    completionHandler(success: true)
                 } catch {
                     completionHandler(success: false)
                 }
@@ -183,11 +182,8 @@ class UserServiceProvider: NSObject {
         // Create the request
         let urlString = "\(serverURL)/request/user_public_data/user_id=\(userID)"
         guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
-//        let params = ["user_id":userID]
-//        guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-//            completionHandler(success: false)
-//            return
-//        }
+        
+        
         
         // Execute the request
         let session = NSURLSession.sharedSession()

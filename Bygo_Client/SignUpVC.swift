@@ -217,19 +217,13 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
             destVC.delegate = delegate
             destVC.model = model
         } else if segue.identifier == "ShowPhoneNumberVerification" {
-            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
-            destVC.delegate = delegate
-            destVC.model = model
+//            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
+//            destVC.delegate = delegate
+//            destVC.model = model
         } else if segue.identifier == "ShowRequestPhoneNumber" {
             guard let destVC = segue.destinationViewController as? PhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model
         }
     }
-}
-
-
-public protocol LoginDelegate {
-    func userDidLogin(shouldDismissLogin:Bool)
-    func phoneNumberDidVerify(shouldDidmissLogin:Bool)
 }

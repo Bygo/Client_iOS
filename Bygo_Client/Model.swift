@@ -40,7 +40,6 @@ class Model: NSObject, AdvertisedListingsServiceProviderDataSource {
         advertisedListingServiceProvider.dataSource = self
     }
     
-    
     // TODO: Remove this function and get the AdListingsSP to accept the userID instead
     internal func getLocalUser() -> User? {
         return userServiceProvider.getLocalUser()

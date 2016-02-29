@@ -8,38 +8,30 @@
 
 import UIKit
 
-class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
+class VerifyMobileVC: UIViewController, UITextFieldDelegate {
     
-    let serverURL = "https://spartan-1131.appspot.com"
-    var model:Model? {
-        didSet {
-            guard let phoneNumber = model?.userServiceProvider.getLocalUser()?.phoneNumber else {
-                print("Did not get valid phone number from model")
-                return
-            }
-            self.phoneNumber = phoneNumber
-        }
-    }
+    var model:Model?
     
     var delegate:LoginDelegate?
     
-    var phoneNumber:String = ""
-    
-    @IBOutlet var instructionLabel: UILabel!
-    @IBOutlet var confirmationLabel: UILabel!
+    @IBOutlet var codeLabel: UILabel!
     @IBOutlet var codeTextField: UITextField!
-    @IBOutlet var confirmButton: UIButton!
+    @IBOutlet var instructionLabel: UILabel!
+
+    @IBOutlet var doneButton: UIButton!
     @IBOutlet var resendCodeButton: UIButton!
     @IBOutlet var changePhoneNumberButton: UIButton!
+    
+    @IBOutlet var codeView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let instructionText = "We will text a confirmation code to \(phoneNumber) in the next 30 seconds. Please retype the confirmation code below and press CONFIRM"
-        instructionLabel.text = instructionText
+        codeView.backgroundColor = kCOLOR_THREE
         
-        confirmButton.backgroundColor   = kCOLOR_ONE
-        navigationItem.hidesBackButton  = true
+        doneButton.alpha = 0.0
+        
+        codeTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
         
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
@@ -56,12 +48,30 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    func isUserDataValid() -> Bool {
+        guard let model = model else { return false }
+        
+        guard let code = codeTextField.text else { return false }
+        if !model.dataValidator.isValidMobileVerificationCode(code) { return false }
+        
+        return true
+    }
+    
+    func enableDoneButtonIfNeeded() {
+        if isUserDataValid() {
+            UIView.animateWithDuration(0.5, animations: {
+                self.doneButton.alpha = 1.0
+            })
+        } else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.doneButton.alpha = 0.0
+            })
+        }
+    }
+    
+    
     func updatePhoneNumber(phoneNumber: String) {
-        self.phoneNumber = phoneNumber
-        
-        let instructionText = "We will text a confirmation code to \(phoneNumber) in the next 30 seconds. Please retype the confirmation code below and press CONFIRM"
-        instructionLabel.text = instructionText
-        
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
             (success:Bool) in
@@ -73,6 +83,37 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
         
     }
     
+    // MARK: - TextField Delegate
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        if textField == codeTextField {
+            if let text = textField.text {
+                let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+                if newString.characters.count > kREQUIRED_CODE_NUM_CHARACTERS {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        codeView.backgroundColor = .whiteColor()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        codeView.backgroundColor = kCOLOR_THREE
+    }
+    
+    func textFieldDidChange(textfield: UITextField) {
+        enableDoneButtonIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        codeView.resignFirstResponder()
+        return true
+    }
+    
+    
     // MARK: - UI Actions
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)
@@ -81,7 +122,7 @@ class VerifyPhoneNumberVC: UIViewController, ModalPhoneNumberDelegate {
         }
     }
     
-    @IBAction func confirmButtonTapped(sender: AnyObject) {
+    @IBAction func doneButtonTapped(sender: AnyObject) {
         guard let code = codeTextField.text else { return }
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.checkPhoneNumberVerificationCode(userID, code: code, completionHandler: {

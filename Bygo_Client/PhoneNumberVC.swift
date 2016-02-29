@@ -12,21 +12,23 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     
     var model:Model?
     var delegate:LoginDelegate?
-    var modalDelegate:ModalPhoneNumberDelegate?
     
-    @IBOutlet var phoneNumberLabel: UILabel!
-    @IBOutlet var phoneNumberTextField: UITextField!
-    @IBOutlet var continueButton: UIButton!
-    @IBOutlet var cancelButton: UIBarButtonItem!
+    @IBOutlet var mobileLabel: UILabel!
+    @IBOutlet var mobileTextField: UITextField!
+    @IBOutlet var mobileView: UIView!
+    
+    @IBOutlet var nextButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-        continueButton.backgroundColor = kCOLOR_ONE
-        navigationController?.navigationBar.barTintColor   = kCOLOR_ONE
-        navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        mobileTextField.tintColor = kCOLOR_ONE
+        
+        mobileView.backgroundColor = kCOLOR_THREE
+        
+        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        
+        nextButton.alpha = 0.0
     }
     
     override func didReceiveMemoryWarning() {
@@ -35,9 +37,31 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     }
     
     
+    func isUserDataValid() -> Bool {
+        guard let model = model else { return false }
+        
+        guard let mobile = mobileTextField.text else { return false }
+        if !model.dataValidator.isValidPhoneNumber(mobile) { return false }
+        
+        return true
+    }
+    
+    func enableNextButtonIfNeeded() {
+        if isUserDataValid() {
+            UIView.animateWithDuration(0.5, animations: {
+                self.nextButton.alpha = 1.0
+            })
+        } else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.nextButton.alpha = 0.0
+            })
+        }
+    }
+    
+    
     // MARK: - TextField Delegate
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        if textField == phoneNumberTextField
+        if textField == mobileTextField
         {
             if let text = textField.text {
                 let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
@@ -69,97 +93,65 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
                 let remainder = decimalString.substringFromIndex(index)
                 formattedString.appendString(remainder)
                 textField.text = formattedString as String
+                enableNextButtonIfNeeded()
                 return false
             }
         }
         return true
     }
     
-    func textFieldShouldClear(textField: UITextField) -> Bool {
-        textField.text = "+1 "
-        return false
+    func textFieldDidBeginEditing(textField: UITextField) {
+        mobileView.backgroundColor = .whiteColor()
     }
     
-    func isValidPhoneNumber(str:String) -> Bool {
-        var digits = str.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-        digits = digits.filter({$0 != ""})
-        if digits.count != 4 { return false }
-        let countryCode = digits[0]
-        let areaCode = digits[1]
-        let prefix = digits[2]
-        let suffix = digits[3]
-        if countryCode != "1" { return false }
-        if areaCode.characters.count != 3 { return false }
-        if prefix.characters.count != 3 { return false }
-        if suffix.characters.count != 4 { return false }
+    func textFieldDidEndEditing(textField: UITextField) {
+        mobileView.backgroundColor = kCOLOR_THREE
+    }
+    
+    func textFieldDidChange(textfield: UITextField) {
+        enableNextButtonIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        mobileTextField.resignFirstResponder()
         return true
     }
-    
+
     // MARK: - UI Actions
-    @IBAction func backButtonTapped(sender: AnyObject) {
-        navigationController?.popViewControllerAnimated(true)
-    }
-    
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)
         if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
-            phoneNumberTextField.resignFirstResponder()
+            mobileTextField.resignFirstResponder()
         }
     }
     
-    @IBAction func continueButtonTapped(sender: AnyObject) {
-        if isValidPhoneNumber(phoneNumberTextField.text!) {
+    @IBAction func nextButtonTapped(sender: AnyObject) {
+        guard let model = model else { return }
+        if model.dataValidator.isValidPhoneNumber(mobileTextField.text!) {
             // TODO: Send message to model to update the user's phone number
-            guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
-            let phoneNumber = phoneNumberTextField.text!
-            model?.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: { (success:Bool) -> Void in
+            guard let localUser = model.userServiceProvider.getLocalUser() else { return }
+            let phoneNumber = mobileTextField.text!
+            model.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: { (success:Bool) -> Void in
                 if success {
-                    self.performSegueWithIdentifier("ShowVerifyPhoneNumber", sender: nil)
+                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
                 } else {
                     print("Something went wrong while updating the user")
                 }
             })
             
         } else {
-            // TODO: Give user some indication of missing phone number
+            // TODO: Give user some indication of missing phone n umber
         }
     }
     
-    @IBAction func continueModalButtonTapped(sender: AnyObject) {
-        if isValidPhoneNumber(phoneNumberTextField.text!) {
-            guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
-            let phoneNumber = phoneNumberTextField.text!
-            model?.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: { (success:Bool) -> Void in
-                if success {
-                    self.modalDelegate?.updatePhoneNumber(phoneNumber)
-                    self.dismissViewControllerAnimated(true, completion: nil)
-                    //                    self.performSegueWithIdentifier("ShowVerifyPhoneNumber", sender: nil)
-                } else {
-                    print("Something went wrong while updating the user")
-                }
-            })
-            // TODO: Send message to model to update the user's phone number
-        } else {
-            // TODO: Give user some indication of missing phone number
-        }
-    }
-    
-    @IBAction func cancelButtonTapped(sender: AnyObject) {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "ShowVerifyPhoneNumber" {
-            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
-            destVC.phoneNumber = phoneNumberTextField.text!
+        if segue.identifier == "VerifyMobileSegue" {
+            guard let destVC = segue.destinationViewController as? VerifyMobileVC else { return }
             destVC.delegate = delegate
             destVC.model = model
         }
     }
     
-}
-
-protocol ModalPhoneNumberDelegate {
-    func updatePhoneNumber(phoneNumber:String)
 }

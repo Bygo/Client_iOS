@@ -33,7 +33,8 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
         // Setup Google API Key
-        GMSServices.provideAPIKey("AIzaSyBMvGu6ZWAj8ZbAn1afQZI7pqC9amM9mw0")
+//        GMSServices.provideAPIKey("AIzaSyBMvGu6ZWAj8ZbAn1afQZI7pqC9amM9mw0")
+        GMSServices.provideAPIKey("AIzaSyAo7yds0oVCOOIXTv6MzGV48GtVDS5PbuI")
         
         // Other setup
         searchBar.frame.size = CGSizeMake(view.bounds.width - 100.0, 20.0)

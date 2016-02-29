@@ -112,16 +112,24 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
             let results = realm.objects(Listing).filter(self.getQueryFilter()).sorted("name", ascending: true)
             let listing = results[indexPath.item]
             
-            guard let name = listing.name else { return }
-            let renterID = listing.renterID
+            if let name = listing.name {
+                dispatch_async(GlobalMainQueue, {
+                    cell.itemTitleLabel.text    = name
+                })
+            }
             
-            dispatch_async(GlobalMainQueue, {
-                cell.itemTitleLabel.text    = name
-                if let _ = renterID {
-                    // TOOD: Grab the image of the renter
-                    cell.renterImageView.hidden = false
+            if let renterID = listing.renterID {
+                // TOOD: Grab the image of the renter
+                cell.renterImageView.hidden = false
+            }
+            
+            if let imageMediaLink = listing.imageLinks.first {
+                if let link = imageMediaLink.value {
+                    if let url = NSURL(string: link) {
+                        cell.mainImageImageView.hnk_setImageFromURL(url)
+                    }
                 }
-            })
+            }
         })
     }
     

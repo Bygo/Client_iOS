@@ -54,7 +54,7 @@
 		7336214A1C60F44700893034 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621491C60F44700893034 /* SignUpVC.swift */; };
 		7336214C1C60F48600893034 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214B1C60F48600893034 /* LoginVC.swift */; };
 		7336214E1C60F4E100893034 /* PhoneNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214D1C60F4E100893034 /* PhoneNumberVC.swift */; };
-		733621501C60F52F00893034 /* VerifyPhoneNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */; };
+		733621501C60F52F00893034 /* VerifyMobileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214F1C60F52F00893034 /* VerifyMobileVC.swift */; };
 		733621541C6104F200893034 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733621531C6104F200893034 /* Settings.storyboard */; };
 		733621561C61053200893034 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621551C61053200893034 /* SettingsVC.swift */; };
 		733621581C6106A200893034 /* FavoriteMeetingLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621571C6106A200893034 /* FavoriteMeetingLocation.swift */; };
@@ -66,7 +66,12 @@
 		7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73386BC21C79C7B2005140C7 /* EditListingPhotosVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BC11C79C7B2005140C7 /* EditListingPhotosVC.swift */; };
+		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
 		739ADBD01C7A217200C34CC1 /* ListingImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBCF1C7A217200C34CC1 /* ListingImageCollectionViewCell.swift */; };
+		739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */; };
+		739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBD41C7F5E5B00C34CC1 /* Image.swift */; };
+		73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */; };
+		73BA58D21C82637900C03FCD /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58D11C82637900C03FCD /* SearchBar.swift */; };
 		73CBA5431C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
 		73CBA5441C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
 		73CBA5451C6FF41200E3985F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */; };
@@ -188,7 +193,7 @@
 		733621491C60F44700893034 /* SignUpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		7336214B1C60F48600893034 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		7336214D1C60F4E100893034 /* PhoneNumberVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVC.swift; sourceTree = "<group>"; };
-		7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyPhoneNumberVC.swift; sourceTree = "<group>"; };
+		7336214F1C60F52F00893034 /* VerifyMobileVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyMobileVC.swift; sourceTree = "<group>"; };
 		733621531C6104F200893034 /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		733621551C61053200893034 /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		733621571C6106A200893034 /* FavoriteMeetingLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteMeetingLocation.swift; sourceTree = "<group>"; };
@@ -200,7 +205,12 @@
 		733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCompleteLocationSuggestionTableViewCell.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73386BC11C79C7B2005140C7 /* EditListingPhotosVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditListingPhotosVC.swift; sourceTree = "<group>"; };
+		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		739ADBCF1C7A217200C34CC1 /* ListingImageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoadingScreen.storyboard; sourceTree = "<group>"; };
+		739ADBD41C7F5E5B00C34CC1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountVC.swift; sourceTree = "<group>"; };
+		73BA58D11C82637900C03FCD /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		73CBA5421C6FF41100E3985F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
 		73DD4C9A1C657F9C0003698A /* MeetingResponderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingResponderVC.swift; sourceTree = "<group>"; };
@@ -307,6 +317,7 @@
 				73147DA81C62EF8800FD70B8 /* Rent.storyboard */,
 				73147DAC1C62EFAF00FD70B8 /* Controllers */,
 				73147DAF1C62F10000FD70B8 /* Cells */,
+				73BA58D01C82636300C03FCD /* Views */,
 			);
 			name = Rent;
 			sourceTree = "<group>";
@@ -424,6 +435,7 @@
 		733621391C60766600893034 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				739ADBD11C7F5A0700C34CC1 /* LoadingScreen */,
 				730CAA3A1C762F35000BE681 /* Payments */,
 				73147DA71C62EF6200FD70B8 /* Rent */,
 				73DE66A31C63864E006D9810 /* Dashboard */,
@@ -475,6 +487,7 @@
 				73DE66EC1C63FB8B006D9810 /* ProposedMeetingTime.swift */,
 				73DE66EE1C6400F4006D9810 /* RentEvent.swift */,
 				73DE66F01C640453006D9810 /* MeetingEvent.swift */,
+				739ADBD41C7F5E5B00C34CC1 /* Image.swift */,
 			);
 			name = Entities;
 			sourceTree = "<group>";
@@ -503,8 +516,10 @@
 			children = (
 				733621491C60F44700893034 /* SignUpVC.swift */,
 				7336214D1C60F4E100893034 /* PhoneNumberVC.swift */,
-				7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */,
+				7336214F1C60F52F00893034 /* VerifyMobileVC.swift */,
 				7336214B1C60F48600893034 /* LoginVC.swift */,
+				73672D2B1C7FC06600352631 /* WelcomeVC.swift */,
+				73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -535,6 +550,22 @@
 				73147DA11C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		739ADBD11C7F5A0700C34CC1 /* LoadingScreen */ = {
+			isa = PBXGroup;
+			children = (
+				739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */,
+			);
+			name = LoadingScreen;
+			sourceTree = "<group>";
+		};
+		73BA58D01C82636300C03FCD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				73BA58D11C82637900C03FCD /* SearchBar.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		73DE66A31C63864E006D9810 /* Dashboard */ = {
@@ -785,6 +816,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				733620F21C60743F00893034 /* Assets.xcassets in Resources */,
+				739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */,
 				733620ED1C60743E00893034 /* Main.storyboard in Resources */,
 				73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */,
 				73DE66DA1C63EE92006D9810 /* Meetings.storyboard in Resources */,
@@ -868,8 +900,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73BA58D21C82637900C03FCD /* SearchBar.swift in Sources */,
 				73DE66D51C63EAB6006D9810 /* RentRequestsHeaderCollectionViewCell.swift in Sources */,
-				733621501C60F52F00893034 /* VerifyPhoneNumberVC.swift in Sources */,
+				733621501C60F52F00893034 /* VerifyMobileVC.swift in Sources */,
 				73147DCF1C6313EA00FD70B8 /* RentItemReviewTableViewCell.swift in Sources */,
 				73147DBF1C62F37700FD70B8 /* ListingsServiceProvider.swift in Sources */,
 				73DE66ED1C63FB8B006D9810 /* ProposedMeetingTime.swift in Sources */,
@@ -877,6 +910,7 @@
 				7336214E1C60F4E100893034 /* PhoneNumberVC.swift in Sources */,
 				73147DB71C62F30D00FD70B8 /* Department.swift in Sources */,
 				7336215F1C612E1D00893034 /* AccountSettingsVC.swift in Sources */,
+				739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */,
 				73147DC11C62F44D00FD70B8 /* Listing.swift in Sources */,
 				73DE66E71C63EFBA006D9810 /* MeetingProposalVC.swift in Sources */,
 				73DE66E51C63EF97006D9810 /* MeetingReviewVC.swift in Sources */,
@@ -887,6 +921,7 @@
 				73DE66E91C63F0AB006D9810 /* MeetingTimeProposalTableViewCell.swift in Sources */,
 				73DE66C31C63B82A006D9810 /* NewListingRentalRatesVC.swift in Sources */,
 				73DE66B41C63A4DD006D9810 /* EditListingNameVC.swift in Sources */,
+				73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */,
 				73DD4CAB1C6D64470003698A /* MeetingTableViewCell.swift in Sources */,
 				73DE66F11C640453006D9810 /* MeetingEvent.swift in Sources */,
 				73DE66CF1C63DF9C006D9810 /* EditListingDescriptionVC.swift in Sources */,
@@ -934,6 +969,7 @@
 				73147DBB1C62F36300FD70B8 /* CategoriesServiceProvider.swift in Sources */,
 				73DE66BF1C63B6C5006D9810 /* NewListingPhotoCollectionViewCell.swift in Sources */,
 				73DE66EB1C63F0C7006D9810 /* MeetingLocationProposalTableViewCell.swift in Sources */,
+				73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */,
 				73DE66BB1C63B1A3006D9810 /* NewListingCategoryVC.swift in Sources */,
 				73147DD11C63143C00FD70B8 /* RelatedRentItemCollectionViewCell.swift in Sources */,
 				73DE66AB1C639519006D9810 /* ListingsVC.swift in Sources */,
@@ -1025,6 +1061,10 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)",
+					"$(inherited)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1071,6 +1111,10 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)",
+					"$(inherited)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

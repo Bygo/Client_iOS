@@ -9,7 +9,6 @@
 import UIKit
 import Braintree
 import RealmSwift
-import Haneke
 
 class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMeetingLocationDelegate, EditFavoriteMeetingLocationDelegate, BTDropInViewControllerDelegate {
 
@@ -54,6 +53,10 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         configureUserSpecificUI()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        delegate?.didReturnToBaseLevelOfNavigation()
+    }
+    
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
@@ -87,10 +90,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         guard let lastName  = localUser.lastName else { return }
         usernameLabel.text  = "\(firstName) \(lastName)"
         
-        guard let profileLink = localUser.profileImageLink else { return }
-        guard let url = NSURL(string: profileLink) else { return }
+        guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
+        guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
         profileImageView.hnk_setImageFromURL(url)
-        print(url)
     }
     
     private func configureUserSpecificUI() {
@@ -332,6 +334,8 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             destVC.delegate = self
             destVC.location = targetLocation
         }
+        
+        delegate?.didMoveOneLevelIntoNavigation()
     }
 }
 
@@ -339,4 +343,6 @@ public protocol SettingsDelegate {
     func openMenu()
     func didUpdateAccountSettings()
     func didLogout()
+    func didMoveOneLevelIntoNavigation()
+    func didReturnToBaseLevelOfNavigation()
 }

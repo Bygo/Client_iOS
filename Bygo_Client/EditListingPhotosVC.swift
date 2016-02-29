@@ -17,6 +17,7 @@ class EditListingPhotosVC: UIViewController, UICollectionViewDataSource, UIColle
     @IBOutlet var continueButton:UIButton!
     
     var model:Model?
+    var delegate:EditListingPhotosDelegate?
     var listing:Listing?
     
     private let kMAX_NUM_IMAGES = 5
@@ -138,7 +139,8 @@ class EditListingPhotosVC: UIViewController, UICollectionViewDataSource, UIColle
     
     @IBAction func continueButtonTapped(sender:AnyObject) {
         if isDataValid() {
-            performSegueWithIdentifier("ShowSetItemValue", sender: nil)
+            delegate?.didUpdatePhotos()
+            navigationController?.popViewControllerAnimated(true)
         }
     }
     
@@ -150,13 +152,23 @@ class EditListingPhotosVC: UIViewController, UICollectionViewDataSource, UIColle
 }
 
 
+
+protocol EditListingPhotosDelegate {
+    func didUpdatePhotos()
+}
+
+
 // MARK: - UICollectionViewDelegate
 extension EditListingPhotosVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width-16.0, view.bounds.width-16.0)
+        return CGSizeMake(view.bounds.width-16.0, view.bounds.width-16.0 + 55.0)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(0.0, 8.0, 0.0, 8.0)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 16.0
     }
 }

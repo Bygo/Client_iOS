@@ -7,21 +7,29 @@
 //
 
 import UIKit
-import Haneke
 
 class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: - Outlets
+    @IBOutlet var headerView: UIView!
     @IBOutlet var profileImageView: UIImageView!
+    
     @IBOutlet var firstNameLabel: UILabel!
     @IBOutlet var lastNameLabel: UILabel!
     @IBOutlet var emailLabel: UILabel!
-    @IBOutlet var phoneNumberLabel: UILabel!
+    @IBOutlet var mobileLabel: UILabel!
+    
     @IBOutlet var firstNameTextField: UITextField!
     @IBOutlet var lastNameTextField: UITextField!
     @IBOutlet var emailTextField: UITextField!
-    @IBOutlet var phoneNumberTextField: UITextField!
+    @IBOutlet var mobileTextField: UITextField!
+    
+    @IBOutlet var cancelButton: UIBarButtonItem!
+    @IBOutlet var saveButton: UIBarButtonItem!
+    
     var imagePicker:UIImagePickerController = UIImagePickerController()
+    
+    private var newProfileImage: UIImage? = nil
     
     var model:Model?
     var delegate:AccountSettingsDelegate?
@@ -36,11 +44,23 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2.0
         profileImageView.layer.masksToBounds = true
         profileImageView.layer.borderWidth = 0.0
-        
+
         // UI Design
+        title = "Your Account"
+        
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        headerView.backgroundColor = .clearColor()
+        view.backgroundColor = kCOLOR_THREE
+        
+        saveButton.enabled = false
+        
+        firstNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        lastNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        emailTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
         
         // Set user specific UI
         configureUserSpecificUI()
@@ -61,10 +81,10 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         
         // Setup the user name and profile image
         guard let user      = model?.userServiceProvider.getLocalUser() else { return }
-        if let firstName    = user.firstName    { firstNameTextField.text = firstName }
-        if let lastName     = user.lastName     { lastNameTextField.text = lastName }
-        if let email        = user.email        { emailTextField.text = email }
-        if let phoneNumber  = user.phoneNumber  { phoneNumberTextField.text = phoneNumber }
+        if let firstName    = user.firstName    { firstNameTextField.text   = firstName }
+        if let lastName     = user.lastName     { lastNameTextField.text    = lastName }
+        if let email        = user.email        { emailTextField.text       = email }
+        if let phoneNumber  = user.phoneNumber  { mobileTextField.text = phoneNumber }
         
         guard let profileLink = user.profileImageLink   else { print("No profile link"); return }
         guard let url = NSURL(string: profileLink)      else { print("No url"); return }
@@ -126,7 +146,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         guard let model         = model                     else { return }
         guard let firstName     = firstNameTextField.text   else { return }
         guard let lastName      = lastNameTextField.text    else { return }
-        guard let phoneNumber   = phoneNumberTextField.text else { return }
+        guard let phoneNumber   = mobileTextField.text else { return }
         guard let email         = emailTextField.text       else { return }
         if !model.dataValidator.isValidPhoneNumber(phoneNumber) { return }
         if !model.dataValidator.isValidEmail(email)             { return }
@@ -136,21 +156,48 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         // Update the local user Account
         model.userServiceProvider.updateLocalUser(firstName, lastName: lastName, email: email, phoneNumber: phoneNumber, completionHandler: {(success:Bool)->Void in
             if success {
-                self.dismissViewControllerAnimated(true, completion: {
-                    self.delegate?.didUpdateAccountSettings()
-                })
+                if let newProfileImage = self.newProfileImage {
+                    guard let userID = model.userServiceProvider.getLocalUser()?.userID else { return }
+                    model.userServiceProvider.setUserProfileImage(userID, image: newProfileImage, completionHandler: {
+                        (success:Bool) in
+                        if success {
+                            dispatch_async(GlobalMainQueue, {
+                                self.dismissViewControllerAnimated(true, completion: {
+                                    self.delegate?.didUpdateAccountSettings()
+                                })
+                            })
+                        } else {
+                            print("FAILED")
+                        }
+                    })
+                } else {
+                    dispatch_async(GlobalMainQueue, {
+                        self.dismissViewControllerAnimated(true, completion: {
+                            self.delegate?.didUpdateAccountSettings()
+                        })
+                    })
+                }
             } else {
                 // TODO: Throw an error message
             }
         })
     }
     
+    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translationInView(view)
+        if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
+            firstNameTextField.resignFirstResponder()
+            lastNameTextField.resignFirstResponder()
+            mobileTextField.resignFirstResponder()
+            emailTextField.resignFirstResponder()
+        }
+    }
     
     // MARK: - Text Field Delegate
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
 
         // Format the phoneNumberTextField to "+1 123 456 7890" format
-        if textField == phoneNumberTextField {
+        if textField == mobileTextField {
             if let text = textField.text {
                 let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
                 let components = newString.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
@@ -192,29 +239,24 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     func textFieldShouldClear(textField: UITextField) -> Bool {
         
         // Format the phoneNumberTextField to a constant country code of "+1 "
-        if textField == phoneNumberTextField {
+        if textField == mobileTextField {
             textField.text = "\(kUSA_COUNTRY_CODE) "
             return false
         }
         return true
     }
     
+    @IBAction func textFieldDidChange(textField: UITextField) {
+        saveButton.enabled = true
+    }
+    
     // MARK: - Image Picker Delegate
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
         
-        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
-        model?.userServiceProvider.setUserProfileImage(userID, image: image, completionHandler: {
-            (success:Bool) in
-            if success {
-                dispatch_async(GlobalMainQueue, {
-                    self.configureUserSpecificUI()
-                    self.delegate?.didUpdateAccountSettings()
-                })
-            } else {
-                print("FAILED")
-            }
-        })
+        profileImageView.image = image
+        newProfileImage = image
+        saveButton.enabled = true
     }
  
     
@@ -223,7 +265,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         firstNameTextField.resignFirstResponder()
         lastNameTextField.resignFirstResponder()
         emailTextField.resignFirstResponder()
-        phoneNumberTextField.resignFirstResponder()
+        mobileTextField.resignFirstResponder()
     }
 }
 

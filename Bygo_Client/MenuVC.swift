@@ -155,7 +155,6 @@ class MenuVC: UITableViewController {
     // MARK: - TableView Delegate
     // Select the correct menu option based on wether or not the user is logged in. There are different menu options in each of these cases.
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("\n\n\nSELECT\n\(indexPath)\n\n")
         guard let model = model else { return }
         if model.userServiceProvider.isLocalUserLoggedIn() {
             delegate?.didSelectMenuOption(menuOptions[indexPath.row])

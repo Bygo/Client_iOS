@@ -10,10 +10,11 @@
 import UIKit
 import RealmSwift
 
-class EditListingVC: UITableViewController, EditListingNameDelegate, EditListingCategoryDelegate, EditListingValueDelegate, EditListingRentalRatesDelegate, EditListingDescriptionDelegate { 
+class EditListingVC: UITableViewController, EditListingNameDelegate, EditListingCategoryDelegate, EditListingValueDelegate, EditListingRentalRatesDelegate, EditListingDescriptionDelegate, EditListingPhotosDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
     
     @IBOutlet var doneButton:UIBarButtonItem!
     @IBOutlet var headerView: UIView!
+    @IBOutlet var collectionView: UICollectionView!
     //    @IBOutlet var headerScrollView: UIScrollView!
     
     var delegate:EditListingsDelegate?
@@ -43,7 +44,10 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
         
         tableView.rowHeight             = UITableViewAutomaticDimension
         tableView.estimatedRowHeight    = 44.0
-        headerView.backgroundColor      = .lightGrayColor()
+        collectionView.backgroundColor  = .whiteColor()
+//        tableView.backgroundColor       = kCOLOR_THREE
+
+        headerView.bounds.size = CGSizeMake(view.bounds.width, view.bounds.width)
         
         model?.categoryServiceProvider.refreshCategories({
             (success:Bool) in
@@ -185,6 +189,37 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
     }
     
     
+    // MARK: - CollectionView DataSource
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if let count = listing?.imageLinks.count {
+            return count
+        } else {
+            return 0
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ListingImageCell", forIndexPath: indexPath) as? ListingImageCollectionViewCell else { return UICollectionViewCell() }
+        
+        cell.imageView.contentMode          = UIViewContentMode.ScaleAspectFill
+        cell.imageView.backgroundColor      = .lightGrayColor()
+        cell.imageView.clipsToBounds        = true
+        cell.imageView.layer.masksToBounds  = true
+        cell.layer.cornerRadius             = kCORNER_RADIUS
+        
+        guard let imageLinks = listing?.imageLinks else { return cell }
+        guard let imageLink = imageLinks[indexPath.item].value else { return cell }
+        guard let url = NSURL(string: imageLink) else { return cell }
+        
+        cell.imageView.hnk_setImageFromURL(url)
+        
+        return cell
+    }
+    
     // MARK: - Editing Delegates
     func didUpdateItemName() {
         tableView.beginUpdates()
@@ -215,6 +250,11 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
         tableView.beginUpdates()
         tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: kDESCRIPTION_SECTION_INDEX)], withRowAnimation: .Fade)
         tableView.endUpdates()
+    }
+    
+    func didUpdatePhotos() {
+        delegate?.didEditListing()
+        collectionView.reloadData()
     }
     
     // MARK: - UIActions
@@ -253,6 +293,7 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
         } else if segue.identifier == "ShowEditPhotos" {
             guard let destVC = segue.destinationViewController as? EditListingPhotosVC else { return }
             destVC.model = model
+            destVC.delegate = self
             destVC.listing = listing
         }
     }
@@ -260,4 +301,22 @@ class EditListingVC: UITableViewController, EditListingNameDelegate, EditListing
 
 protocol EditListingsDelegate {
     func didEditListing()
+}
+
+
+extension EditListingVC : UICollectionViewDelegateFlowLayout {
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        return CGSizeMake(collectionView.bounds.width-16.0, collectionView.bounds.width-16.0)
+    }
+    
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        
+        return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 16.0
+    }
 }

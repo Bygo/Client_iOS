@@ -23,10 +23,12 @@ private let kSHAPE_4_HEIGHT_FACTOR:CGFloat = 2.0
 class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
     // MARK: - Outlets
-    @IBOutlet var collectionView:UICollectionView!
-    @IBOutlet var refreshControl:UIRefreshControl!
+    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var refreshControl: UIRefreshControl! = UIRefreshControl()
+    @IBOutlet var searchButton: UIBarButtonItem!
     
-    lazy var searchBar: UISearchBar = UISearchBar(frame: CGRectMake(0,0,0,0))
+    var isSearching:Bool = false
+    @IBOutlet var searchBar: SearchBar!
     
     var delegate:RentDelegate?
     var model:Model?
@@ -38,7 +40,7 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         super.viewDidLoad()
 
         // Add refresh control
-        refreshControl = UIRefreshControl()
+        // refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "refreshListings", forControlEvents: .ValueChanged)
         collectionView.addSubview(refreshControl)
         
@@ -48,7 +50,16 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         collectionView.backgroundColor = kCOLOR_THREE
         
+        // SearchBar
+        searchBar = SearchBar(frame: CGRectMake(view.bounds.width-40.0, 8.0, 30.0, 30.0))
+        searchBar.alpha = 0.0
+        navigationController?.navigationBar.addSubview(searchBar)
+        
         refreshListings()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        delegate?.didReturnToBaseLevelOfNavigation()
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -106,9 +117,13 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             
             
             dispatch_async(GlobalMainQueue, {
-                cell.rentalRateLabel.text               = String(format: "$%0.2f", rentalRate)
-                cell.distanceLabel.text                 = String(format: "%0.1f miles", distance)
-                cell.titleLabel.text                    = name
+                cell.rentalRateLabel.text   = String(format: "$%0.2f", rentalRate)
+                cell.distanceLabel.text     = String(format: "%0.1f miles", distance)
+                cell.markerImageView.image  = UIImage(named: "Marker")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+                cell.markerImageView.tintColor = .blackColor()
+                cell.markerImageView.alpha  = 0.5
+                cell.titleLabel.text        = name
+                
 
                 if rating < 0.0 {
                     cell.noRatingLabel.hidden = false
@@ -128,6 +143,20 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 if let imageLink = imageLink {
                     let imageURL = NSURL(string: imageLink)!
                     cell.mainImageImageView.hnk_setImageFromURL(imageURL)
+                    
+                    guard let request = URLServiceProvider().getNewGETRequest(withURL: "\(imageLink)") else { return }
+                    let session = NSURLSession.sharedSession()
+                    let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+                        if error != nil {
+                            return
+                        }
+                        
+                        print("google: \(response)")
+                        let d = String(data: data!, encoding: NSUTF8StringEncoding)
+                        print(d)
+                    })
+                    task.resume()
+
                 }
             })
         })
@@ -163,6 +192,52 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         delegate?.openMenu()
     }
     
+    @IBAction func searchButtonTapped(sender: AnyObject) {
+        if isSearching {
+            hideSearchBar()
+        } else {
+            revealSearchBar()
+        }
+        isSearching = !isSearching
+    }
+    
+    func revealSearchBar() {
+        searchButton.title = "Cancel"
+        searchButton.image = nil
+        searchBar.becomeFirstResponder()
+        searchBar.text = nil
+
+        
+        let targetWidth = self.view.bounds.width - 8.0 - 50.0 - 8.0 - 8.0 - 8.0
+        navigationController?.navigationBar.bringSubviewToFront(searchBar)
+        
+        UIView.animateWithDuration(0.3, animations: {
+            self.searchBar.frame = CGRectMake(8.0, self.searchBar.frame.origin.y, targetWidth, self.searchBar.bounds.height)
+            self.searchBar.alpha = 1.0
+            }, completion: {
+                (complete:Bool) in
+                if complete {
+                self.navigationController?.navigationBar.layoutIfNeeded()
+            }
+        })
+    }
+    
+    func hideSearchBar() {
+        searchBar.resignFirstResponder()
+        
+        searchButton.title = nil
+        searchButton.image = UIImage(named: "Search")
+        
+        UIView.animateWithDuration(0.3, animations: {
+            self.searchBar.frame = CGRectMake(self.view.bounds.width-40.0, self.searchBar.frame.origin.y, self.searchBar.bounds.height, self.searchBar.bounds.height)
+            self.searchBar.alpha = 0.0
+            }, completion:  {
+                (complete:Bool) in
+                if complete {
+                    self.navigationController?.navigationBar.layoutIfNeeded()
+            }
+        })
+    }
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -172,6 +247,7 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             destVC.delegate = delegate
             destVC.model    = model
         }
+        delegate?.didMoveOneLevelIntoNavigation()
     }
 }
 
@@ -182,7 +258,7 @@ extension RentVC : UICollectionViewDelegateFlowLayout{
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(8.0, 0.0, 8.0, 0.0)
+        return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
     }
     
 }
@@ -191,4 +267,6 @@ extension RentVC : UICollectionViewDelegateFlowLayout{
 public protocol RentDelegate {
     func showLoginMenu()
     func openMenu()
+    func didMoveOneLevelIntoNavigation()
+    func didReturnToBaseLevelOfNavigation()
 }

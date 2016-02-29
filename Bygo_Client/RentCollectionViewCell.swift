@@ -17,5 +17,10 @@ class RentCollectionViewCell: UICollectionViewCell {
     @IBOutlet var noRatingLabel: UILabel!
     @IBOutlet var rentalRateLabel: UILabel!
     @IBOutlet var timeFrameLabel: UILabel!
+    @IBOutlet var markerImageView: UIImageView!
     
+    
+    override func prepareForReuse() {
+        mainImageImageView.image = nil
+    }
 }

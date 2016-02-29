@@ -10,4 +10,8 @@ import UIKit
 
 class ListingImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet var imageView: UIImageView!
+    
+    override func prepareForReuse() {
+        imageView.image = nil
+    }
 }

@@ -8,7 +8,6 @@
 
 import UIKit
 import RealmSwift
-import Haneke
 
 class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
@@ -24,6 +23,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     @IBOutlet var ratingImageView: UIImageView!
     @IBOutlet var noRatingLabel: UILabel!
     @IBOutlet var rentNowButton: UIButton!
+    @IBOutlet var inquireButton: UIButton!
     @IBOutlet var listingImagesCollectionView: UICollectionView!
     @IBOutlet var headerView: UIView!
     
@@ -41,6 +41,13 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
         tableView.rowHeight             = UITableViewAutomaticDimension
         tableView.estimatedRowHeight    = 80.0
         
+        rentNowButton.backgroundColor   = kCOLOR_SIX
+        inquireButton.backgroundColor   = kCOLOR_FIVE
+        tableView.backgroundColor       = .whiteColor()
+        
+        loadHeaderView()
+        tableView.reloadData()
+        
         // Download the complete AdvertisedListing
         guard let listing   = listing           else { return }
         guard let listingID = listing.listingID else { return }
@@ -48,26 +55,23 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             model?.advertisedListingServiceProvider.downloadAdvertisedListingComplete(listingID, completionHandler: {
                 (success:Bool) in
                 if success {
-                    self.tableView.reloadData()
                     self.loadHeaderView()
+                    self.tableView.reloadData()
                 } else {
                     print("Could not load Listing")
                 }
             })
         }
-        
-        rentNowButton.backgroundColor = kCOLOR_FIVE
-        tableView.backgroundColor = kCOLOR_THREE
-        
-        loadHeaderView()
     }
     
     
     // MARK: - Item Specific UI
     func loadHeaderView() {
+        headerView.heightAnchor.constraintEqualToConstant(rentNowButton.frame.origin.y + rentNowButton.bounds.height + 8.0)
+        
         guard let listing = listing else { return }
         if listing.isSnapshot { return }
-        itemTitleLabel.text     = listing.name
+        itemTitleLabel.text = listing.name
         
         noRatingLabel.hidden = true
         if let rating = listing.rating.value {
@@ -88,7 +92,6 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             noRatingLabel.hidden = false
         }
         
-        
 //        guard let hourlyRate    = listing.hourlyRate.value else { return }
 //        guard let dailyRate     = listing.dailyRate.value  else { return }
 //        guard let weeklyRate    = listing.weeklyRate.value else { return }
@@ -102,25 +105,27 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        guard let listing = listing else { return 0 }
-        if listing.isSnapshot { return 0 }
-        return 3
+//        guard let listing = listing else { return 0 }
+//        if listing.isSnapshot { return 0 }
+//        return 3
+        return 1
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        switch section {
-        case kITEM_DESCRIPTION_SECTION:
-            return 1
-        case kRELATED_ITEMS_SECTION:
-            return 1
-        case kOWNER_PROFILE_SECTION:
-            return 1
-        case kCOMMENTS_SECTION:
-            return 0
-        default:
-            return 0
-        }
+//        switch section {
+//        case kITEM_DESCRIPTION_SECTION:
+//            return 1
+//        case kRELATED_ITEMS_SECTION:
+//            return 1
+//        case kOWNER_PROFILE_SECTION:
+//            return 1
+//        case kCOMMENTS_SECTION:
+//            return 0
+//        default:
+//            return 0
+//        }
+        return 3
     }
     
     
@@ -130,7 +135,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
         if listing.isSnapshot { return UITableViewCell() }
         
         // Configure the cell...
-        switch indexPath.section {
+        switch indexPath.row {
         case kITEM_DESCRIPTION_SECTION: // Item description
             guard let cell = tableView.dequeueReusableCellWithIdentifier("DetailsCell", forIndexPath: indexPath) as? RentItemDescriptionTableViewCell else { return UITableViewCell() }
             cell.descriptionLabel.text = listing.itemDescription
@@ -151,26 +156,31 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             // FIXME: Create an actual user profile cell
             guard let cell = tableView.dequeueReusableCellWithIdentifier("UserProfileCell", forIndexPath: indexPath) as? RentItemUserProfileTableViewCell else { return UITableViewCell() }
             
-            cell.profileImageView.contentMode = UIViewContentMode.ScaleAspectFill
-            cell.profileImageView.backgroundColor = .lightGrayColor()
-            cell.profileImageView.clipsToBounds = true
-            cell.profileImageView.layer.cornerRadius = cell.profileImageView.bounds.width/2.0
-            cell.profileImageView.layer.masksToBounds = true
+            cell.profileImageView.contentMode           = UIViewContentMode.ScaleAspectFill
+            cell.profileImageView.backgroundColor       = .lightGrayColor()
+            cell.profileImageView.clipsToBounds         = true
+            cell.profileImageView.layer.cornerRadius    = cell.profileImageView.bounds.width/2.0
+            cell.profileImageView.layer.masksToBounds   = true
             
             if let ownerID = listing.ownerID {
+                print("OWNER PROFILE: \(ownerID)")
                 model?.userServiceProvider.fetchUser(ownerID, completionHandler: {
                     (success:Bool) in
                     if success {
+                        print("Got the user!")
                         let realm           = try! Realm()
                         let owner           = realm.objects(User).filter("userID == \"\(ownerID)\"").first
-                        print(owner)
                         guard let firstName = owner?.firstName  else { return }
                         guard let lastName  = owner?.lastName   else { return }
+                        
+                        dispatch_async(GlobalMainQueue, {
+                            cell.nameLabel.text = "\(firstName) \(lastName)"
+                        })
+                        
                         guard let imageMediaLink = owner?.profileImageLink else { return }
                         guard let url = NSURL(string: imageMediaLink) else { return }
                         
                         dispatch_async(GlobalMainQueue, {
-                            cell.nameLabel.text = "\(firstName) \(lastName)"
                             cell.profileImageView.hnk_setImageFromURL(url)
                         })
                     }
@@ -181,6 +191,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             
         case kCOMMENTS_SECTION:
             guard let cell = tableView.dequeueReusableCellWithIdentifier("CommentCell", forIndexPath: indexPath) as? RentItemReviewTableViewCell else { return UITableViewCell() }
+            
             // TODO: Load top 5 comments from server
             cell.commenterNameLabel.text = "Sayan"
             cell.dateLabel.text = "Nov 23"
@@ -196,30 +207,15 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        switch indexPath.section {
+        switch indexPath.row {
         case kRELATED_ITEMS_SECTION:
-            return 166.0
+            return 150.0
         default:
             return UITableViewAutomaticDimension
         }
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case kITEM_DESCRIPTION_SECTION:
-//            return "Description"
-            return " "
-//        case kOWNER_PROFILE_SECTION:
-//            return "Owner"
-//        case kRELATED_ITEMS_SECTION:
-//            return "Related Items"
-//        case kCOMMENTS_SECTION:
-//            return "Reviews"
-        default:
-            return ""
-        }
-    }
-    
+
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
     }
@@ -258,12 +254,13 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             
         } else {
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RelatedItemCell", forIndexPath: indexPath) as? RelatedRentItemCollectionViewCell else { return UICollectionViewCell() }
-//            cell.layer.borderColor = UIColor.lightGrayColor().CGColor
-//            cell.layer.borderWidth = 1.0
+            
             // FIXME: Pull from global UI repo
-            cell.layer.cornerRadius = 0.0
-            cell.imageView.backgroundColor = .lightGrayColor()
-            cell.itemTitleLabel.text = "Related Item \(indexPath.row)"
+            cell.imageView.layer.cornerRadius = kCORNER_RADIUS * 4.0
+            cell.imageView.clipsToBounds = true
+            cell.imageView.backgroundColor  = .lightGrayColor()
+            cell.itemTitleLabel.text        = "Related Item \(indexPath.row)"
+            cell.itemTitleLabel.backgroundColor = kCOLOR_THREE
             return cell
         }
     }
@@ -342,7 +339,9 @@ extension RentItemDetailsVC : UICollectionViewDelegateFlowLayout {
             return UIEdgeInsetsMake(0.0, sectionInset, 0.0, sectionInset)
         }
     }
+    
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 16.0
+    }
 }
-
-
-

@@ -99,8 +99,8 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     func showLoginMenu() {
         let loginSB = UIStoryboard(name: "Login", bundle: NSBundle.mainBundle())
         loginContainer = loginSB.instantiateInitialViewController() as? UINavigationController
-        (loginContainer?.topViewController as? SignUpVC)?.model = model
-        (loginContainer?.topViewController as? SignUpVC)?.delegate = self
+        (loginContainer?.topViewController as? WelcomeVC)?.model = model
+        (loginContainer?.topViewController as? WelcomeVC)?.delegate = self
         presentViewController(loginContainer!, animated: true, completion: nil)
     }
     
@@ -118,8 +118,19 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         view.bringSubviewToFront(menuContainer!.view)
     }
     
+    
+    private var isMenuAvailable:Bool = true
+    
     func shouldMenuOpen() -> Bool {
-        return true
+        return isMenuAvailable
+    }
+    
+    func didMoveOneLevelIntoNavigation() {
+        isMenuAvailable = false
+    }
+    
+    func didReturnToBaseLevelOfNavigation() {
+        isMenuAvailable = true
     }
     
     
