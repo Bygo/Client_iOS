@@ -11,8 +11,8 @@ import UIKit
 class MenuVC: UITableViewController {
     
     // MARK: - Menu Features
-    let menuOptions = [MenuOptions.Rent, MenuOptions.Dashboard, MenuOptions.History, MenuOptions.Settings, MenuOptions.Help]
-    let nonUserMenuOptions = [MenuOptions.Rent, MenuOptions.SignUp]
+    let menuOptions = [MenuOptions.Discover, MenuOptions.Dashboard, MenuOptions.History, MenuOptions.Settings, MenuOptions.Help]
+    let nonUserMenuOptions = [MenuOptions.Discover, MenuOptions.SignUp]
     
     
     // MARK: - Outlets
@@ -29,7 +29,17 @@ class MenuVC: UITableViewController {
         super.viewDidLoad()
         
         // Configure the user specific settings
-//        configureUI()
+        // configureUI()
+        
+        view.backgroundColor = .clearColor()
+        tableView.backgroundColor = .clearColor()
+        profileHeader.backgroundColor = .clearColor()
+        
+        
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
+        visualEffectView.frame = view.bounds
+        tableView.addSubview(visualEffectView)
+        tableView.sendSubviewToBack(visualEffectView)
         
         view.clipsToBounds          = false
         view.layer.shadowColor      = UIColor.blackColor().CGColor
@@ -45,56 +55,15 @@ class MenuVC: UITableViewController {
     
     // MARK: - Updating UI
     func userDidLogin() {
-//        configureUI()
+        // configureUI()
         tableView.reloadData()
     }
     
     func userDidLogout() {
-//        configureUI()
+        // configureUI()
         tableView.reloadData()
     }
     
-//    func userDidUpdateAccountSettings() {
-////        configureUI()
-//        tableView.reloadData()
-//    }
-    
-//    func configureUI() {
-//        guard let model = model else { return }
-//        if model.userServiceProvider.isLocalUserLoggedIn() {
-//            configureUserSpecificUI()
-//        } else {
-//            configureDefaultUI()
-//        }
-//    }
-    
-//    func configureUserSpecificUI() {
-//        // Setup the user profile imageview
-//        profileImageView.hidden                 = false
-//        usernameLabel.hidden                    = false
-//        profileHeader.hidden                    = false
-//        profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
-//        profileImageView.backgroundColor        = .lightGrayColor()
-//        profileImageView.clipsToBounds          = true
-//        profileImageView.layer.cornerRadius     = 34.0
-//        profileImageView.layer.masksToBounds    = true
-//        profileImageView.layer.borderWidth      = 0.0
-//        
-//        // Set the user profile name and image
-//        guard let user      = model?.userServiceProvider.getLocalUser() else { return }
-//        guard let firstName = user.firstName                            else { return }
-//        guard let lastName  = user.lastName                             else { return }
-//        usernameLabel.text  = "\(firstName) \(lastName)"
-//        tableView.layoutIfNeeded()
-//    }
-//    
-//    func configureDefaultUI() {
-//        profileImageView.hidden = true
-//        usernameLabel.hidden    = true
-//        profileHeader.hidden    = true
-//        tableView.layoutIfNeeded()
-//    }
-//    
     
     // MARK: - TableView Data Source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -180,7 +149,7 @@ class MenuVC: UITableViewController {
     func stringForMenuOption(option:MenuOptions) -> String {
         // FIXME: This needs to return a localized string
         switch option {
-        case .Rent:         return "Rent"
+        case .Discover:         return "Discover"
         case .Dashboard:    return "Dashboard"
         case .History:      return "History"
         case .Settings:     return "Settings"
@@ -193,7 +162,7 @@ class MenuVC: UITableViewController {
 
 
 enum MenuOptions {
-    case Rent
+    case Discover
     case Dashboard
     case History
     case Settings

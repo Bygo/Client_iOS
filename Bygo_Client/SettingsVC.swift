@@ -90,9 +90,10 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         guard let lastName  = localUser.lastName else { return }
         usernameLabel.text  = "\(firstName) \(lastName)"
         
-        guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
-        guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
-        profileImageView.hnk_setImageFromURL(url)
+//        guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
+//        guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
+//        profileImageView.hnk_setImageFromURL(url)
+        profileImageView.image = UIImage(named: "nick")
     }
     
     private func configureUserSpecificUI() {
@@ -128,7 +129,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             guard let localUser = model?.userServiceProvider.getLocalUser() else { return 0 }
             guard let userID    = localUser.userID else { return 0 }
             let realm           = try! Realm()
-            return realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").count + 1
+            return realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").count + 2
             
         } else if section == kLOGOUT_SECTION {
             let kNUM_LOGOUT_BUTTONS = 1
@@ -160,13 +161,27 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             
         case kFAV_MEETING_LOCATIONS_SECTION:
             
-            let indexOfNewFavoriteLocationButton = tableView.numberOfRowsInSection(kFAV_MEETING_LOCATIONS_SECTION)-1
+            let indexOfNewFavoriteLocationButton = tableView.numberOfRowsInSection(kFAV_MEETING_LOCATIONS_SECTION)-2
             if indexPath.row == indexOfNewFavoriteLocationButton {
                 let cell = UITableViewCell()
                 cell.textLabel?.text = "Add New Favorite Location"
+                cell.textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
                 cell.backgroundColor    = kCOLOR_FIVE
                 cell.textLabel?.textColor = .whiteColor()
                 cell.textLabel?.textAlignment = .Center
+                return cell
+            }
+            
+            
+            let indexOfInstructionLabel = tableView.numberOfRowsInSection(kFAV_MEETING_LOCATIONS_SECTION)-1
+            if indexPath.row == indexOfInstructionLabel {
+                let cell = UITableViewCell()
+                cell.textLabel?.text = "List some of the places around you where you can meet other people to hand off items."
+                cell.textLabel?.font = UIFont.systemFontOfSize(12.0)
+                cell.textLabel?.numberOfLines = 0
+                cell.textLabel?.textAlignment = .Center
+                cell.textLabel?.textColor = .blackColor()
+                cell.backgroundColor = .clearColor()
                 return cell
             }
             
@@ -185,6 +200,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             let cell = UITableViewCell()
             // FIXME: Pull text form some localized text repo
             cell.textLabel?.text = "Log Out"
+            cell.textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
             cell.textLabel?.textAlignment = .Center
             cell.textLabel?.textColor = .whiteColor()
             cell.backgroundColor = kCOLOR_TWO
@@ -208,7 +224,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             
         case kFAV_MEETING_LOCATIONS_SECTION:
             switch indexPath.row {
-            case tableView.numberOfRowsInSection(1)-1:
+            case tableView.numberOfRowsInSection(1)-2:
                 performSegueWithIdentifier("ShowNewFavoriteMeetingLocation", sender: nil)
             default:
                 guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
@@ -236,7 +252,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == tableView {
-            profileImageViewVerticalOffset.constant = 16.0 + scrollView.contentOffset.y/2.0
+            if scrollView.contentOffset.y < 0.0 {
+                profileImageViewVerticalOffset.constant = 48.0 + scrollView.contentOffset.y/2.0
+            }
         }
     }
     
@@ -322,11 +340,13 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             guard let destVC = navVC.topViewController as? AccountSettingsVC else { return }
             destVC.model = model
             destVC.delegate = self
+            
         } else if segue.identifier == "ShowNewFavoriteMeetingLocation" {
             guard let navVC = segue.destinationViewController as? UINavigationController else { return }
             guard let destVC = navVC.topViewController as? NewFavoriteMeetingLocationVC else { return }
             destVC.delegate = self
             destVC.model = model
+            
         } else if segue.identifier == "ShowEditFavoriteMeetingLocation" {
             guard let navVC = segue.destinationViewController as? UINavigationController else { return }
             guard let destVC = navVC.topViewController as? EditFavoriteMeetingLocationVC else { return }

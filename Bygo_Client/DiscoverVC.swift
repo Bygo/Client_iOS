@@ -20,7 +20,7 @@ private let kSHAPE_4_WIDTH_FACTOR:CGFloat = 1.0
 private let kSHAPE_4_HEIGHT_FACTOR:CGFloat = 2.0
 
 
-class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class DiscoverVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
     // MARK: - Outlets
     @IBOutlet var collectionView: UICollectionView!
@@ -51,9 +51,9 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         collectionView.backgroundColor = kCOLOR_THREE
         
         // SearchBar
-        searchBar = SearchBar(frame: CGRectMake(view.bounds.width-40.0, 8.0, 30.0, 30.0))
-        searchBar.alpha = 0.0
-        navigationController?.navigationBar.addSubview(searchBar)
+//        searchBar = SearchBar(frame: CGRectMake(view.bounds.width-40.0, 8.0, 30.0, 30.0))
+//        searchBar.alpha = 0.0
+//        navigationController?.navigationBar.addSubview(searchBar)
         
         refreshListings()
     }
@@ -80,14 +80,15 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     func refreshListings() {
-        model?.advertisedListingServiceProvider.refreshAdvertisedListingsSnapshots({
-            (success:Bool) in
-            if success {
-                self.refreshControl.endRefreshing()
-                self.collectionView.reloadData()
-            }
-            else { print("Error loading AdvertisedListing snapshots") }
-        })
+        self.collectionView.reloadData()
+//        model?.advertisedListingServiceProvider.refreshAdvertisedListingsSnapshots({
+//            (success:Bool) in
+//            if success {
+//                self.refreshControl.endRefreshing()
+//                self.collectionView.reloadData()
+//            }
+//            else { print("Error loading AdvertisedListing snapshots") }
+//        })
     }
     
     
@@ -99,6 +100,7 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let realm = try! Realm()
         let num = realm.objects(AdvertisedListing).count
+        print("\(num) AdListings")
         return num
     }
     
@@ -107,6 +109,7 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         dispatch_async(GlobalUserInteractiveQueue, {
             let realm           = try! Realm()
             let listings = realm.objects(AdvertisedListing).sorted("score", ascending: false)
+            
             let listing  = listings[indexPath.item]
             
             guard let name          = listing.name else { return }
@@ -140,24 +143,31 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                     cell.ratingImageView.image = UIImage(named: "5-Star")
                 }
                 
-                if let imageLink = imageLink {
-                    let imageURL = NSURL(string: imageLink)!
-                    cell.mainImageImageView.hnk_setImageFromURL(imageURL)
-                    
-                    guard let request = URLServiceProvider().getNewGETRequest(withURL: "\(imageLink)") else { return }
-                    let session = NSURLSession.sharedSession()
-                    let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
-                        if error != nil {
-                            return
-                        }
-                        
-                        print("google: \(response)")
-                        let d = String(data: data!, encoding: NSUTF8StringEncoding)
-                        print(d)
-                    })
-                    task.resume()
-
+                switch indexPath.row {
+                case 0: cell.mainImageImageView.image = UIImage(named: "board")
+                case 1: cell.mainImageImageView.image = UIImage(named: "xbox")
+                case 2: cell.mainImageImageView.image = UIImage(named: "tent")
+                default: break
                 }
+                
+//                if let imageLink = imageLink {
+//                    let imageURL = NSURL(string: imageLink)!
+//                    cell.mainImageImageView.hnk_setImageFromURL(imageURL)
+//                    
+//                    guard let request = URLServiceProvider().getNewGETRequest(withURL: "\(imageLink)") else { return }
+//                    let session = NSURLSession.sharedSession()
+//                    let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+//                        if error != nil {
+//                            return
+//                        }
+//                        
+//                        print("google: \(response)")
+//                        let d = String(data: data!, encoding: NSUTF8StringEncoding)
+//                        print(d)
+//                    })
+//                    task.resume()
+//
+//                }
             })
         })
     }
@@ -252,7 +262,7 @@ class RentVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
 }
 
 // MARK: - UICollectionViewDelegate
-extension RentVC : UICollectionViewDelegateFlowLayout{
+extension DiscoverVC : UICollectionViewDelegateFlowLayout{
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         return CGSizeMake(view.bounds.width, view.bounds.height/6.0)
     }
@@ -260,7 +270,6 @@ extension RentVC : UICollectionViewDelegateFlowLayout{
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
     }
-    
 }
 
 

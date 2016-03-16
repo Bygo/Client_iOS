@@ -64,7 +64,7 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidAppear(animated: Bool) {
         buttonsBottomOffset.constant = 8.0
-        UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+        UIView.animateWithDuration(0.75, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             self.bygoLogoImageView.alpha    = 1.0
                 self.signInButton.alpha     = 1.0
                 self.registerButton.alpha   = 1.0

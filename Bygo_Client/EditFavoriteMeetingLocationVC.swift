@@ -37,6 +37,7 @@ class EditFavoriteMeetingLocationVC: UIViewController, UITextFieldDelegate {
         
         // Do any additional setup after loading the view.
         saveButton.enabled = false
+        view.backgroundColor = kCOLOR_THREE
         
         guard let location = location else { return }
         nameTextField.text = location.name

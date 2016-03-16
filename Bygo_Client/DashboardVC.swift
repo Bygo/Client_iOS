@@ -17,13 +17,15 @@ private let kMEETINGS_INDEX = 3//4
 //private let kCREATE_LISTING_INDEX = 4//5
 
 
-class DashboardVC: UITableViewController, RentRequestsDelegate {
+class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var model:Model?
     var delegate:DashboardDelegate?
     var targetListType:ListingsListType?
     @IBOutlet var headerView: UIView!
     @IBOutlet var infoTextVerticalOffset: NSLayoutConstraint!
+    
+//    var imagePicker:UIImagePickerController = UIImagePickerController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,13 +47,16 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchNewRentRequest:", name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasAccepted:", name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasRejected:", name: Notifications.RentRequestWasRejected.rawValue, object: nil)
+
+        tableView.reloadData()
         
-        refreshData({
-            (success:Bool) in
-            if success {
-                self.tableView.reloadData()
-            }
-        })
+//        refreshData({
+//            (success:Bool) in
+//            if success {
+//                self.tableView.reloadData()
+//            }
+//        })
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -132,6 +137,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath)
+        cell.textLabel?.font = UIFont.systemFontOfSize(16.0)
         
         switch indexPath.section {
         case 0:
@@ -139,25 +145,6 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             case kALL_MY_LISTINGS_INDEX:
                 cell.textLabel?.text = "Your Listings"
                 cell.accessoryType = .DisclosureIndicator
-                
-//            case kSHARED_ITEMS_INDEX:
-//                cell.textLabel?.text = "No Shared Items"
-//                cell.accessoryType = .DisclosureIndicator
-//                
-//                // Configure the Cell
-//                guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
-//                dispatch_async(GlobalBackgroundQueue, {
-//                    let realm       = try! Realm()
-//                    let sharedListings = realm.objects(Listing).filter("(ownerID == \"\(userID)\") AND (renterID != nil)")
-//                    let count = sharedListings.count
-//                    
-//                    if count > 0 {
-//                        dispatch_async(GlobalMainQueue, {
-//                            if count == 1 { cell.textLabel?.text = "1 Shared Item" }
-//                            else { cell.textLabel?.text = "\(count) Shared Items" }
-//                        })
-//                    }
-//                })
                 
             case kRENTED_ITEMS_INDEX:
                 cell.textLabel?.text    = "No Rented Items"
@@ -187,7 +174,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
                     let numRentRequests = realm.objects(RentEvent).filter("ownerID == \"\(userID)\" AND (status == \"Proposed\" OR status == \"Inquired\")").count
                     if numRentRequests > 0 {
                         dispatch_async(GlobalMainQueue, {
-                            if numRentRequests == 1 { cell.textLabel?.text = "1 Rent Reqeust" }
+                            if numRentRequests == 1 { cell.textLabel?.text = "1 Rent Request" }
                             else { cell.textLabel?.text = "\(numRentRequests) Rent Requests" }
                         })
                     }
@@ -209,19 +196,14 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
                         })
                     }
                 })
-                
-//            case kCREATE_LISTING_INDEX:
-//                cell.textLabel?.text            = "Create New Listing"
-//                cell.textLabel?.textAlignment   = .Center
-//                cell.textLabel?.textColor       = .whiteColor()
-//                cell.backgroundColor            = kCOLOR_FIVE
-//                
+ 
             default:
                 break
             }
             
         case 1:
             cell.textLabel?.text            = "Create New Listing"
+            cell.textLabel?.font            = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
             cell.textLabel?.textAlignment   = .Center
             cell.textLabel?.textColor       = .whiteColor()
             cell.backgroundColor            = kCOLOR_FIVE
@@ -244,13 +226,7 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
                 targetListType = .All
                 performSegueWithIdentifier("ShowListings", sender: nil)
                 
-//            case kSHARED_ITEMS_INDEX:
-//                targetListType = .Shared
-//                performSegueWithIdentifier("ShowListings", sender: nil)
-                
             case kRENTED_ITEMS_INDEX:
-                //            targetListType = .Rented
-                //            performSegueWithIdentifier("ShowListings", sender: nil)
                 performSegueWithIdentifier("ShowRentedListings", sender: nil)
                 
             case kRENT_REQUESTS_INDEX:
@@ -259,29 +235,66 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             case kMEETINGS_INDEX:
                 performSegueWithIdentifier("ShowMeetings", sender: nil)
                 
-//            case kCREATE_LISTING_INDEX:
-//                performSegueWithIdentifier("ShowCreateNewListing", sender: nil)
-                
             default:
                 break
             }
         case 1:
             performSegueWithIdentifier("ShowCreateNewListing", sender: nil)
+//            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
+//                imagePicker.sourceType     = .Camera
+//                imagePicker.cameraDevice   = UIImagePickerControllerCameraDevice.Rear
+//                imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo
+////                imagePicker.delegate       = self
+//                imagePicker.allowsEditing  = true
+//                imagePicker.showsCameraControls = true
+//                
+//                let sb = UIStoryboard(name: "Dashboard", bundle: NSBundle.mainBundle())
+//                guard let overlay = sb.instantiateViewControllerWithIdentifier("OverlayVC") as? NewListingVC else { return }
+//                
+//                overlay.imagePicker = imagePicker
+//                imagePicker.cameraOverlayView = overlay.view
+//                
+//                imagePicker.view.addSubview(overlay.view)
+//                imagePicker.view.bringSubviewToFront(overlay.view)
+//                imagePicker.delegate = overlay
+//                
+//                let photoLibraryButton = UIButton(frame: CGRectMake(100, 100, 80, 80))
+//                photoLibraryButton.backgroundColor = .orangeColor()
+//                photoLibraryButton.setImage(UIImage(named: "Photos")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+//                photoLibraryButton.tintColor = .whiteColor()
+//                        view.addSubview(photoLibraryButton)
+//                photoLibraryButton.addTarget(self, action: "adsf:", forControlEvents: .TouchUpInside)
+//                imagePicker.view.addSubview(photoLibraryButton)
+//                
+//                presentViewController(imagePicker, animated: true, completion: nil)
+//                
+//            } else if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary) {
+//                imagePicker.sourceType     = .PhotoLibrary
+//                imagePicker.delegate       = self
+//                imagePicker.allowsEditing  = false
+//                presentViewController(imagePicker, animated: true, completion: nil)
+//            }
+
 
         default:
             break
         }
     }
     
+    @IBAction func adsf(sender: AnyObject) {
+        print("asdf")
+    }
+    
     func rentRequestsDidUpdate() {
-        print("Dashboard: RentRequestsDidUpdate")
         tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0), NSIndexPath(forRow: kMEETINGS_INDEX, inSection: 0)], withRowAnimation: .Fade)
     }
     
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == tableView {
-            infoTextVerticalOffset.constant = 50.0 + scrollView.contentOffset.y/2.0
+            if scrollView.contentOffset.y < 0.0 {
+                infoTextVerticalOffset.constant = 50.0 + scrollView.contentOffset.y/2.0
+            }
         }
     }
     
@@ -325,9 +338,9 @@ class DashboardVC: UITableViewController, RentRequestsDelegate {
             destVC.model = model
             
         } else if segue.identifier == "ShowCreateNewListing" {
-            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
-            guard let destVC    = navVC.topViewController as? NewListingNameVC else { return }
-            destVC.model        = model
+//            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
+//            guard let destVC    = navVC.topViewController as? NewListingNameVC else { return }
+//            destVC.model        = model
             
         } else if segue.identifier == "ShowRentRequests" {
             guard let destVC    = segue.destinationViewController as? RentRequestsVC else { return }

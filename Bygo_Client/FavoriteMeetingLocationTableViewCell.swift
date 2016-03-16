@@ -16,6 +16,11 @@ class FavoriteMeetingLocationTableViewCell: UITableViewCell {
     @IBOutlet var titleLabel: UILabel!
     
     
+    override func layoutSubviews() {
+        mapView.layer.cornerRadius = kCORNER_RADIUS
+        accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

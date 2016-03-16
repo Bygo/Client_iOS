@@ -86,9 +86,11 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         if let email        = user.email        { emailTextField.text       = email }
         if let phoneNumber  = user.phoneNumber  { mobileTextField.text = phoneNumber }
         
-        guard let profileLink = user.profileImageLink   else { print("No profile link"); return }
-        guard let url = NSURL(string: profileLink)      else { print("No url"); return }
-        profileImageView.hnk_setImageFromURL(url)
+        profileImageView.image = UIImage(named: "nick")
+        
+//        guard let profileLink = user.profileImageLink   else { print("No profile link"); return }
+//        guard let url = NSURL(string: profileLink)      else { print("No url"); return }
+//        profileImageView.hnk_setImageFromURL(url)
     }
     
     

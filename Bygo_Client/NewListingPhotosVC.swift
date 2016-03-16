@@ -12,7 +12,7 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
     @IBOutlet var instructionLabel:UILabel!
     @IBOutlet var collectionView:UICollectionView!
     @IBOutlet var addImageButton:UIButton!
-    @IBOutlet var continueButton:UIButton!
+    @IBOutlet var nextButton: UIBarButtonItem!
     
     var model:Model?
     var listingName:String?
@@ -29,11 +29,15 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        continueButton.enabled = isDataValid()
+//        continueButton.enabled = isDataValid()
         addImageButton.enabled = shouldAddMoreImages()
         
-        continueButton.backgroundColor = kCOLOR_ONE
+//        continueButton.backgroundColor = kCOLOR_FIVE
         addImageButton.backgroundColor = kCOLOR_FIVE
+        view.backgroundColor = kCOLOR_THREE
+        collectionView.backgroundColor = kCOLOR_THREE
+        
+        enableNextButtonIfNeeded()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -43,6 +47,32 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func enableNextButtonIfNeeded() {
+        if isDataValid() {
+            UIView.animateWithDuration(0.5, animations: {
+                self.nextButton.enabled = true
+            })
+        } else {
+            UIView.animateWithDuration(0.5, animations: {
+                self.nextButton.enabled = false
+            })
+        }
+    }
+    
+    func disableAddImageButtonIfNeeded() {
+        if !shouldAddMoreImages() {
+            addImageButton.enabled = false
+            UIView.animateWithDuration(0.25, animations: {
+                self.addImageButton.alpha = 0.0
+            })
+        } else {
+            addImageButton.enabled = true
+            UIView.animateWithDuration(0.25, animations: {
+                self.addImageButton.alpha = 1.0
+            })
+        }
     }
     
     // MARK: - Data
@@ -72,6 +102,7 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
         cell.image.layer.masksToBounds  = true
         cell.image.image                = listingImages[indexPath.row]
         cell.image.layer.cornerRadius   = kCORNER_RADIUS
+        cell.backgroundColor            = kCOLOR_THREE
         cell.deleteButton.tag           = indexPath.row
         cell.deleteButton.titleLabel?.textColor = kCOLOR_TWO
         cell.deleteButton.addTarget(self, action: "deleteImageButtonTapped:", forControlEvents: .TouchUpInside)
@@ -84,10 +115,12 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
         listingImages.append(image)
-        continueButton.enabled = isDataValid()
+//        continueButton.enabled = isDataValid()
+        enableNextButtonIfNeeded()
         addImageButton.enabled = shouldAddMoreImages()
         collectionView.reloadData()
         collectionView.scrollToItemAtIndexPath(NSIndexPath(forItem: collectionView.numberOfItemsInSection(0)-1, inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
+        disableAddImageButtonIfNeeded()
     }
     
     
@@ -95,11 +128,13 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
     @IBAction func deleteImageButtonTapped(sender:AnyObject) {
         guard let idx = sender.tag else { return }
         listingImages.removeAtIndex(idx)
-        continueButton.enabled = isDataValid()
+//        continueButton.enabled = isDataValid()
+        enableNextButtonIfNeeded()
+        disableAddImageButtonIfNeeded()
         addImageButton.enabled = shouldAddMoreImages()
         collectionView.performBatchUpdates({
             self.collectionView.deleteItemsAtIndexPaths([NSIndexPath(forItem: idx, inSection: 0)])
-        }, completion: nil)
+            }, completion: nil)
     }
     
     @IBAction func newImageButtonTapped(sender: AnyObject) {
@@ -113,6 +148,7 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
                 self.presentViewController(self.imagePicker, animated: true, completion: nil)
             }
         })
+        
         let cameraAction = UIAlertAction(title: "Camera", style: .Default, handler: {
             (alert: UIAlertAction!) -> Void in
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
@@ -120,9 +156,10 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
                 self.imagePicker.cameraDevice   = UIImagePickerControllerCameraDevice.Rear
                 self.imagePicker.delegate       = self
                 self.imagePicker.allowsEditing  = false
-                self.presentViewController(self.imagePicker, animated: false, completion: nil)
+                self.presentViewController(self.imagePicker, animated: true, completion: nil)
             }
         })
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
             (alert: UIAlertAction!) -> Void in
         })
@@ -162,7 +199,7 @@ class NewListingPhotosVC: UIViewController, UICollectionViewDataSource, UICollec
 // MARK: - UICollectionViewDelegate
 extension NewListingPhotosVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width-16.0, view.bounds.width-16.0)
+        return CGSizeMake(view.bounds.width-16.0, (view.bounds.width-16.0) + 48)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {

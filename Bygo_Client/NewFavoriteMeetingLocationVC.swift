@@ -32,6 +32,8 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
+        tableView.backgroundColor = kCOLOR_THREE
+        
         // Setup Google API Key
 //        GMSServices.provideAPIKey("AIzaSyBMvGu6ZWAj8ZbAn1afQZI7pqC9amM9mw0")
         GMSServices.provideAPIKey("AIzaSyAo7yds0oVCOOIXTv6MzGV48GtVDS5PbuI")
@@ -46,7 +48,7 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
         searchBar.delegate = self
         
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 44.0
+        tableView.estimatedRowHeight = 48.0
         
         // Get current location
         locationManager.requestWhenInUseAuthorization()

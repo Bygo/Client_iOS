@@ -175,14 +175,15 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
                         
                         dispatch_async(GlobalMainQueue, {
                             cell.nameLabel.text = "\(firstName) \(lastName)"
+                            cell.profileImageView.image = UIImage(named: "sayan")
                         })
                         
-                        guard let imageMediaLink = owner?.profileImageLink else { return }
-                        guard let url = NSURL(string: imageMediaLink) else { return }
-                        
-                        dispatch_async(GlobalMainQueue, {
-                            cell.profileImageView.hnk_setImageFromURL(url)
-                        })
+//                        guard let imageMediaLink = owner?.profileImageLink else { return }
+//                        guard let url = NSURL(string: imageMediaLink) else { return }
+//                        
+//                        dispatch_async(GlobalMainQueue, {
+//                            cell.profileImageView.hnk_setImageFromURL(url)
+//                        })
                     }
                 })
             }
@@ -227,32 +228,48 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
         if collectionView == listingImagesCollectionView {
             if let count = listing?.imageLinks.count {
-                return count
+                return 1
+//                return count
             } else {
                 return 0
             }
         } else {
             return 5
         }
+        
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if collectionView == listingImagesCollectionView {
+            
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ListingImageCell", forIndexPath: indexPath) as? ListingImageCollectionViewCell else { return UICollectionViewCell() }
             
             
-            guard let imgLink = listing?.imageLinks[indexPath.row].value else { return cell }
-            guard let url = NSURL(string: imgLink) else { return cell }
+//            guard let imgLink = listing?.imageLinks[indexPath.row].value else { return cell }
+//            guard let url = NSURL(string: imgLink) else { return cell }
             cell.imageView.contentMode          = UIViewContentMode.ScaleAspectFill
             cell.imageView.clipsToBounds        = true
             cell.imageView.layer.masksToBounds  = true
             cell.layer.cornerRadius             = kCORNER_RADIUS
-            cell.imageView.hnk_setImageFromURL(url)
+            
+//            cell.imageView.hnk_setImageFromURL(url)
+            
+            if let id = listing?.listingID {
+                switch id {
+                case "2": cell.imageView.image = UIImage(named: "tent")
+                case "3": cell.imageView.image = UIImage(named: "xbox")
+                case "4": cell.imageView.image = UIImage(named: "board")
+                default: break
+                }
+            }
+            
             return cell
             
         } else {
+            
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("RelatedItemCell", forIndexPath: indexPath) as? RelatedRentItemCollectionViewCell else { return UICollectionViewCell() }
             
             // FIXME: Pull from global UI repo
@@ -262,6 +279,7 @@ class RentItemDetailsVC: UITableViewController, UICollectionViewDataSource, UICo
             cell.itemTitleLabel.text        = "Related Item \(indexPath.row)"
             cell.itemTitleLabel.backgroundColor = kCOLOR_THREE
             return cell
+            
         }
     }
     

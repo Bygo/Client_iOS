@@ -24,10 +24,19 @@ class NewListingNameVC: UIViewController, UITableViewDataSource, UITableViewDele
         // Do any additional setup after loading the view.
         nameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
         
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 48.0
+        
         // UI Design
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        nameTextField.tintColor = kCOLOR_ONE
+        view.backgroundColor = kCOLOR_THREE
+        tableView.backgroundColor = .clearColor()
+        
+        nameTextField.becomeFirstResponder()
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -42,6 +51,11 @@ class NewListingNameVC: UIViewController, UITableViewDataSource, UITableViewDele
     // MARK: - TextField Delegate
     func textFieldDidChange(sender:AnyObject) {
         tableView.reloadData()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        nameTextField.resignFirstResponder()
+        return true
     }
     
     
@@ -65,9 +79,15 @@ class NewListingNameVC: UIViewController, UITableViewDataSource, UITableViewDele
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("NameSuggestionCell", forIndexPath: indexPath)
+        cell.textLabel?.numberOfLines = 0
+        cell.backgroundColor = .whiteColor()
+        cell.textLabel?.font = UIFont.systemFontOfSize(16.0)
+        
         
         if indexPath.row == 0 {
             cell.textLabel?.text = "Continue with name \"\(nameTextField.text!)\""
+            cell.backgroundColor = kCOLOR_FIVE
+            cell.textLabel?.textColor = .whiteColor()
         }
         
         // TODO: Get matching names from server and load them into the tableview cell

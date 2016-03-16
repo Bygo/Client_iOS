@@ -85,7 +85,6 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
     
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
         if indexPath.row == 0 {
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("HeaderCell", forIndexPath: indexPath) as? RentRequestsHeaderCollectionViewCell else { return UICollectionViewCell() }
             
@@ -134,6 +133,7 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
                         // Configure cell text labels
                         cell.userNameLabel.text     = "\(renterFirstName) \(renterLastName)"
                         cell.rentalRateLabel.text   = String(format: "$%.2f", rentalRate)
+                        cell.userProfileImageView.image = UIImage(named: "sayan")
                     })
                 })
             })
@@ -143,14 +143,12 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row != 0 {
-            showMeetingResponder(indexPath)
-        }
+//        if indexPath.row != 0 {
+//            showMeetingResponder(indexPath)
+//        }
     }
     
 //    func showMeetingResponder(focusItemID:String, proposalIndex:Int) {
-    
-        
 //        guard let meetingSchedulerBundler = NSBundle(identifier: "com.NicholasGarfield.MeetingScheduler-iOS") else {
 //            print("MeetingScheduler bundle not found")
 //            return

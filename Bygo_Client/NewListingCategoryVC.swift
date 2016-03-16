@@ -9,16 +9,24 @@
 import UIKit
 import RealmSwift
 
-class NewListingCategoryVC: UITableViewController {
+class NewListingCategoryVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var model:Model?
+    
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var nextButton: UIBarButtonItem!
     
     var listingName:String?
     var listingDepartment:Department?
     var listingCategory:Category?
     
+    private var targetIndex:NSIndexPath?
+    
+    @IBOutlet var headerView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
         model?.categoryServiceProvider.refreshCategories({
             (success:Bool) in
@@ -26,7 +34,10 @@ class NewListingCategoryVC: UITableViewController {
             else { print("Error refreshing all Categories") }
         })
         
-        title = listingDepartment?.name
+        
+        title = "Category"
+        nextButton.enabled = false
+//        tableView.backgroundColor = .whiteColor()
     }
     
     override func didReceiveMemoryWarning() {
@@ -35,7 +46,7 @@ class NewListingCategoryVC: UITableViewController {
     }
     
     // MARK: - Table view data source
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
@@ -45,37 +56,55 @@ class NewListingCategoryVC: UITableViewController {
         return "departmentID == \"\(departmentID)\""
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let realm = try! Realm()
         return realm.objects(Category).filter(getQueryFilter()).count
     }
     
     
-    func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+    func configureCell(cell: ListingCategoryTableViewCell, atIndexPath indexPath: NSIndexPath) {
         let queryFilter = self.getQueryFilter()
+        cell.textLabel?.alpha = 0.0
         dispatch_async(GlobalUserInteractiveQueue, {
             let realm       = try! Realm()
             let categories  = realm.objects(Category).filter(queryFilter).sorted("name", ascending: true)
             guard let name  = categories[indexPath.row].name else { return }
-            dispatch_async(GlobalMainQueue, { cell.textLabel?.text = name })
+            dispatch_async(GlobalMainQueue, {
+                cell.textLabel?.text = name
+                UIView.animateWithDuration(0.5, delay: 0.05*Double(indexPath.row), options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                        cell.textLabel?.alpha = 1.0
+                    }, completion: nil)
+            })
         })
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("CategoryCell", forIndexPath: indexPath)
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCellWithIdentifier("CategoryCell", forIndexPath: indexPath) as? ListingCategoryTableViewCell else { return UITableViewCell() }
+        
         configureCell(cell, atIndexPath: indexPath)
+        
         return cell
         
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let realm       = try! Realm()
-        listingCategory = realm.objects(Category).filter(self.getQueryFilter()).sorted("name", ascending: true)[indexPath.row]
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        performSegueWithIdentifier("ShowTakePhotos", sender: nil)
+    func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return targetIndex != indexPath
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        targetIndex = indexPath
+        nextButton.enabled = true
     }
     
     // MARK: - UI Actions
+    @IBAction func nextButtonTapped(sender: AnyObject) {
+        if let targetIndex = targetIndex {
+            let realm       = try! Realm()
+            listingCategory = realm.objects(Category).filter(self.getQueryFilter()).sorted("name", ascending: true)[targetIndex.row]
+            performSegueWithIdentifier("ShowTakePhotos", sender: nil)
+        }
+    }
+    
     @IBAction func backButtonTapped(sender: AnyObject) {
         navigationController?.popViewControllerAnimated(true)
     }

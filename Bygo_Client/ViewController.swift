@@ -8,14 +8,15 @@
 
 import UIKit
 import MapKit
+import RealmSwift
 
-class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate, RentDelegate, DashboardDelegate {
+class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate, HomeDelegate, DashboardDelegate {
 
     let model = Model()
     
     @IBOutlet var menuContainer:UIViewController?
     @IBOutlet var settingsContainer:UIViewController?
-    @IBOutlet var rentContainer:UIViewController?
+    @IBOutlet var discoverContainer:UIViewController?
     @IBOutlet var dashboardContainer:UIViewController?
     @IBOutlet var loginContainer:UINavigationController?
     
@@ -27,6 +28,14 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        NSUserDefaults.standardUserDefaults().setValue("1", forKey: "LocalUserID")
+        
+        let loadedData = NSUserDefaults.standardUserDefaults().boolForKey("isDataLoaded")
+        
+        if !loadedData {
+            initWithDemoData()
+        }
         
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.model = model
         
@@ -44,6 +53,117 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
             print("Cannot work without location services")
         }
     }
+    
+    
+    func initWithDemoData() {
+        let realm = try! Realm()
+        
+        let currentUser = User()
+        currentUser.userID = "1"
+        currentUser.firstName = "Nick"
+        currentUser.lastName = "Garfield"
+        currentUser.phoneNumber = "+1 309 363 7151"
+        currentUser.isPhoneNumberVerified = true
+        currentUser.email = "nick@bygo.io"
+        currentUser.isEmailVerified = true
+        currentUser.dateLastModified = NSDate()
+        
+        
+        let user1 = User()
+        user1.userID = "2"
+        user1.firstName = "Sayan"
+        user1.lastName = "Roychowhdury"
+        user1.phoneNumber = "+1 123 456 7890"
+        user1.isPhoneNumberVerified = true
+        user1.email = "sayan@bygo.io"
+        user1.isEmailVerified = true
+        user1.dateLastModified = NSDate()
+        
+        
+        let listing1 = Listing()
+        listing1.listingID = "1"
+        listing1.name = "Accoustic Guitar"
+        listing1.categoryID = "5699257587728384"
+        listing1.totalValue.value = 150.0
+        listing1.hourlyRate.value = 2.0
+        listing1.dailyRate.value = 7.0
+        listing1.weeklyRate.value = 25.0
+        listing1.itemDescription = "A 6-string accoustic guitar"
+        
+        
+        let ad1 = AdvertisedListing()
+        ad1.isSnapshot = false
+        ad1.score = 1.0
+        ad1.name = "2-Person Camping Tent"
+        ad1.distance = 0.5
+        ad1.ownerID = "2"
+        ad1.rating.value = 5.0
+        ad1.totalValue.value = 60.0
+        ad1.hourlyRate.value = 2.0
+        ad1.dailyRate.value = 4.0
+        ad1.weeklyRate.value = 12.0
+        ad1.categoryID = "5746055551385600"
+        ad1.itemDescription = "An easy to-use camping tent perfect for 2 people."
+        ad1.listingID = "2"
+        
+        
+        let ad2 = AdvertisedListing()
+        ad2.isSnapshot = false
+        ad2.score = 2.0
+        ad2.name = "Xbox 360"
+        ad2.distance = 0.4
+        ad2.ownerID = "2"
+        ad2.rating.value = 4.0
+        ad2.totalValue.value = 300.0
+        ad2.hourlyRate.value = 3.0
+        ad2.dailyRate.value = 5.0
+        ad2.weeklyRate.value = 20.0
+        ad2.categoryID = "5684666375864320"
+        ad2.itemDescription = "An Xbox 360 from 2013. Includes two controllers, a power cabel, and an HDMI cabel."
+        ad2.listingID = "3"
+        
+        
+        let ad3 = AdvertisedListing()
+        ad3.isSnapshot = false
+        ad3.score = 3.0
+        ad3.name = "White Board"
+        ad3.distance = 0.4
+        ad3.ownerID = "2"
+        ad3.rating.value = 3.0
+        ad3.totalValue.value = 300.0
+        ad3.hourlyRate.value = 3.0
+        ad3.dailyRate.value = 5.0
+        ad3.weeklyRate.value = 20.0
+        ad3.categoryID = "5752754626625536"
+        ad3.itemDescription = "3 feet by 6 feet white board. Includes a black marker"
+        ad3.listingID = "4"
+        
+        
+        let rentEvent                   = RentEvent()
+        rentEvent.eventID               = "1"
+        rentEvent.ownerID               = "1"
+        rentEvent.renterID              = "2"
+        rentEvent.listingID             = "1"
+        rentEvent.rentalRate.value      = 2.0
+        rentEvent.timeFrame             = "Day"
+        rentEvent.proposedBy            = "Renter"
+        rentEvent.status                = "Proposed"
+        rentEvent.startMeetingEventID   = "0"
+        rentEvent.endMeetingEventID     = nil
+        
+        
+        try! realm.write {
+            realm.add(currentUser)
+            realm.add(user1)
+            realm.add(listing1)
+            realm.add(rentEvent)
+            realm.add(ad1)
+            realm.add(ad2)
+            realm.add(ad3)
+        }
+        
+        NSUserDefaults.standardUserDefaults().setBool(true, forKey: "isDataLoaded")
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -54,13 +174,13 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     private func refreshModules() {
         removeModule(&menuContainer)
         removeModule(&settingsContainer)
-        removeModule(&rentContainer)
+        removeModule(&discoverContainer)
         removeModule(&dashboardContainer)
         
         addModule("Menu", vc: &menuContainer)
         addModule("Settings", vc: &settingsContainer)
         addModule("Dashboard", vc: &dashboardContainer)
-        addModule("Rent", vc: &rentContainer)
+        addModule("Discover", vc: &discoverContainer)
         
         (menuContainer as? MenuContainerVC)?.delegate   = self
         (menuContainer as? MenuContainerVC)?.model      = model
@@ -71,10 +191,10 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.model = model
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.delegate = self
         
-        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.model           = model
-        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.delegate        = self
+        ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.model           = model
+        ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.delegate        = self
         
-        view.bringSubviewToFront(rentContainer!.view)
+        view.bringSubviewToFront(discoverContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)
         panGestureRecognizer.addTarget(menuContainer!, action: "panGestureRecognized:")
     }
@@ -108,7 +228,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     // MARK: - MenuContainerDelegate
     func didSelectMenuOption(option:MenuOptions) {
         switch option {
-        case .Rent:         view.bringSubviewToFront(rentContainer!.view)
+        case .Discover:     view.bringSubviewToFront(discoverContainer!.view)
         case .Dashboard:    view.bringSubviewToFront(dashboardContainer!.view)
         case .History:      break
         case .Settings:     view.bringSubviewToFront(settingsContainer!.view)
@@ -143,7 +263,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     func userDidLogin(shouldDismissLogin:Bool) {
         (menuContainer as? MenuContainerVC)?.userDidLogin()
         ((settingsContainer as? UINavigationController)?.topViewController as? SettingsVC)?.userDidLogin()
-        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.userDidLogin()
+        ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.userDidLogin()
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.userDidLogin()
         
         if shouldDismissLogin {
@@ -169,11 +289,11 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     }
     
     func didLogout() {
-        ((rentContainer as? UINavigationController)?.topViewController as? RentVC)?.userDidLogout()
+        ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.userDidLogout()
         ((dashboardContainer as? UINavigationController)?.topViewController as? DashboardVC)?.userDidLogout()
         (menuContainer as? MenuContainerVC)?.userDidLogout()
 
-        view.bringSubviewToFront(rentContainer!.view)
+        view.bringSubviewToFront(discoverContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)
     }
 }

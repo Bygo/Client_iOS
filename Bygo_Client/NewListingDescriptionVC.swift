@@ -10,12 +10,15 @@ import UIKit
 
 class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
     
+    @IBOutlet var headerView: UIView!
+    
     @IBOutlet var instructionLabel:UILabel!
     @IBOutlet var descriptionLabel:UILabel!
     @IBOutlet var descriptionTextView:UITextView!
-    @IBOutlet var continueButton:UIButton!
-    @IBOutlet var continueButtonDistanceToBottomLayoutGuide: NSLayoutConstraint!
+    @IBOutlet var descriptionViewBottomSpaceToContainer: NSLayoutConstraint!
     
+    @IBOutlet var descriptionView: UIView!
+    @IBOutlet var doneButton: UIBarButtonItem!
     
     var model:Model?
     var listingName:String?
@@ -35,7 +38,9 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
         
         // TODO: Give the description text view a placeholder
-        continueButton.enabled = isDataValid()
+        doneButton.enabled = isDataValid()
+        view.backgroundColor = kCOLOR_THREE
+        descriptionView.backgroundColor = .whiteColor()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -56,18 +61,31 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
     
     // MARK: - Keyboard
     func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            descriptionTextView.contentInset = UIEdgeInsetsMake(0, 0, keyboardSize.height, 0)
-        }
+//        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+//            descriptionTextView.contentInset = UIEdgeInsetsMake(0, 0, keyboardSize.height, 0)
+//        }
         
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let navBarHeight = navigationController?.navigationBar.bounds.height {
+                let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+                self.view.frame.origin.y = (navBarHeight + statusBarHeight) - headerView.bounds.height
+                self.descriptionViewBottomSpaceToContainer.constant = keyboardSize.height
+            }
+        }
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        descriptionTextView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        if let _ = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let navBarHeight = navigationController?.navigationBar.bounds.height {
+                let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+                self.view.frame.origin.y = navBarHeight + statusBarHeight
+                self.descriptionViewBottomSpaceToContainer.constant = 20.0
+            }
+        }
     }
     
     func textViewDidChange(textView: UITextView) {
-        continueButton.enabled = isDataValid()
+        doneButton.enabled = isDataValid()
     }
     
     // MARK: - UI Actions
@@ -77,12 +95,11 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
     
     
     // MARK: - UIActions
-    @IBAction func continueButtonTapped(sender:AnyObject) {
+    @IBAction func doneButtonTapped(sender:AnyObject) {
+
+        navigationController?.topViewController?.dismissViewControllerAnimated(true, completion: nil)
         
-        print(model)
-        print(model?.userServiceProvider.getLocalUser())
-        print(model?.userServiceProvider.getLocalUser()?.userID)
-        
+        /*
         // Validate the Listing data
         guard let userID            = model?.userServiceProvider.getLocalUser()?.userID else { print("No user id"); return }
         guard let name              = listingName                   else { return }
@@ -102,5 +119,6 @@ class NewListingDescriptionVC: UIViewController, UITextViewDelegate {
                 print("Error creating new Listing")
             }
         })
+        */
     }
 }

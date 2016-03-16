@@ -9,9 +9,9 @@
 import UIKit
 
 class SearchBar: UITextField {
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         
         font = UIFont.systemFontOfSize(16.0)
         layer.cornerRadius  = frame.height/2.0 - 1.0
@@ -21,10 +21,6 @@ class SearchBar: UITextField {
         textColor           = .blackColor()
         tintColor           = kCOLOR_ONE
         placeholder         = "Search"
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
     
     override func textRectForBounds(bounds: CGRect) -> CGRect {

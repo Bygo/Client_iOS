@@ -17,6 +17,8 @@ class MenuOptionTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         // Set the horizontal inset of the cell's text
+        backgroundColor = .clearColor()
+        textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
         textLabel?.frame.origin.x = bounds.size.width*(1.0/3.0) + 16.0 + 16.0 + 25.0 + 8.0
         selectionIndicatorWidthConstraint.constant = bounds.size.width*(1.0/3.0) + 8.0
         
@@ -32,20 +34,20 @@ class MenuOptionTableViewCell: UITableViewCell {
         }
     }
     
-    override func setHighlighted(highlighted: Bool, animated: Bool) {
-        if highlighted {
-            backgroundColor = .lightGrayColor()
-        } else {
-            backgroundColor = .whiteColor()
-        }
-    }
+//    override func setHighlighted(highlighted: Bool, animated: Bool) {
+//        if highlighted {
+//            backgroundColor = .lightGrayColor()
+//        } else {
+//            backgroundColor = .whiteColor()
+//        }
+//    }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+//    override func setSelected(selected: Bool, animated: Bool) {
 //        if selected {
 //            selectionIndicator.hidden = false
 //        } else {
 //            selectionIndicator.hidden = true
 //        }
-    }
+//    }
     
 }

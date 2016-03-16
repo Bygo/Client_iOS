@@ -8,13 +8,18 @@
 
 import UIKit
 
-class NewListingValueVC: UIViewController {
+class NewListingValueVC: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var instructionLabel:UILabel!
+    @IBOutlet var detailedLabel: UILabel!
     @IBOutlet var itemValueLabel:UILabel!
     @IBOutlet var currencyLabel:UILabel!
     @IBOutlet var itemValueTextField:UITextField!
-    @IBOutlet var continueButton:UIButton!
+    @IBOutlet var nextButton: UIBarButtonItem!
+    
+    @IBOutlet var headerView: UIView!
+    @IBOutlet var valueView: UIView!
+    
     
     var model:Model?
     var listingName:String?
@@ -27,7 +32,19 @@ class NewListingValueVC: UIViewController {
         
         // Do any additional setup after loading the view.
         itemValueTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        continueButton.enabled = isDataValid()
+        nextButton.enabled = isDataValid()
+        
+        instructionLabel.text = "5. In total, how valuable are the items included in this Listing?"
+        
+        detailedLabel.text = "The Listing value will be used to calculate suggested rental rates. Currently, Listings are limited to values of $1000 or less."
+        
+        itemValueTextField.becomeFirstResponder()
+        
+        itemValueTextField.tintColor = kCOLOR_ONE
+        
+        view.backgroundColor = kCOLOR_THREE
+        headerView.backgroundColor = .whiteColor()
+        valueView.backgroundColor = .whiteColor()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -47,18 +64,39 @@ class NewListingValueVC: UIViewController {
     
     
     // MARK: - TextField Delegate
-    func textFieldDidChange(sender:AnyObject) {
-        continueButton.enabled = isDataValid()
-    }
-    
-    // MARK: - UIActions
-    @IBAction func continueButtonTapped(sender:AnyObject) {
-        if isDataValid() {
-            itemValueTextField.resignFirstResponder()
-            performSegueWithIdentifier("ShowSetRentalRates", sender: nil)
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        if textField == itemValueTextField {
+            if let text = textField.text {
+                let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+                
+                let components = newString.componentsSeparatedByString(".")
+                
+                // If the user is adding an extra decimal point, don't allow the change
+                if components.count > 2 {
+                    return false
+                }
+                
+                // If the user is trying to specify a monetary value with greater than one cent precision, don't allow their text to be entered
+                if components.count == 2 {
+                    let cents = components[1]
+                    if cents.characters.count > 2 {
+                        return false
+                    }
+                }
+                
+                // If the value will be greater than 1000, don't allow the user to enter in a value
+                let v = NSString(string: newString).doubleValue
+                if v > 1000 { return false }
+            }
         }
+        return true
     }
     
+    func textFieldDidChange(sender:AnyObject) {
+        nextButton.enabled = isDataValid()
+    }
+    
+    // MARK: - UI Actions
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)
         if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
@@ -66,10 +104,17 @@ class NewListingValueVC: UIViewController {
         }
     }
     
-    // MARK: - UI Actions
     @IBAction func backButtonTapped(sender: AnyObject) {
         navigationController?.popViewControllerAnimated(true)
     }
+    
+    @IBAction func nextButtonTapped(sender: AnyObject) {
+        if isDataValid() {
+            itemValueTextField.resignFirstResponder()
+            performSegueWithIdentifier("ShowSetRentalRates", sender: nil)
+        }
+    }
+    
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

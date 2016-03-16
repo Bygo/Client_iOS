@@ -31,8 +31,10 @@ class UserServiceProvider: NSObject {
     // Get the local user
     func getLocalUser() -> User? {
         guard let userID = NSUserDefaults.standardUserDefaults().valueForKey("LocalUserID") as? String else { return nil }
+        print("UserID: \(userID)")
         let result:Results<User> = try! Realm().objects(User).filter("userID == \"\(userID)\"")
         guard let user = result.first else { return nil }
+        print(user)
         return user
     }
     
@@ -46,7 +48,7 @@ class UserServiceProvider: NSObject {
     func createNewUser(firstName:String, lastName:String, email:String, phoneNumber:String?, facebookID:String?, password:String?, signupMethod:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/create_new/user"
+        let urlString = "\(serverURL)/user/create"
         var params = ["first_name":firstName, "last_name":lastName, "email":email, "phone_number":"", "facebook_id":"", "password":"", "signup_method":signupMethod]
         if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
             params["notification_token"] = notificationToken
@@ -122,7 +124,7 @@ class UserServiceProvider: NSObject {
     func setUserProfileImage(userID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
         let filename = "profile_picture.jpg"
         
-        let url = NSURL(string: "\(serverURL)/create_new/user_image/user_id=\(userID)")!
+        let url = NSURL(string: "\(serverURL)/create_user_image/user_id=\(userID)")!
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
@@ -180,9 +182,8 @@ class UserServiceProvider: NSObject {
     private func downloadUserPublicData(userID:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/request/user_public_data/user_id=\(userID)"
+        let urlString = "\(serverURL)/user/user_id=\(userID)"
         guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
-        
         
         
         // Execute the request
@@ -242,7 +243,7 @@ class UserServiceProvider: NSObject {
     func login(phoneNumber:String, password:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString   = "\(serverURL)/login/user"
+        let urlString   = "\(serverURL)/user/login"
         var params      = ["login_id":phoneNumber, "password":password]
         if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
             params["notification_token"] = notificationToken
@@ -296,7 +297,7 @@ class UserServiceProvider: NSObject {
     func login(facebookID:String, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/login/facebook_user"
+        let urlString = "\(serverURL)/user/login_facebook"
         var params = ["facebook_id":facebookID]
         if let notificationToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.registrationToken {
             params["notification_token"] = notificationToken
@@ -348,9 +349,6 @@ class UserServiceProvider: NSObject {
                 guard let credit                = json["credit"] as? Double else { return }
                 guard let debit                 = json["debit"] as? Double else { return }
                 let mediaImageLink              = json["image_media_link"] as? String
-                let dateFormatter               = NSDateFormatter()
-                dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
-                guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                 
                 // Create new user
                 let user                    = User()
@@ -365,7 +363,6 @@ class UserServiceProvider: NSObject {
                 user.isEmailVerified        = isEmailVerified
                 user.credit                 = credit
                 user.debit                  = debit
-                user.dateLastModified       = dateLastModified
                 user.profileImageLink       = mediaImageLink
                 
                 let realm = try! Realm()
@@ -412,7 +409,7 @@ class UserServiceProvider: NSObject {
         
         // Create the request
         guard let userID = getLocalUser()?.userID else { return }
-        let urlString = "\(serverURL)/update/user"
+        let urlString = "\(serverURL)/user/update/user_id=\(userID)"
         let params = ["user_id":userID, "first_name":firstName, "last_name":lastName, "email":email, "phone_number":phoneNumber] as [String:String]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
             completionHandler(success: false)
