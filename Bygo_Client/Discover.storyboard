@@ -546,8 +546,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your listing was created." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ARS-SB-xJF">
-                                <rect key="frame" x="32" y="105" width="537" height="19.5"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                <rect key="frame" x="32" y="105" width="537" height="21.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -584,6 +584,7 @@
                         <outlet property="checkmarkView" destination="5q4-oT-eMh" id="rwZ-uF-d7h"/>
                         <outlet property="detailLabel" destination="ARS-SB-xJF" id="zIK-IL-dXR"/>
                         <outlet property="doneButton" destination="G7t-Bf-iLl" id="mN9-SZ-mD7"/>
+                        <outlet property="doneButtonBottomOffset" destination="AqY-5J-w9M" id="pUa-PK-egN"/>
                         <outlet property="titleLabel" destination="fRr-T8-bmT" id="Rdq-09-Zv4"/>
                     </connections>
                 </viewController>

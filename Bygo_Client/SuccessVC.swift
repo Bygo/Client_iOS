@@ -13,6 +13,7 @@ class SuccessVC: UIViewController {
     @IBOutlet var titleLabel:UILabel!
     @IBOutlet var detailLabel:UILabel!
     @IBOutlet var doneButton: UIButton!
+    @IBOutlet var doneButtonBottomOffset: NSLayoutConstraint!
     @IBOutlet var checkmarkView:AnimatedCheckmarkView!
     
     var delegate:SuccessDelegate?
@@ -32,6 +33,7 @@ class SuccessVC: UIViewController {
         
         doneButton.backgroundColor = kCOLOR_THREE
         doneButton.setTitleColor(kCOLOR_SIX, forState: .Normal)
+        doneButtonBottomOffset.constant = -48.0
         doneButton.alpha = 0.0
 
         checkmarkView.layoutIfNeeded()
@@ -43,10 +45,12 @@ class SuccessVC: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         checkmarkView.beginAnimation({
+            self.doneButtonBottomOffset.constant = 48.0
             UIView.animateWithDuration(1.0, animations: {
                 self.titleLabel.alpha = 1.0
                 self.detailLabel.alpha = 1.0
                 self.doneButton.alpha = 1.0
+                self.view.layoutIfNeeded()
             })
         })
     }
