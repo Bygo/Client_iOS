@@ -107,8 +107,9 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         if segue.identifier == "SuccessSegue" {
             guard let destVC = segue.destinationViewController as? SuccessVC else { return }
             destVC.delegate = self
-//            guard let destVC = segue.destinationViewController as? SuccessVC else { return }
-//            destVC.titleLabel.text = "Success! Success! Your listing was created."
+            destVC.titleString = "Success!"
+            destVC.detailString = "Your listing was created."
+
         } else if segue.identifier == "HomeAddressSegue" {
             
         }

@@ -29,14 +29,6 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        NSUserDefaults.standardUserDefaults().setValue("1", forKey: "LocalUserID")
-        
-        let loadedData = NSUserDefaults.standardUserDefaults().boolForKey("isDataLoaded")
-        
-        if !loadedData {
-            initWithDemoData()
-        }
-        
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.model = model
         
         refreshModules()
@@ -54,7 +46,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         }
     }
     
-    
+    /*
     func initWithDemoData() {
         let realm = try! Realm()
         
@@ -164,6 +156,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         
         NSUserDefaults.standardUserDefaults().setBool(true, forKey: "isDataLoaded")
     }
+    */
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

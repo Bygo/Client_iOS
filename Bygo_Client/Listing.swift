@@ -16,10 +16,6 @@ class Listing: Object {
     dynamic var name:String?            = nil
     dynamic var itemDescription:String? = nil
     let rating      = RealmOptional<Double>()
-    let totalValue  = RealmOptional<Double>()
-    let hourlyRate  = RealmOptional<Double>()
-    let dailyRate   = RealmOptional<Double>()
-    let weeklyRate  = RealmOptional<Double>()
     let imageLinks = List<RealmString>()
     
     dynamic var dateLastModified:NSDate? = nil
@@ -28,5 +24,5 @@ class Listing: Object {
     // Relations
     dynamic var ownerID:String?     = nil
     dynamic var renterID:String?    = nil
-    dynamic var categoryID:String?  = nil
+    dynamic var typeID:String?      = nil
 }

@@ -8,6 +8,8 @@
 
 import UIKit
 import RealmSwift
+import Haneke
+
 
 private let kSHAPE_1_WIDTH_FACTOR:CGFloat   = 2.0
 private let kSHAPE_1_HEIGHT_FACTOR:CGFloat  = 2.0
@@ -18,7 +20,7 @@ private let kSHAPE_3_HEIGHT_FACTOR:CGFloat  = 1.0
 private let kSHAPE_4_WIDTH_FACTOR:CGFloat   = 1.0
 private let kSHAPE_4_HEIGHT_FACTOR:CGFloat  = 2.0
 
-class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, EditListingsDelegate {
+class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var noListingsLabel: UILabel!
@@ -117,12 +119,12 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                     cell.itemTitleLabel.text    = name
                 })
             }
-            
-            if let renterID = listing.renterID {
-                // TOOD: Grab the image of the renter
-                cell.renterImageView.hidden = false
-            }
-            
+//            
+//            if let renterID = listing.renterID {
+//                // TOOD: Grab the image of the renter
+//                cell.renterImageView.hidden = false
+//            }
+//            
             if let imageMediaLink = listing.imageLinks.first {
                 if let link = imageMediaLink.value {
                     if let url = NSURL(string: link) {
@@ -178,14 +180,14 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowEditListing" {
-            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
-            guard let destVC    = navVC.topViewController as? EditListingVC else { return }
-            destVC.delegate     = self
-            destVC.model        = model
-            if let focusIndex   = focusIndex {
-                let realm       = try! Realm()
-                destVC.listing  = realm.objects(Listing).filter(getQueryFilter()).sorted("name", ascending: true)[focusIndex.item]
-            }
+//            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
+//            guard let destVC    = navVC.topViewController as? EditListingVC else { return }
+//            destVC.delegate     = self
+//            destVC.model        = model
+//            if let focusIndex   = focusIndex {
+//                let realm       = try! Realm()
+//                destVC.listing  = realm.objects(Listing).filter(getQueryFilter()).sorted("name", ascending: true)[focusIndex.item]
+//            }
         }
     }
 }

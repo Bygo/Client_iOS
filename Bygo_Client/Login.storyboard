@@ -457,7 +457,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Verify Mobile Number" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="44S-Vn-anU">
-                                <rect key="frame" x="214" y="33" width="174" height="21"/>
+                                <rect key="frame" x="213.5" y="33.5" width="173.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -475,14 +475,14 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8GP-MO-v1w">
                                 <rect key="frame" x="0.0" y="84" width="600" height="48"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="CODE" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gfE-jc-OeM">
-                                        <rect key="frame" x="20" y="18" width="35" height="14"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CODE" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gfE-jc-OeM">
+                                        <rect key="frame" x="20" y="17" width="34.5" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Verification Code" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kcp-nc-2VU">
-                                        <rect key="frame" x="62" y="0.0" width="530" height="48"/>
+                                        <rect key="frame" x="62.5" y="0.0" width="529.5" height="48"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -502,7 +502,7 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We will text the verification code to your device." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="REa-5P-162">
-                                <rect key="frame" x="20" y="140" width="560" height="15"/>
+                                <rect key="frame" x="20" y="140" width="560" height="14.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="1" alpha="0.75" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -945,7 +945,7 @@
         <image name="GreenBackground" width="310" height="552"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="SMj-w5-FnQ"/>
-        <segue reference="LcY-A0-deo"/>
+        <segue reference="n47-CR-1s8"/>
+        <segue reference="vBR-rO-pyk"/>
     </inferredMetricsTieBreakers>
 </document>

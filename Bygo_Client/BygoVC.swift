@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, SuccessDelegate {
     
     @IBOutlet var searchBar: SearchBar!
     @IBOutlet var promptLabel: UILabel!
@@ -59,7 +59,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     override func viewWillAppear(animated: Bool) {
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .Slide)
+        UIApplication.sharedApplication().statusBarHidden = false
+//        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .Slide)
     }
 
     override func didReceiveMemoryWarning() {
@@ -153,6 +154,15 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         }
     }
     
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        switch indexPath.section {
+        case 2:
+            performSegueWithIdentifier("OrderSegue", sender: nil)
+        default:
+            break
+        }
+    }
+    
     private var previousScrollViewOffset:CGFloat = 0.0
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == collectionView {
@@ -181,7 +191,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "CreateNewListing" {
-            UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .Slide)
+            
+            // UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .Slide)
             
             guard let destVC = segue.destinationViewController as? NewListingImageVC else { return }
             if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
@@ -195,9 +206,15 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 destVC.sourceType     = .PhotoLibrary
                 destVC.allowsEditing  = false
             }
-        }
+        } 
     }
     
+    
+    // MARK: - Success Delegate
+    func doneButtonTapped() {
+        dismissViewControllerAnimated(true, completion: nil)
+//        navigationController?.popViewControllerAnimated(true)
+    }
 }
 
 // MARK: - UICollectionViewDelegate

@@ -22,23 +22,15 @@ enum RentalTimeFrame:String {
     case Week   = "Week"
 }
 
-class Model: NSObject, AdvertisedListingsServiceProviderDataSource {
+class Model: NSObject {
     let userServiceProvider                     = UserServiceProvider(serverURL: serverURL)
     let favoriteMeetingLocationServiceProvider  = FavoriteMeetingLocationServiceProvider(serverURL: serverURL)
-    let advertisedListingServiceProvider        = AdvertisedListingsServiceProvider(serverURL: serverURL)
     let listingServiceProvider                  = ListingsServiceProvider(serverURL: serverURL)
-    let departmentServiceProvider               = DepartmentsServiceProvider(serverURL: serverURL)
-    let categoryServiceProvider                 = CategoriesServiceProvider(serverURL: serverURL)
     let rentServiceProvider                     = RentServiceProvider(serverURL: serverURL)
     let meetingServiceProvider                  = MeetingServiceProvider(serverURL: serverURL)
     let paymentsServiceProvider                 = PaymentsServiceProvider(serverURL: serverURL)
     let phoneNumberServiceProvider              = PhoneNumberVerificationServiceProvider(serverURL: serverURL)
     let dataValidator = DataValidator()
-
-    override init() {
-        super.init()
-        advertisedListingServiceProvider.dataSource = self
-    }
     
     // TODO: Remove this function and get the AdListingsSP to accept the userID instead
     internal func getLocalUser() -> User? {

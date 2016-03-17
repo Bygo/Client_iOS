@@ -10,6 +10,9 @@ import UIKit
 
 class SuccessVC: UIViewController {
 
+    var titleString:String?
+    var detailString:String?
+    
     @IBOutlet var titleLabel:UILabel!
     @IBOutlet var detailLabel:UILabel!
     @IBOutlet var doneButton: UIButton!
@@ -24,7 +27,11 @@ class SuccessVC: UIViewController {
         // Do any additional setup after loading the view.
         
         view.backgroundColor = kCOLOR_THREE
-        UIApplication.sharedApplication().statusBarHidden = true
+        UIApplication.sharedApplication().statusBarHidden = false
+        navigationController?.navigationBarHidden = true
+
+        titleLabel.text = titleString
+        detailLabel.text = detailString
         
         titleLabel.textColor = kCOLOR_THREE
         detailLabel.textColor = kCOLOR_THREE
@@ -43,10 +50,14 @@ class SuccessVC: UIViewController {
         view.bringSubviewToFront(detailLabel)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        
+    }
+    
     override func viewDidAppear(animated: Bool) {
         checkmarkView.beginAnimation({
             self.doneButtonBottomOffset.constant = 48.0
-            UIView.animateWithDuration(1.0, animations: {
+            UIView.animateWithDuration(0.5, animations: {
                 self.titleLabel.alpha = 1.0
                 self.detailLabel.alpha = 1.0
                 self.doneButton.alpha = 1.0
@@ -62,8 +73,6 @@ class SuccessVC: UIViewController {
     
     @IBAction func doneButtonTapped(sender:AnyObject) {
         self.delegate?.doneButtonTapped()
-//        print(parentViewController)
-//        .parentViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
     

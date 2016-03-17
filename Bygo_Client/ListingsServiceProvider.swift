@@ -64,11 +64,6 @@ class ListingsServiceProvider: NSObject {
                         guard let status            = listingData["status"] as? String else { return }
                         guard let itemDescription   = listingData["item_description"] as? String else { return }
                         let rating                  = listingData["rating"] as? Double
-                        guard let totalValue        = listingData["total_value"] as? Double else { return }
-                        guard let hourlyRate        = listingData["hourly_rate"] as? Double else { return }
-                        guard let dailyRate         = listingData["daily_rate"] as? Double else { return }
-                        guard let weeklyRate        = listingData["weekly_rate"] as? Double else { return }
-                        guard let categoryID        = listingData["category_id"] as? String else { return }
                         let mediaLinks              = listingData["image_media_links"] as? [String]
                         
                         let dateFormatter           = NSDateFormatter()
@@ -85,11 +80,6 @@ class ListingsServiceProvider: NSObject {
                         listing.status              = status
                         listing.itemDescription     = itemDescription
                         listing.rating.value        = rating
-                        listing.totalValue.value    = totalValue
-                        listing.hourlyRate.value    = hourlyRate
-                        listing.dailyRate.value     = dailyRate
-                        listing.weeklyRate.value    = weeklyRate
-                        listing.categoryID          = categoryID
                         listing.dateLastModified    = dateLastModified
                         
                         if let mediaLinks = mediaLinks {
@@ -117,11 +107,11 @@ class ListingsServiceProvider: NSObject {
         task.resume()
     }
     
-    func createNewListing(userID:String, name:String, categoryID:String, totalValue:Double, hourlyRate:Double, dailyRate:Double, weeklyRate:Double, itemDescription:String, images:[UIImage], completionHandler:(success:Bool)->Void) {
+    func createNewListing(userID:String, typeID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
         
         // Create the request
-        let urlString = "\(serverURL)/create_new/listing"
-        let params:[String:AnyObject] = ["owner_id":userID, "name":name, "item_description":itemDescription, "total_value":totalValue, "hourly_rate":hourlyRate, "daily_rate":dailyRate, "weekly_rate":weeklyRate, "category_id":categoryID]
+        let urlString = "\(serverURL)/listing/create"
+        let params:[String:AnyObject] = ["user_id":userID, "type_id": typeID]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
         
 
@@ -146,34 +136,19 @@ class ListingsServiceProvider: NSObject {
                     dispatch_async(dispatch_get_main_queue(), {
                         guard let listingID         = json["listing_id"] as? String else { return }
                         guard let status            = json["status"] as? String else { return }
-                        let dateFormatter           = NSDateFormatter()
-                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                        guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
+                        
+//                        let dateFormatter           = NSDateFormatter()
+//                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
+//                        guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
     
                         
                         // Add new Listing to local cache
                         let realm                   = try! Realm()
                         let listing                 = Listing()
                         listing.listingID           = listingID
-                        listing.name                = name
-                        listing.ownerID             = userID
-                        listing.categoryID          = categoryID
-                        listing.totalValue.value    = totalValue
-                        listing.hourlyRate.value    = hourlyRate
-                        listing.dailyRate.value     = dailyRate
-                        listing.weeklyRate.value    = weeklyRate
-                        listing.itemDescription     = itemDescription
-                        listing.status              = status
-                        listing.dateLastModified    = dateLastModified
+                        
                         try! realm.write { realm.add(listing) }
-                    
-                        print("NUM IMAGES: \(images.count)")
-                        var i = 0
-                        for image in images {
-                            print("Sending... \(i)")
-                            i++
-                            self.addImageForListing(listingID, image: image, completionHandler: completionHandler)
-                        }
+                        self.addImageForListing(listingID, image: image, completionHandler: completionHandler)
                     })
                 } catch {
                     dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
@@ -281,11 +256,6 @@ class ListingsServiceProvider: NSObject {
                     // Parse the JSON response object
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let name              = json["name"] as? String else { return }
-                    guard let categoryID        = json["category_id"] as? String else { return }
-                    guard let totalValue        = json["total_value"] as? Double else { return }
-                    guard let hourlyRate        = json["hourly_rate"] as? Double else { return }
-                    guard let dailyRate         = json["daily_rate"] as? Double else { return }
-                    guard let weeklyRate        = json["weekly_rate"] as? Double else { return }
                     guard let itemDescription   = json["item_description"] as? String else { return }
                     let dateFormatter           = NSDateFormatter()
                     dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
@@ -298,11 +268,6 @@ class ListingsServiceProvider: NSObject {
                         
                         try! realm.write {
                             listing.name                = name
-                            listing.categoryID          = categoryID
-                            listing.totalValue.value    = totalValue
-                            listing.hourlyRate.value    = hourlyRate
-                            listing.dailyRate.value     = dailyRate
-                            listing.weeklyRate.value    = weeklyRate
                             listing.itemDescription     = itemDescription
                             listing.dateLastModified    = dateLastModified
                         }
@@ -364,11 +329,6 @@ class ListingsServiceProvider: NSObject {
                     guard let status            = json["status"]            as? String else { return }
                     guard let itemDescription   = json["item_description"]  as? String else { return }
                     let rating                  = json["rating"]            as? Double
-                    guard let totalValue        = json["total_value"]       as? Double else { return }
-                    guard let hourlyRate        = json["hourly_rate"]       as? Double else { return }
-                    guard let dailyRate         = json["daily_rate"]        as? Double else { return }
-                    guard let weeklyRate        = json["weekly_rate"]       as? Double else { return }
-                    guard let categoryID        = json["category_id"]       as? String else { return }
                     let dateFormatter           = NSDateFormatter()
                     dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
                     guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
@@ -384,11 +344,6 @@ class ListingsServiceProvider: NSObject {
                     listing.status              = status
                     listing.itemDescription     = itemDescription
                     listing.rating.value        = rating
-                    listing.totalValue.value    = totalValue
-                    listing.hourlyRate.value    = hourlyRate
-                    listing.dailyRate.value     = dailyRate
-                    listing.weeklyRate.value    = weeklyRate
-                    listing.categoryID          = categoryID
                     listing.dateLastModified    = dateLastModified
                     
                     try! realm.write {
