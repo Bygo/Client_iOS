@@ -28,7 +28,6 @@ class SuccessVC: UIViewController {
         
         view.backgroundColor = kCOLOR_THREE
         UIApplication.sharedApplication().statusBarHidden = false
-        navigationController?.navigationBarHidden = true
 
         titleLabel.text = titleString
         detailLabel.text = detailString
@@ -51,7 +50,7 @@ class SuccessVC: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     override func viewDidAppear(animated: Bool) {

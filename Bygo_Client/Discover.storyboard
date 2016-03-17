@@ -482,47 +482,6 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ic3-dR-Glf">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fxd-JM-IoF">
-                                        <rect key="frame" x="20" y="26" width="60" height="33"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="60" id="DcV-Ja-VOX"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                        <state key="normal" title="Cancel"/>
-                                        <connections>
-                                            <action selector="cancelButtonTapped:" destination="nPW-nW-td1" eventType="touchUpInside" id="7Qf-qy-p3w"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Configure Order" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m4E-hv-v7M">
-                                        <rect key="frame" x="235" y="26" width="129.5" height="33"/>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X3t-mc-fla">
-                                        <rect key="frame" x="532" y="25.5" width="60" height="33"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="60" id="gsx-YX-YpJ"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                        <state key="normal" title="Send"/>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="64" id="0uF-bQ-ukF"/>
-                                    <constraint firstAttribute="bottom" secondItem="fxd-JM-IoF" secondAttribute="bottom" constant="5" id="4VZ-lb-VNM"/>
-                                    <constraint firstItem="m4E-hv-v7M" firstAttribute="centerX" secondItem="Ic3-dR-Glf" secondAttribute="centerX" id="FA5-yQ-eLA"/>
-                                    <constraint firstItem="fxd-JM-IoF" firstAttribute="leading" secondItem="Ic3-dR-Glf" secondAttribute="leading" constant="8" id="G29-OD-PDH"/>
-                                    <constraint firstItem="m4E-hv-v7M" firstAttribute="height" secondItem="fxd-JM-IoF" secondAttribute="height" id="Tld-fh-SWQ"/>
-                                    <constraint firstAttribute="trailing" secondItem="X3t-mc-fla" secondAttribute="trailing" constant="8" id="Zri-OF-rde"/>
-                                    <constraint firstAttribute="bottom" secondItem="m4E-hv-v7M" secondAttribute="bottom" constant="5" id="d5Y-fH-PyY"/>
-                                    <constraint firstItem="X3t-mc-fla" firstAttribute="centerY" secondItem="m4E-hv-v7M" secondAttribute="centerY" id="kac-jc-PrQ"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
@@ -532,17 +491,14 @@
                             <constraint firstAttribute="leadingMargin" secondItem="QlP-IM-iqy" secondAttribute="leading" id="859-pF-jm8"/>
                             <constraint firstItem="QlP-IM-iqy" firstAttribute="top" secondItem="alV-1m-PZL" secondAttribute="bottom" constant="24" id="Ncw-jD-AV8"/>
                             <constraint firstItem="XaW-Xy-ZLC" firstAttribute="trailing" secondItem="vld-Mp-EHD" secondAttribute="trailingMargin" id="O9f-m0-Kbw"/>
-                            <constraint firstItem="Ic3-dR-Glf" firstAttribute="top" secondItem="alV-1m-PZL" secondAttribute="bottom" constant="-64" id="Rwo-E3-KW6"/>
                             <constraint firstItem="QlP-IM-iqy" firstAttribute="centerX" secondItem="vld-Mp-EHD" secondAttribute="centerX" id="ewM-im-rub"/>
                             <constraint firstItem="WFd-0w-VJ3" firstAttribute="trailing" secondItem="vld-Mp-EHD" secondAttribute="centerX" id="fo9-Zo-QvB"/>
-                            <constraint firstItem="Ic3-dR-Glf" firstAttribute="centerX" secondItem="vld-Mp-EHD" secondAttribute="centerX" id="giB-MP-qc9"/>
                             <constraint firstItem="WFd-0w-VJ3" firstAttribute="top" secondItem="QlP-IM-iqy" secondAttribute="bottom" constant="16" id="h2Z-2P-exe"/>
                             <constraint firstItem="7Cc-ad-Tl5" firstAttribute="top" secondItem="WFd-0w-VJ3" secondAttribute="bottom" id="kv9-o8-gDf"/>
                             <constraint firstItem="XaW-Xy-ZLC" firstAttribute="height" secondItem="WFd-0w-VJ3" secondAttribute="height" id="lCv-6k-hq7"/>
                             <constraint firstItem="dBS-5U-bAH" firstAttribute="centerX" secondItem="XaW-Xy-ZLC" secondAttribute="centerX" id="naW-PP-CqA"/>
                             <constraint firstItem="7Cc-ad-Tl5" firstAttribute="centerX" secondItem="WFd-0w-VJ3" secondAttribute="centerX" id="plp-5K-KJ9"/>
                             <constraint firstItem="XaW-Xy-ZLC" firstAttribute="leading" secondItem="WFd-0w-VJ3" secondAttribute="trailing" id="sfT-2S-Z4q"/>
-                            <constraint firstItem="Ic3-dR-Glf" firstAttribute="width" secondItem="vld-Mp-EHD" secondAttribute="width" id="tKv-YF-qeS"/>
                             <constraint firstItem="dBS-5U-bAH" firstAttribute="top" secondItem="XaW-Xy-ZLC" secondAttribute="bottom" id="tnZ-7V-7eQ"/>
                         </constraints>
                     </view>
@@ -560,10 +516,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cancelButton" destination="DaX-Gc-WSk" id="tHg-nW-u5X"/>
-                        <outlet property="mockCancelButton" destination="fxd-JM-IoF" id="l0E-Uc-2vu"/>
-                        <outlet property="mockNavBar" destination="Ic3-dR-Glf" id="Get-rd-nYT"/>
-                        <outlet property="mockSendButton" destination="X3t-mc-fla" id="ldu-cv-mJj"/>
-                        <outlet property="mockTitleLabel" destination="m4E-hv-v7M" id="RLW-Wj-YHL"/>
                         <outlet property="promptLabel" destination="QlP-IM-iqy" id="ycy-WI-hw8"/>
                         <outlet property="rentalDurationLabel" destination="7Cc-ad-Tl5" id="sdy-4V-2pu"/>
                         <outlet property="rentalDurationTextField" destination="WFd-0w-VJ3" id="5mR-1R-3Wz"/>

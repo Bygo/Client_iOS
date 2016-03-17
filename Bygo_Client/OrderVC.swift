@@ -9,16 +9,6 @@
 import UIKit
 
 class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
-    
-
-    // TERRIBLE TERRIBLE HACK
-    // When SuccessVC hides the nav bar, a black bar is left during the push animation
-    // This *mock* navbar is meant to cover up that visual glitch
-    @IBOutlet var mockNavBar: UIView!
-    @IBOutlet var mockTitleLabel: UILabel!
-    @IBOutlet var mockCancelButton: UIButton!
-    @IBOutlet var mockSendButton: UIButton!
-
 
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var sendButton: UIBarButtonItem!
@@ -30,13 +20,6 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Configuration of the TERRIBLE TERRIBLE HACK
-        mockNavBar.backgroundColor = kCOLOR_ONE
-        mockTitleLabel.textColor = .whiteColor()
-        mockCancelButton.setTitleColor(.whiteColor(), forState: .Normal)
-        mockSendButton.setTitleColor(.whiteColor(), forState: .Normal)
-        
         
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
@@ -55,6 +38,10 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
         rentalDurationTextField.text = ""
         sendButton.enabled = isDataValid()
         rentalDurationTextField.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     private func isDataValid() -> Bool {
