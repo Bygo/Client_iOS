@@ -10,9 +10,11 @@ import UIKit
 
 class ItemTypeCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet var imageView: UIImageView!
     @IBOutlet var nameLabel: UILabel!
  
     override func prepareForReuse() {
         backgroundColor = .whiteColor()
     }
+    
 }

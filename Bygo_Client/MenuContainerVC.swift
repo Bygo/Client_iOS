@@ -45,7 +45,7 @@ class MenuContainerVC: UIViewController, MenuDelegate {
         openMenuAnimationWithVelocity(-1.0)
     }
     
-    @IBAction private func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
+    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         
         guard let delegate = delegate else { return }
         

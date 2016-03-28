@@ -163,7 +163,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
             model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: phoneNumberTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "Phone Number", completionHandler: { (success:Bool)->Void in
                 if success {
                     self.delegate?.userDidLogin(false)
-                    self.performSegueWithIdentifier("ShowPhoneNumberVerification", sender: nil)
+                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
                 } else {
                     print("Error creating new user")
                 }
@@ -191,7 +191,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                             if success {
                                 dispatch_async(GlobalMainQueue, {
                                     self.delegate?.userDidLogin(false)
-                                    self.performSegueWithIdentifier("ShowRequestPhoneNumber", sender: nil)
+                                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
                                 })
                             } else {
                                 print("Error creating new user")
@@ -216,10 +216,10 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
             guard let destVC = segue.destinationViewController as? LoginVC else { return }
             destVC.delegate = delegate
             destVC.model = model
-        } else if segue.identifier == "ShowPhoneNumberVerification" {
-//            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
-//            destVC.delegate = delegate
-//            destVC.model = model
+        } else if segue.identifier == "VerifyMobileSegue" {
+            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
+            destVC.delegate = delegate
+            destVC.model = model
         } else if segue.identifier == "ShowRequestPhoneNumber" {
             guard let destVC = segue.destinationViewController as? PhoneNumberVC else { return }
             destVC.delegate = delegate

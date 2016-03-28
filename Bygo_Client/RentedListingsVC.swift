@@ -34,7 +34,7 @@ class RentedListingsVC: UIViewController, UICollectionViewDelegate, UICollection
         
         noListingsLabel.text = "You are not renting any Items"
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasAccepted:", name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(RentedListingsVC.rentRequestWasAccepted(_:)), name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
     }
     
     

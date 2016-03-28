@@ -11,11 +11,9 @@ import RealmSwift
 
 class ItemType: Object {
     
-    dynamic var typeID:String?  = nil
-    dynamic var name:String?    = nil
+    dynamic var typeID:String? = nil
+    dynamic var name:String? = nil
     let deliveryFee = RealmOptional<Double>()
-    let totalValue = RealmOptional<Double>()
-    let dailyRate = RealmOptional<Double>()
-    let weeklyRate = RealmOptional<Double>()
-    let semesterRate = RealmOptional<Double>()
+    let value = RealmOptional<Double>()
+    let imageLinks = List<RealmString>()
 }

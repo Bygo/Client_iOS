@@ -8,6 +8,8 @@
 
 import UIKit
 
+// curl -H "Content-Type: application/json" -X POST -d item_type_data.json https://bygo-client-server.appspot.com/item_type/load
+
 private let serverURL = "https://bygo-client-server.appspot.com"
 
 enum Notifications:String {
@@ -30,6 +32,8 @@ class Model: NSObject {
     let meetingServiceProvider                  = MeetingServiceProvider(serverURL: serverURL)
     let paymentsServiceProvider                 = PaymentsServiceProvider(serverURL: serverURL)
     let phoneNumberServiceProvider              = PhoneNumberVerificationServiceProvider(serverURL: serverURL)
+    let itemTypeServiceProvider                 = ItemTypeServiceProvider(serverURL: serverURL)
+    let discoveryServiceProvider                = DiscoveryServiceProvider(serverURL: serverURL)
     let dataValidator = DataValidator()
     
     // TODO: Remove this function and get the AdListingsSP to accept the userID instead

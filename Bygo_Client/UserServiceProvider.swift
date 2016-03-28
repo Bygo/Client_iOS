@@ -82,9 +82,9 @@ class UserServiceProvider: NSObject {
                     // Parse JSON response data
                     let json                    = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let userID            = json["user_id"] as? String else { return }
-                    let dateFormatter           = NSDateFormatter()
-                    dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                    guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
+//                    let dateFormatter           = NSDateFormatter()
+//                    dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
+//                    guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     
                     // Create new user
                     dispatch_async(dispatch_get_main_queue(), {
@@ -96,7 +96,6 @@ class UserServiceProvider: NSObject {
                         user.facebookID             = facebookID
                         user.phoneNumber            = phoneNumber
                         user.email                  = email
-                        user.dateLastModified       = dateLastModified
                         
                         let realm = try! Realm()
                         try! realm.write {

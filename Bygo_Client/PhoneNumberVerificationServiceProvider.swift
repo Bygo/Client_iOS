@@ -17,35 +17,25 @@ class PhoneNumberVerificationServiceProvider: NSObject {
     }
     
     func sendPhoneNumberVerificationCode(userID:String, completionHandler:(success:Bool)->Void) {
-        guard let url = NSURL(string: "\(serverURL)/phone_number_verification/send_code") else { return }
-        let request = NSMutableURLRequest(URL: url)
+        let urlString = "\(serverURL)/verification/phone_number/send_code/user_id=\(userID)"
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
         let session = NSURLSession.sharedSession()
-        request.HTTPMethod = "POST"
-        let params = ["user_id":userID]
-        do {
-            try request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: [])
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
+        let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            if error != nil {
+                completionHandler(success: false)
+                return
+            }
             
-            let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
-                if error != nil {
-                    completionHandler(success: false)
-                    return
-                }
-                
-                let statusCode = (response as? NSHTTPURLResponse)!.statusCode
-                switch statusCode {
-                case 200:
-                    completionHandler(success: true)
-                default:
-                    print("/phone_number_verification/send_code : \(statusCode)")
-                    completionHandler(success: false)
-                }
-            })
-            task.resume()
-        } catch {
-            completionHandler(success: false)
-        }
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            switch statusCode {
+            case 200:
+                completionHandler(success: true)
+            default:
+                print("/verification/phone_number/send_code/ : \(statusCode)")
+                completionHandler(success: false)
+            }
+        })
+        task.resume()
     }
     
     func checkPhoneNumberVerificationCode(userID: String, code:String, completionHandler:(success:Bool)->Void) {

@@ -39,8 +39,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         mobileView.backgroundColor      = kCOLOR_THREE
         passwordView.backgroundColor    = kCOLOR_THREE
         
-        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        passwordTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        mobileTextField.addTarget(self, action: #selector(LoginVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        passwordTextField.addTarget(self, action: #selector(LoginVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         doneButton.alpha = 0.0
     }

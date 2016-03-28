@@ -189,7 +189,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         
         view.bringSubviewToFront(discoverContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)
-        panGestureRecognizer.addTarget(menuContainer!, action: "panGestureRecognized:")
+        panGestureRecognizer.addTarget(menuContainer!, action: #selector(MenuContainerVC.panGestureRecognized(_:)))
     }
     
     private func removeModule(inout vc:UIViewController?) {

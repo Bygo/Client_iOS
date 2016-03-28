@@ -143,7 +143,7 @@ class NewListingVC: UIViewController, UIImagePickerControllerDelegate, UINavigat
         cancelButton.titleLabel?.textColor = .whiteColor()
         cancelButton.setTitle("Cancel", forState: .Normal)
         cancelButton.frame = CGRectMake(16.0, (vh)-bottomOffset-60.0, 60.0, 60.0)
-        cancelButton.addTarget(self, action: "cancelButtonTapped:", forControlEvents: .TouchUpInside)
+        cancelButton.addTarget(self, action: #selector(NewListingVC.cancelButtonTapped(_:)), forControlEvents: .TouchUpInside)
         footerView.addSubview(cancelButton)
         
         let buttonWidth:CGFloat = 45.0
@@ -179,7 +179,6 @@ class NewListingVC: UIViewController, UIImagePickerControllerDelegate, UINavigat
         captureButton.setImage(UIImage(named: "Photos")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
         captureButton.tintColor = .whiteColor()
         view.addSubview(captureButton)
-        captureButton.addTarget(self, action: "adsf:", forControlEvents: .TouchUpInside)
         imagePicker.view.addSubview(captureButton)
 
     }

@@ -75,11 +75,11 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
         emailView.backgroundColor       = kCOLOR_THREE
         passwordView.backgroundColor    = kCOLOR_THREE
         
-        firstNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        lastNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        emailTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        passwordTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        firstNameTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        lastNameTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        mobileTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        emailTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        passwordTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         nextButton.alpha = 0.0
     }
@@ -332,7 +332,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
             destVC.delegate = delegate
             destVC.model = model
         } else if segue.identifier == "VerifyMobileSegue" {
-            guard let destVC = segue.destinationViewController as? VerifyMobileVC else { return }
+            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model
         }

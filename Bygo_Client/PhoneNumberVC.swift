@@ -26,7 +26,7 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         
         mobileView.backgroundColor = kCOLOR_THREE
         
-        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        mobileTextField.addTarget(self, action: #selector(PhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         nextButton.alpha = 0.0
     }
@@ -148,7 +148,7 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "VerifyMobileSegue" {
-            guard let destVC = segue.destinationViewController as? VerifyMobileVC else { return }
+            guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model
         }

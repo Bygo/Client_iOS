@@ -190,8 +190,8 @@ class MeetingResponderVC: UIViewController, UICollectionViewDataSource, UICollec
             cell.timeConfirmationView.delegate              = self
             cell.timeConfirmationView.layer.cornerRadius    = 0.0
             cell.timeConfirmationView.proposalIndex         = tableView.tag
-            let tapGestureRecognizer                        = UITapGestureRecognizer(target: self, action: "tapGestureRecognized:")
-            let panGestureRecognizer                        = UIPanGestureRecognizer(target: self, action: "panGestureRecognized:")
+            let tapGestureRecognizer                        = UITapGestureRecognizer(target: self, action: #selector(MeetingResponderVC.tapGestureRecognized(_:)))
+            let panGestureRecognizer                        = UIPanGestureRecognizer(target: self, action: #selector(MeetingResponderVC.panGestureRecognized(_:)))
             cell.timeConfirmationView.addGestureRecognizer(tapGestureRecognizer)
             cell.timeConfirmationView.addGestureRecognizer(panGestureRecognizer)
             cell.timeConfirmationView.reload()

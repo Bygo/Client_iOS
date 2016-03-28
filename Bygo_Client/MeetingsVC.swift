@@ -21,7 +21,7 @@ class MeetingsVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasAccepted:", name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MeetingsVC.rentRequestWasAccepted(_:)), name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
         
         configureNoRentRequestsLabel()
     }

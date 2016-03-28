@@ -44,9 +44,9 @@ class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerCon
         headerView.backgroundColor  = kCOLOR_THREE
         tableView.backgroundColor   = kCOLOR_THREE
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchNewRentRequest:", name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasAccepted:", name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rentRequestWasRejected:", name: Notifications.RentRequestWasRejected.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.didFetchNewRentRequest(_:)), name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.rentRequestWasAccepted(_:)), name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.rentRequestWasRejected(_:)), name: Notifications.RentRequestWasRejected.rawValue, object: nil)
 
         tableView.reloadData()
         

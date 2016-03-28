@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VerifyMobileVC: UIViewController, UITextFieldDelegate {
+class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     
     var model:Model?
     
@@ -31,7 +31,7 @@ class VerifyMobileVC: UIViewController, UITextFieldDelegate {
         
         doneButton.alpha = 0.0
         
-        codeTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        codeTextField.addTarget(self, action: #selector(VerifyPhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {

@@ -41,10 +41,10 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
         // cancelButton.hidden = true
         cancelButton.transform = CGAffineTransformMakeRotation(CGFloat((270.0*M_PI)/180.0));
         bygoLogoImageView.alpha = 0.0
-        bygoLogoImageView.layer.shadowColor = UIColor.blackColor().CGColor
-        bygoLogoImageView.layer.shadowOpacity = 0.5
-        bygoLogoImageView.layer.shadowOffset = CGSizeMake(1.0, 1.0)
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "panGestureRecognized:")
+//        bygoLogoImageView.layer.shadowColor = UIColor.blackColor().CGColor
+//        bygoLogoImageView.layer.shadowOpacity = 0.5
+//        bygoLogoImageView.layer.shadowOffset = CGSizeMake(1.0, 1.0)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(WelcomeVC.panGestureRecognized(_:)))
         panGestureRecognizer.delegate = self
         panGestureRecognizer.maximumNumberOfTouches = 1
         view.addGestureRecognizer(panGestureRecognizer)

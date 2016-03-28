@@ -22,7 +22,7 @@ class RentRequestsVC: UICollectionViewController, MeetingResponderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchNewRentRequest:", name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(RentRequestsVC.didFetchNewRentRequest(_:)), name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
         
         configureNoRentRequestsLabel()
     }

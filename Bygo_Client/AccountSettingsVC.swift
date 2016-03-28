@@ -57,10 +57,10 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         
         saveButton.enabled = false
         
-        firstNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        lastNameTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        emailTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
-        mobileTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: .EditingChanged)
+        firstNameTextField.addTarget(self, action: #selector(AccountSettingsVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        lastNameTextField.addTarget(self, action: #selector(AccountSettingsVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        emailTextField.addTarget(self, action: #selector(AccountSettingsVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        mobileTextField.addTarget(self, action: #selector(AccountSettingsVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         // Set user specific UI
         configureUserSpecificUI()

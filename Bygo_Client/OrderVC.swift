@@ -7,9 +7,13 @@
 //
 
 import UIKit
+import RealmSwift
 
 class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
-
+    
+    var typeID: String?
+    var model: Model?
+    
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var sendButton: UIBarButtonItem!
     @IBOutlet var promptLabel: UILabel!
@@ -33,11 +37,19 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
         // Do any additional setup after loading the view.
         rentalValueTextField.userInteractionEnabled = false
         
-        rentalDurationTextField.addTarget(self, action: "rentalDurationTextFieldDidChange:", forControlEvents: .EditingChanged)
+        rentalDurationTextField.addTarget(self, action: #selector(OrderVC.rentalDurationTextFieldDidChange(_:)), forControlEvents: .EditingChanged)
         rentalDurationTextField.tintColor = kCOLOR_ONE
         rentalDurationTextField.text = ""
         sendButton.enabled = isDataValid()
         rentalDurationTextField.becomeFirstResponder()
+        
+        
+        print(typeID)
+        guard let typeID = typeID else { promptLabel.text = nil; return }
+        let realm = try! Realm()
+        guard let itemName = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0].name else { promptLabel.text = nil; return }
+        promptLabel.text = "How long do you want the \(itemName) for?"
+            
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -122,7 +134,11 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
             
             destVC.delegate = self
             destVC.titleString = "Order Sent!"
-            destVC.detailString = "We'll notify you when we find an Acoustic Guitar to fill your order."
+            
+            guard let typeID = typeID else { destVC.detailString = nil; return }
+            let realm = try! Realm()
+            guard let itemName = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0].name else { destVC.detailString = nil; return }
+            destVC.detailString = "We'll notify you when we find a \(itemName) to fill your order."
         }
     }
 }
