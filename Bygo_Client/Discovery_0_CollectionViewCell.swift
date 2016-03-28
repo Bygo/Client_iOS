@@ -12,7 +12,6 @@ import RealmSwift
 class Discovery_0_CollectionViewCell: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var subtitleLabel: UILabel!
     @IBOutlet var collectionView: UICollectionView!
     
     var delegate:DiscoveryDelegate?
@@ -65,7 +64,6 @@ class Discovery_0_CollectionViewCell: UICollectionViewCell, UICollectionViewDele
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         guard let itemTypeIDs = itemTypeIDs else { return }
         let typeID = itemTypeIDs[indexPath.row]
-        print("0: \(typeID)")
         delegate?.didSelectItemType(typeID)
     }
 }

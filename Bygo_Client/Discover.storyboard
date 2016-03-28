@@ -36,14 +36,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="516" height="128"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="What are you looking for?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S4b-gh-8nH">
-                                                    <rect key="frame" x="8" y="24" width="500" height="20"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What are you looking for?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S4b-gh-8nH">
+                                                    <rect key="frame" x="8" y="24" width="500" height="24"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xiG-gE-KSb" customClass="SearchBar" customModule="Bygo_Client" customModuleProvider="target">
-                                                    <rect key="frame" x="8" y="49" width="500" height="44"/>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xiG-gE-KSb" customClass="SearchBar" customModule="Bygo_Client" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="42" width="500" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="sou-Bd-vt4"/>
                                                     </constraints>
@@ -77,14 +77,14 @@
                                         <size key="customSize" width="319" height="77"/>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Discovery_0_Cell" id="EAp-HD-gEY" customClass="Discovery_0_CollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
-                                        <rect key="frame" x="2" y="289" width="596" height="251"/>
+                                        <rect key="frame" x="0.0" y="289" width="316" height="251"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="596" height="251"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="316" height="251"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dY6-yW-xIv">
-                                                    <rect key="frame" x="0.0" y="64" width="596" height="163"/>
+                                                    <rect key="frame" x="0.0" y="40" width="316" height="187"/>
                                                     <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AA0-r3-8VU">
                                                         <size key="itemSize" width="116" height="146"/>
                                                         <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -93,7 +93,7 @@
                                                     </collectionViewFlowLayout>
                                                     <cells>
                                                         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ItemTypeCell" id="ab2-rd-YnJ" userLabel="ItemTypeCell" customClass="ItemTypeCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="8.5" width="116" height="146"/>
+                                                            <rect key="frame" x="0.0" y="20.5" width="116" height="146"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                                                 <rect key="frame" x="0.0" y="0.0" width="116" height="146"/>
@@ -101,7 +101,7 @@
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item Type" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kpE-Ha-NR8">
                                                                         <rect key="frame" x="8" y="118" width="100" height="20"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -131,37 +131,63 @@
                                                     </cells>
                                                 </collectionView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0lZ-j9-xbK">
-                                                    <rect key="frame" x="16" y="8" width="564" height="24"/>
+                                                    <rect key="frame" x="16" y="8" width="284" height="24"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CyL-VW-mOs">
-                                                    <rect key="frame" x="8" y="36" width="580" height="20"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="CyL-VW-mOs" firstAttribute="top" secondItem="0lZ-j9-xbK" secondAttribute="bottom" constant="4" id="6Py-jZ-36N"/>
-                                            <constraint firstItem="CyL-VW-mOs" firstAttribute="centerX" secondItem="EAp-HD-gEY" secondAttribute="centerX" id="CBf-wA-Cgj"/>
                                             <constraint firstItem="dY6-yW-xIv" firstAttribute="centerX" secondItem="EAp-HD-gEY" secondAttribute="centerX" id="FPR-f3-CXa"/>
                                             <constraint firstItem="0lZ-j9-xbK" firstAttribute="centerX" secondItem="EAp-HD-gEY" secondAttribute="centerX" id="TRR-EF-yY5"/>
+                                            <constraint firstItem="dY6-yW-xIv" firstAttribute="top" secondItem="0lZ-j9-xbK" secondAttribute="bottom" constant="8" id="Ueu-Jy-ewZ"/>
                                             <constraint firstItem="dY6-yW-xIv" firstAttribute="width" secondItem="EAp-HD-gEY" secondAttribute="width" id="aol-0t-Yfs"/>
-                                            <constraint firstItem="dY6-yW-xIv" firstAttribute="top" secondItem="CyL-VW-mOs" secondAttribute="bottom" constant="8" id="eXr-Jd-wo8"/>
                                             <constraint firstAttribute="topMargin" secondItem="0lZ-j9-xbK" secondAttribute="top" id="i6u-Kh-jEq"/>
                                             <constraint firstItem="0lZ-j9-xbK" firstAttribute="leading" secondItem="EAp-HD-gEY" secondAttribute="leadingMargin" constant="8" id="iV1-BB-uq0"/>
                                             <constraint firstAttribute="bottom" secondItem="dY6-yW-xIv" secondAttribute="bottom" constant="24" id="wo0-wk-SBr"/>
-                                            <constraint firstAttribute="leadingMargin" secondItem="CyL-VW-mOs" secondAttribute="leading" id="yDU-YS-VO9"/>
                                         </constraints>
-                                        <size key="customSize" width="596" height="251"/>
+                                        <size key="customSize" width="316" height="251"/>
                                         <connections>
                                             <outlet property="collectionView" destination="dY6-yW-xIv" id="AVh-af-yiH"/>
-                                            <outlet property="subtitleLabel" destination="CyL-VW-mOs" id="G7S-KF-L2w"/>
                                             <outlet property="titleLabel" destination="0lZ-j9-xbK" id="YNg-QG-e4e"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ItemTypeCell" id="ya6-C8-zWM" userLabel="ItemTypeCell" customClass="ItemTypeCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                        <rect key="frame" x="326" y="341.5" width="116" height="146"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="116" height="146"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item Type" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C1h-nC-fQ6">
+                                                    <rect key="frame" x="8" y="118" width="100" height="20"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lyF-Mq-1CI">
+                                                    <rect key="frame" x="0.0" y="0.0" width="116" height="116"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="lyF-Mq-1CI" secondAttribute="height" multiplier="1:1" id="tZF-a4-eNm"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="C1h-nC-fQ6" firstAttribute="centerX" secondItem="ya6-C8-zWM" secondAttribute="centerX" id="59b-AX-LCs"/>
+                                            <constraint firstItem="lyF-Mq-1CI" firstAttribute="centerX" secondItem="ya6-C8-zWM" secondAttribute="centerX" id="9OK-Ac-LY7"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="C1h-nC-fQ6" secondAttribute="bottom" id="TB8-kM-6G1"/>
+                                            <constraint firstItem="C1h-nC-fQ6" firstAttribute="leading" secondItem="ya6-C8-zWM" secondAttribute="leadingMargin" id="Wz9-FV-b3l"/>
+                                            <constraint firstItem="lyF-Mq-1CI" firstAttribute="top" secondItem="ya6-C8-zWM" secondAttribute="top" id="jlW-n0-hO7"/>
+                                            <constraint firstItem="lyF-Mq-1CI" firstAttribute="width" secondItem="ya6-C8-zWM" secondAttribute="width" id="x0Y-K0-FrX"/>
+                                        </constraints>
+                                        <size key="customSize" width="116" height="146"/>
+                                        <connections>
+                                            <outlet property="imageView" destination="lyF-Mq-1CI" id="OSc-gK-8jW"/>
+                                            <outlet property="nameLabel" destination="C1h-nC-fQ6" id="5En-dR-NXK"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
