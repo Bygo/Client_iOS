@@ -90,10 +90,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         guard let lastName  = localUser.lastName else { return }
         usernameLabel.text  = "\(firstName) \(lastName)"
         
-//        guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
-//        guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
-//        profileImageView.hnk_setImageFromURL(url)
-        profileImageView.image = UIImage(named: "nick")
+        guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
+        guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
+        profileImageView.hnk_setImageFromURL(url)
     }
     
     private func configureUserSpecificUI() {

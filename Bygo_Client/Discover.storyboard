@@ -283,20 +283,20 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SearchBarCell" id="9ox-1b-PPE" customClass="SearchBarCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
-                                        <rect key="frame" x="107" y="0.0" width="386" height="156"/>
+                                        <rect key="frame" x="47" y="0.0" width="506" height="156"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="386" height="156"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="506" height="156"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What type of item is this?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mzi-om-ckj">
-                                                    <rect key="frame" x="8" y="24" width="370" height="20"/>
+                                                    <rect key="frame" x="8" y="24" width="490" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yMW-jx-9CA" customClass="SearchBar" customModule="Bygo_Client" customModuleProvider="target">
-                                                    <rect key="frame" x="8" y="49" width="370" height="44"/>
+                                                    <rect key="frame" x="8" y="49" width="490" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="oVp-xx-xK9"/>
                                                     </constraints>
@@ -314,35 +314,46 @@
                                             <constraint firstItem="Mzi-om-ckj" firstAttribute="leading" secondItem="9ox-1b-PPE" secondAttribute="leadingMargin" id="Xh8-AV-Hgd"/>
                                             <constraint firstItem="Mzi-om-ckj" firstAttribute="centerX" secondItem="9ox-1b-PPE" secondAttribute="centerX" id="tvk-bd-Mso"/>
                                         </constraints>
+                                        <size key="customSize" width="506" height="156"/>
                                         <connections>
                                             <outlet property="questionLabel" destination="Mzi-om-ckj" id="Hl8-DH-gZQ"/>
                                             <outlet property="searchBar" destination="yMW-jx-9CA" id="Bo0-C8-q00"/>
                                         </connections>
                                     </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ItemTypeCell" id="e7o-mm-lox" customClass="ItemTypeCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
-                                        <rect key="frame" x="174" y="166" width="252" height="252"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ItemTypeCell" id="p7P-pV-EZ4" userLabel="ItemTypeCell" customClass="ItemTypeCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                        <rect key="frame" x="198" y="166" width="204" height="287"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="252" height="252"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="204" height="287"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Acoustic Guitar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZXx-IV-KvM">
-                                                    <rect key="frame" x="8" y="224" width="236" height="20"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item Type" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DlD-LJ-kh3">
+                                                    <rect key="frame" x="8" y="259" width="188" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CUP-WB-fs6">
+                                                    <rect key="frame" x="0.0" y="0.0" width="204" height="204"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="CUP-WB-fs6" secondAttribute="height" multiplier="1:1" id="xbr-Yf-HjF"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="bottomMargin" secondItem="ZXx-IV-KvM" secondAttribute="bottom" id="6nx-CV-oGZ"/>
-                                            <constraint firstAttribute="leadingMargin" secondItem="ZXx-IV-KvM" secondAttribute="leading" id="K8w-hY-cwE"/>
-                                            <constraint firstAttribute="trailingMargin" secondItem="ZXx-IV-KvM" secondAttribute="trailing" id="ywG-BF-xUf"/>
+                                            <constraint firstItem="CUP-WB-fs6" firstAttribute="width" secondItem="p7P-pV-EZ4" secondAttribute="width" id="DOj-10-Sor"/>
+                                            <constraint firstItem="DlD-LJ-kh3" firstAttribute="leading" secondItem="p7P-pV-EZ4" secondAttribute="leadingMargin" id="GwN-QF-2Yk"/>
+                                            <constraint firstItem="CUP-WB-fs6" firstAttribute="centerX" secondItem="p7P-pV-EZ4" secondAttribute="centerX" id="Xh4-Wr-LS9"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="DlD-LJ-kh3" secondAttribute="bottom" id="YlG-BF-9Xw"/>
+                                            <constraint firstItem="CUP-WB-fs6" firstAttribute="top" secondItem="p7P-pV-EZ4" secondAttribute="top" id="gvJ-yP-QV1"/>
+                                            <constraint firstItem="DlD-LJ-kh3" firstAttribute="centerX" secondItem="p7P-pV-EZ4" secondAttribute="centerX" id="zdC-CG-3Gg"/>
                                         </constraints>
-                                        <size key="customSize" width="252" height="252"/>
+                                        <size key="customSize" width="204" height="287"/>
                                         <connections>
-                                            <outlet property="nameLabel" destination="ZXx-IV-KvM" id="tcI-j1-QQq"/>
+                                            <outlet property="imageView" destination="CUP-WB-fs6" id="FWL-me-EjX"/>
+                                            <outlet property="nameLabel" destination="DlD-LJ-kh3" id="cZM-Ib-CeI"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -437,8 +448,8 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G7t-Bf-iLl">
-                                <rect key="frame" x="-1" y="504" width="601" height="48"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G7t-Bf-iLl">
+                                <rect key="frame" x="-0.5" y="504" width="600" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="t1r-te-M3W"/>
                                 </constraints>
@@ -622,8 +633,8 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BUP-Gv-ryx">
-                                <rect key="frame" x="-1" y="504" width="601" height="48"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BUP-Gv-ryx">
+                                <rect key="frame" x="-0.5" y="504" width="600" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="lK4-jG-tNr"/>
                                 </constraints>

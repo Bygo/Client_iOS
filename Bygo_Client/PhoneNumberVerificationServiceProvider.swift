@@ -39,7 +39,7 @@ class PhoneNumberVerificationServiceProvider: NSObject {
     }
     
     func checkPhoneNumberVerificationCode(userID: String, code:String, completionHandler:(success:Bool)->Void) {
-        guard let url = NSURL(string: "\(serverURL)/phone_number_verification/check_code") else { return }
+        guard let url = NSURL(string: "\(serverURL)/verification/phone_number/check_code") else { return }
         let request = NSMutableURLRequest(URL: url)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"

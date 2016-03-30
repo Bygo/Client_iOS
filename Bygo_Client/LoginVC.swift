@@ -191,6 +191,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         model?.userServiceProvider.attemptFacebookLogin({
             (data:[String:AnyObject]?) in
             if let data = data {
+                print(data)
                 guard let firstName     = data["first_name"] as? String else { return }
                 guard let lastName      = data["last_name"] as? String else { return }
                 guard let email         = data["email"] as? String else { return }

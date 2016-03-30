@@ -170,7 +170,7 @@ class ListingsServiceProvider: NSObject {
         
         let filename = format.stringFromDate(now)
         
-        let url = NSURL(string: "\(serverURL)/create_new/listing_image/listing_id=\(listingID)")!
+        let url = NSURL(string: "\(serverURL)/listing/create_listing_image/listing_id=\(listingID)")!
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         

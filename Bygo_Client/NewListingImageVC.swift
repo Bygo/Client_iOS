@@ -41,9 +41,13 @@ class NewListingImageVC: UIImagePickerController, UIImagePickerControllerDelegat
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        print("Prep")
         if segue.identifier == "ListingTypeSegue" {
-            guard let navVC = segue.destinationViewController as? UINavigationController else { return }
-            guard let destVC = navVC.topViewController as? NewListingTypeVC else { return }
+            guard let destVC = segue.destinationViewController as? NewListingTypeVC else { return }
+            // guard let destVC = navVC.topViewController as? NewListingTypeVC else { return }
+            
+            print(model)
             
             destVC.parentVC = self
             destVC.model = model

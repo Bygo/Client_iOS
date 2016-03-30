@@ -54,6 +54,10 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         refresh()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        refreshControl.endRefreshing()
+    }
+    
     func configureCreateListingButton() {
         createListingButton.backgroundColor = kCOLOR_FOUR
         createListingButton.setTitleColor(.whiteColor(), forState: .Normal)
@@ -306,6 +310,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 destVC.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo
                 destVC.allowsEditing  = true
                 destVC.showsCameraControls = true
+                destVC.model = model
                 
             } else if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary) {
                 destVC.sourceType     = .PhotoLibrary

@@ -37,4 +37,20 @@ class URLServiceProvider: NSObject {
         request.HTTPMethod = "GET"
         return request
     }
+    
+    func downloadImage(url: NSURL, completionHandler:(image:UIImage?)->Void){
+        getDataFromUrl(url) { (data, response, error)  in
+            dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                guard let data = data where error == nil else { return }
+                completionHandler(image: UIImage(data: data))
+            }
+        }
+    }
+    
+    // Get the data from this URL
+    private func getDataFromUrl(url:NSURL, completion: ((data: NSData?, response: NSURLResponse?, error: NSError? ) -> Void)) {
+        NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) in
+            completion(data: data, response: response, error: error)
+            }.resume()
+    }
 }

@@ -123,7 +123,7 @@ class UserServiceProvider: NSObject {
     func setUserProfileImage(userID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
         let filename = "profile_picture.jpg"
         
-        let url = NSURL(string: "\(serverURL)/create_user_image/user_id=\(userID)")!
+        let url = NSURL(string: "\(serverURL)/user/create_user_image/user_id=\(userID)")!
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
@@ -282,6 +282,9 @@ class UserServiceProvider: NSObject {
                             print("Data did not convert to dictionary type")
                             return
                         }
+                        print("\n\nFACEBOOK DATA")
+                        print(data)
+                        print("\n\n")
                         completionHandler(data: data)
                     } else {
                         print("Error Getting Info \(error)")
@@ -342,9 +345,9 @@ class UserServiceProvider: NSObject {
                 let password                    = json["password"] as? String
                 let facebookID                  = json["facebook_id"] as? String
                 let phoneNumber                 = json["phone_number"] as? String
-                guard let isPhoneNumberVerified = json["is_phone_number_verified"] as? Bool else { return }
+//                guard let isPhoneNumberVerified = json["is_phone_number_verified"] as? Bool else { return }
                 guard let email                 = json["email"] as? String else { return }
-                guard let isEmailVerified       = json["is_phone_number_verified"] as? Bool else { return }
+//                guard let isEmailVerified       = json["is_phone_number_verified"] as? Bool else { return }
                 guard let credit                = json["credit"] as? Double else { return }
                 guard let debit                 = json["debit"] as? Double else { return }
                 let mediaImageLink              = json["image_media_link"] as? String
@@ -357,9 +360,9 @@ class UserServiceProvider: NSObject {
                 user.password               = password
                 user.facebookID             = facebookID
                 user.phoneNumber            = phoneNumber
-                user.isPhoneNumberVerified  = isPhoneNumberVerified
+//                user.isPhoneNumberVerified  = isPhoneNumberVerified
                 user.email                  = email
-                user.isEmailVerified        = isEmailVerified
+//                user.isEmailVerified        = isEmailVerified
                 user.credit                 = credit
                 user.debit                  = debit
                 user.profileImageLink       = mediaImageLink
@@ -430,15 +433,15 @@ class UserServiceProvider: NSObject {
                     
                     // Parse JSON data
                     let json                        = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-                    let dateFormatter               = NSDateFormatter()
-                    dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
-                    guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
+//                    let dateFormatter               = NSDateFormatter()
+//                    dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
+//                    guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     guard let firstName             = json["first_name"] as? String else { return }
                     guard let lastName              = json["last_name"] as? String else { return }
                     guard let phoneNumber           = json["phone_number"] as? String else { return }
-                    guard let isPhoneNumberVerified = json["is_phone_number_verified"] as? Bool else { return }
+//                    guard let isPhoneNumberVerified = json["is_phone_number_verified"] as? Bool else { return }
                     guard let email                 = json["email"] as? String else { return }
-                    guard let isEmailVerified       = json["is_email_verified"] as? Bool else { return }
+//                    guard let isEmailVerified       = json["is_email_verified"] as? Bool else { return }
                     
                     
                     // Update the local user
@@ -449,10 +452,10 @@ class UserServiceProvider: NSObject {
                             localUser.firstName             = firstName
                             localUser.lastName              = lastName
                             localUser.phoneNumber           = phoneNumber
-                            localUser.isPhoneNumberVerified = isPhoneNumberVerified
+//                            localUser.isPhoneNumberVerified = isPhoneNumberVerified
                             localUser.email                 = email
-                            localUser.isEmailVerified       = isEmailVerified
-                            localUser.dateLastModified      = dateLastModified
+//                            localUser.isEmailVerified       = isEmailVerified
+//                            localUser.dateLastModified      = dateLastModified
                         }
                         
                         completionHandler(success: true)

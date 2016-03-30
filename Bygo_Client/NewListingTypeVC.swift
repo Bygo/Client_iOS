@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, SuccessDelegate, UITextFieldDelegate {
 
@@ -14,11 +15,13 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
     @IBOutlet var cancelButton: UIButton!
     @IBOutlet var navBar: UIView!
     @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var searchBar:SearchBar!
     
     var model:Model?
     var image:UIImage?
     var parentVC:UIViewController?
-    var searchBar:SearchBar?
+    
+    private var layoutData: AnyObject? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +55,40 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         // Dispose of any resources that can be recreated.
     }
     
-
+    // MARK: - UITextFieldDelegate
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        
+        if textField == searchBar {
+            if let text = textField.text {
+                let newString = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+                model?.discoveryServiceProvider.search(newString, completionHanlder: {
+                    (data: AnyObject?) in
+                    
+                    self.layoutData = data
+                    if self.layoutData != nil {
+                        self.collectionView.reloadSections(NSIndexSet(index: 1))
+                    }
+                })
+            }
+            return true
+        }
+        return false
+    }
+    
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        searchBar?.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldShouldClear(textField: UITextField) -> Bool {
+        self.layoutData = []
+        self.collectionView.reloadSections(NSIndexSet(index: 1))
+        return true
+    }
+    
+    
+    // MARK: - UICollectionViewDataSource
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 2
     }
@@ -60,7 +96,9 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 3
+        case 1:
+            guard let layoutData = layoutData else { return 0 }
+            return layoutData.count
         default: return 0
         }
     }
@@ -69,15 +107,53 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         switch indexPath.section {
         case 0:
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("SearchBarCell", forIndexPath: indexPath) as? SearchBarCollectionViewCell else { return UICollectionViewCell() }
-            cell.questionLabel.text = "What are you listing?"
+            cell.questionLabel.text = nil //"What are you listing?"
             searchBar = cell.searchBar
+            searchBar?.placeholder = "What are you listing?"
             searchBar?.delegate = self
             return cell
+            
         case 1:
-            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
-            cell.nameLabel.text = "Sport Skis"
-            cell.backgroundColor = .whiteColor()
-            return cell
+            
+            guard let layoutData = layoutData as? [[String:AnyObject]] else { return UICollectionViewCell() }
+            let data = layoutData[indexPath.row]
+            guard let type = data["type"] as? Int else { return UICollectionViewCell() }
+            switch type {
+            case 1:
+                guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
+                cell.backgroundColor = .whiteColor()
+                cell.imageView.backgroundColor = .clearColor()
+                cell.imageView.contentMode = UIViewContentMode.ScaleAspectFit
+                cell.imageView.clipsToBounds = true
+                
+                guard let typeID = data["id"] as? String else { return cell }
+                guard let model = model else { return cell }
+                model.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                    (success:Bool) in
+                    
+                    if success {
+                        let realm = try! Realm()
+                        let itemType = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0]
+                        let name = itemType.name
+                        let mediaLink = NSURL(string: itemType.imageLinks[0].value!)!
+                        dispatch_async(GlobalMainQueue, {
+                            cell.nameLabel.text = name
+                            cell.imageView.hnk_setImageFromURL(mediaLink)
+                        })
+                    }
+                })
+                return cell
+                
+            default:
+                return collectionView.dequeueReusableCellWithReuseIdentifier("BufferCell", forIndexPath: indexPath)
+            }
+
+            
+//            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
+//            cell.nameLabel.text = "Sport Skis"
+//            cell.backgroundColor = .whiteColor()
+//            return cell
+            
         default:
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
             cell.nameLabel.text = ""
@@ -85,17 +161,38 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         }
     }
     
+    // MARK: - UICollectionViewDelegate
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.section == 1 {
-            // TODO: If no delivery address exists: ask for it
-            performSegueWithIdentifier("SuccessSegue", sender: nil)
+        switch indexPath.section {
+        case 0:
+            searchBar.becomeFirstResponder()
+            
+        case 1:
+            guard let layoutData = layoutData as? [[String:AnyObject]] else { return }
+            let data = layoutData[indexPath.row]
+            guard let type = data["type"] as? Int else { return }
+            switch type {
+            case 1:
+                // TODO: If no delivery address exists: ask for it
+                guard let id = data["id"] as? String else { return }
+                
+                guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+                guard let image = image else { return }
+                model?.listingServiceProvider.createNewListing(userID, typeID: id, image: image, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        self.performSegueWithIdentifier("SuccessSegue", sender: nil)
+                    } else {
+                        // TODO: Present some error message
+                    }
+                })
+                
+            default: return
+            }
+        default: return
         }
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        searchBar?.resignFirstResponder()
-        return true
-    }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         searchBar?.resignFirstResponder()
@@ -111,6 +208,8 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
             destVC.detailString = "Your listing was created."
 
         } else if segue.identifier == "HomeAddressSegue" {
+            
+        } else if segue.identifier == "PhoneNumberSegue" {
             
         }
     }

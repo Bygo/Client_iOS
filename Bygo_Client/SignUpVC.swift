@@ -179,6 +179,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                 guard let lastName      = data["last_name"] as? String else { return }
                 guard let email         = data["email"] as? String else { return }
                 guard let facebookID    = data["id"] as? String else { return }
+                let picture = data["picture"] as? [String:AnyObject]
                 let signUpMethod        = "Facebook"
                 
                 self.model?.userServiceProvider.login(facebookID, completionHandler: { (loginSuccess:Bool)->Void in
@@ -189,10 +190,14 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                     } else {
                         self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: { (success:Bool)->Void in
                             if success {
-                                dispatch_async(GlobalMainQueue, {
-                                    self.delegate?.userDidLogin(false)
-                                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
+                                
+                                self.setUserFacebookProfileImage(picture, completionHandler: {
+                                    dispatch_async(GlobalMainQueue, {
+                                        self.delegate?.userDidLogin(false)
+                                        self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
+                                    })
                                 })
+                                
                             } else {
                                 print("Error creating new user")
                             }
@@ -203,6 +208,34 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                 print("Error while logging in (signing up) with facebook")
             }
         })
+    }
+    
+    // Upload the user's profile image from facebook
+    private func setUserFacebookProfileImage(picture: [String:AnyObject]?, completionHandler:()->Void) {
+        print("A")
+        if let userID = self.model?.userServiceProvider.getLocalUser()?.userID {
+            print("B")
+            if let picture = picture {
+                print("C")
+                if let urlString = picture["url"] as? String {
+                    print("D")
+                    if let url = NSURL(string: urlString) {
+                        print("E")
+                        URLServiceProvider().downloadImage(url, completionHandler: {
+                            (image:UIImage?) in
+                            print("F")
+                            if let image = image {
+                                print("G")
+                                self.model?.userServiceProvider.setUserProfileImage(userID, image: image, completionHandler: { (success:Bool) in
+                                    print("H")
+                                    completionHandler()
+                                })
+                            } else { completionHandler() }
+                        })
+                    } else { completionHandler() }
+                } else { completionHandler() }
+            } else { completionHandler() }
+        } else { completionHandler() }
     }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
