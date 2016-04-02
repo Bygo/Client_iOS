@@ -133,22 +133,24 @@ class ListingsServiceProvider: NSObject {
                 // Parse the JSON response object
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-                    dispatch_async(dispatch_get_main_queue(), {
-                        guard let listingID         = json["listing_id"] as? String else { return }
-                        guard let status            = json["status"] as? String else { return }
-                        
-//                        let dateFormatter           = NSDateFormatter()
-//                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-//                        guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
-    
-                        
-                        // Add new Listing to local cache
-                        let realm                   = try! Realm()
-                        let listing                 = Listing()
-                        listing.listingID           = listingID
-                        
-                        try! realm.write { realm.add(listing) }
-                        self.addImageForListing(listingID, image: image, completionHandler: completionHandler)
+                    guard let listingID = json["listing_id"] as? String else { return }
+                    
+                    // guard let status            = json["status"] as? String else { return }
+                    //                        let dateFormatter           = NSDateFormatter()
+                    //                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
+                    //                        guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
+                    
+                    // Add new Listing to local cache
+                    let realm                   = try! Realm()
+                    let listing                 = Listing()
+                    listing.listingID           = listingID
+                    
+                    try! realm.write { realm.add(listing) }
+                    self.addImageForListing(listingID, image: image, completionHandler: {
+                        (success:Bool) in
+                        dispatch_async(GlobalMainQueue, {
+                            completionHandler(success: success)
+                        })
                     })
                 } catch {
                     dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
@@ -182,7 +184,7 @@ class ListingsServiceProvider: NSObject {
         body.appendData("\r\n--\(boundary)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Disposition: form-data; name=\"userfile\"; filename=\"\(filename).jpg\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         body.appendData("Content-Type: application/octet-stream\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-        body.appendData(UIImageJPEGRepresentation(image, 0.5)!)
+        body.appendData(UIImageJPEGRepresentation(image, 0.25)!)
         body.appendData("\r\n--\(boundary)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
         
         request.HTTPBody = body

@@ -41,7 +41,7 @@ class AnimatedCheckmarkView: UIView {
         
         circleView.frame = CGRectMake(0, (bounds.height/2.0)-(bounds.width/2.0), bounds.width, bounds.width)
         circleView.layer.cornerRadius = bounds.width/2.0
-        circleView.backgroundColor = kCOLOR_SIX
+        circleView.backgroundColor = kCOLOR_ONE // kCOLOR_SIX
         partialCheck1.backgroundColor = kCOLOR_THREE
         partialCheck2.backgroundColor = kCOLOR_THREE
         
@@ -51,7 +51,7 @@ class AnimatedCheckmarkView: UIView {
         let partialCheck1Length = sine45 * (r/2.0)
         let partialCheck2Length = sine45 * (1.5*r)
         
-        let checkLineWidth:CGFloat = 15
+        let checkLineWidth:CGFloat = 16.0
         
         let partialCheck2Height = partialCheck2Length * sine45
         

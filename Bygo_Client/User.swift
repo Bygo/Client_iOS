@@ -24,4 +24,8 @@ class User: Object {
     dynamic var debit:Double                = 0.0
     dynamic var profileImageLink:String?    = nil
     dynamic var dateLastModified:NSDate?    = nil
+    
+    dynamic var homeAddress_googlePlacesID: String? = nil
+    dynamic var homeAddress_name: String? = nil
+    dynamic var homeAddress_address: String? = nil
 }

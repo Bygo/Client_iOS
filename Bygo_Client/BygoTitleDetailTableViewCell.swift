@@ -8,10 +8,10 @@
 
 import UIKit
 
-class AutoCompleteLocationSuggestionTableViewCell: UITableViewCell {
+class BygoTitleDetailTableViewCell: UITableViewCell {
 
-    @IBOutlet var locationNameLabel: UILabel!
-    @IBOutlet var streetNameLabel: UILabel!
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var detailLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

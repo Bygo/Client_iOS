@@ -351,6 +351,9 @@ class UserServiceProvider: NSObject {
                 guard let credit                = json["credit"] as? Double else { return }
                 guard let debit                 = json["debit"] as? Double else { return }
                 let mediaImageLink              = json["image_media_link"] as? String
+                let homeAddressAddress = json["home_address_address"] as? String
+                let homeAddressName = json["home_address_name"] as? String
+                let homeAddressGooglePlacesID = json["home_address_google_places_id"] as? String
                 
                 // Create new user
                 let user                    = User()
@@ -366,6 +369,9 @@ class UserServiceProvider: NSObject {
                 user.credit                 = credit
                 user.debit                  = debit
                 user.profileImageLink       = mediaImageLink
+                user.homeAddress_name = homeAddressName
+                user.homeAddress_address = homeAddressAddress
+                user.homeAddress_googlePlacesID = homeAddressGooglePlacesID
                 
                 let realm = try! Realm()
                 try! realm.write { realm.add(user) }
@@ -458,6 +464,64 @@ class UserServiceProvider: NSObject {
 //                            localUser.dateLastModified      = dateLastModified
                         }
                         
+                        completionHandler(success: true)
+                    })
+                } catch {
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                }
+            default:
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+            }
+        })
+        task.resume()
+    }
+    
+    
+    
+    func updateHomeAddress(googlePlacesID:String, address:String, name:String, geoPoint:String, completionHandler:(success:Bool)->Void) {
+        
+        // Create the request
+        guard let userID = getLocalUser()?.userID else { return }
+        let urlString = "\(serverURL)/user/update_home_address/user_id=\(userID)"
+        let params:[String:AnyObject] = ["google_places_id":googlePlacesID, "address":address, "name":name, "geo_point":geoPoint]
+        
+        guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
+            completionHandler(success: false)
+            return
+        }
+        
+        
+        // Execute the request
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: {
+            
+            // Handle the server response
+            (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            
+            if error != nil {
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                return
+            }
+
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            print(statusCode)
+            switch statusCode {
+            case 201:   // Catching status code 201, success, new location created
+                do {
+                    
+                    // Parse JSON response data
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let address = json["home_address_address"] as? String else { return }
+                    guard let name = json["home_address_name"] as? String else { return }
+                    guard let googlePlacesID = json["home_address_google_places_id"] as? String else { return }
+                    dispatch_async(dispatch_get_main_queue(), {
+                        let realm = try! Realm()
+                        try! realm.write {
+                            guard let localUser = self.getLocalUser() else { return }
+                            localUser.homeAddress_name = name
+                            localUser.homeAddress_address = address
+                            localUser.homeAddress_googlePlacesID = googlePlacesID
+                        }
                         completionHandler(success: true)
                     })
                 } catch {

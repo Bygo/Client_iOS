@@ -18,7 +18,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     @IBOutlet var createListingButton: UIButton!
     @IBOutlet var createListingButtonBottomOffset: NSLayoutConstraint!
     @IBOutlet var refreshControl: UIRefreshControl!
-    
+    @IBOutlet var menuButton: UIBarButtonItem!
+
     var delegate:HomeDelegate?
     var model:Model?
     var selectedTypeID: String?
@@ -38,12 +39,14 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
+        menuButton.tintColor = .whiteColor()
+        
         // NSTimer.scheduledTimerWithTimeInterval(10.0, target: self, selector: #selector(BygoVC.changePrompt), userInfo: nil, repeats: true)
         
         view.backgroundColor = kCOLOR_THREE
         collectionView?.backgroundColor = .clearColor()
         
-        configureCreateListingButton()
+        //        configureCreateListingButton()
         
         title = "Discover"
         
@@ -59,10 +62,14 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     func configureCreateListingButton() {
-        createListingButton.backgroundColor = kCOLOR_FOUR
+        createListingButton.backgroundColor = kCOLOR_TWO
         createListingButton.setTitleColor(.whiteColor(), forState: .Normal)
         createListingButton.titleLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
         createListingButton.setTitle("Create a Listing", forState: .Normal)
+        
+//        createListingButton.layer.shadowColor = UIColor.blackColor().CGColor
+//        createListingButton.layer.shadowOpacity = 0.5
+//        createListingButton.layer.shadowOffset = CGSizeMake(1.0, 1.0)
     }
     
     override func prefersStatusBarHidden() -> Bool {
@@ -180,6 +187,10 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         default : return 0
         }
     }
+    
+    private let kGALLERY_WITH_TITLE_CELL = 0
+    private let kITEM_TYPE_CELL = 1
+    private let kCREATE_NEW_LISTING_CELL = 2
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         switch indexPath.section {
@@ -195,7 +206,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             let data = layoutData[indexPath.row]
             guard let type = data["type"] as? Int else { return collectionView.dequeueReusableCellWithReuseIdentifier("BufferCell", forIndexPath: indexPath) }
             switch type {
-            case 0:
+            case kGALLERY_WITH_TITLE_CELL:
                 guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Discovery_0_Cell", forIndexPath: indexPath) as? Discovery_0_CollectionViewCell else { return UICollectionViewCell() }
                 let title = data["title"] as? String
                 cell.titleLabel.text = title
@@ -211,7 +222,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 cell.collectionView.reloadData()
                 return cell
                 
-            case 1:
+            case kITEM_TYPE_CELL:
                 
                 guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
                 cell.backgroundColor = .whiteColor()
@@ -237,6 +248,17 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 })
                 return cell
                 
+            case kCREATE_NEW_LISTING_CELL:
+                
+                guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CreateListingCell", forIndexPath: indexPath) as? CreateNewListingCollectionViewCell else { return UICollectionViewCell() }
+//                cell.backgroundColor = .whiteColor()
+                cell.backgroundColor = kCOLOR_FIVE
+                cell.titleLabel.textColor = .whiteColor()
+                cell.detailLabel.textColor = .whiteColor()
+                cell.detailLabel.alpha = 0.75
+                cell.titleLabel.text = "Got a Guitar?"
+                cell.detailLabel.text = "List it now and earn some extra cash"
+                return cell
                 
             default:
                 return collectionView.dequeueReusableCellWithReuseIdentifier("BufferCell", forIndexPath: indexPath)
@@ -264,9 +286,13 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             let data = layoutData[indexPath.row]
             guard let type = data["type"] as? Int else { return }
             switch type {
-            case 1:
+            case kITEM_TYPE_CELL:
                 guard let id = data["id"] as? String else { return }
                 didSelectItemType(id)
+                
+            case kCREATE_NEW_LISTING_CELL:
+                performSegueWithIdentifier("CreateNewListing", sender: nil)
+
             default: return
             }
         default: return
@@ -276,21 +302,21 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     
     private var previousScrollViewOffset:CGFloat = 0.0
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView == collectionView {
-            if scrollView.contentOffset.y <= 0 {
-                self.createListingButtonBottomOffset.constant = 0.0
-            } else if scrollView.contentOffset.y >= scrollView.contentSize.height-48.0 {
-                self.createListingButtonBottomOffset.constant = -48.0
-            } else if scrollView.contentOffset.y < previousScrollViewOffset {
-                self.createListingButtonBottomOffset.constant = 0.0
-            } else if scrollView.contentOffset.y > previousScrollViewOffset {
-                self.createListingButtonBottomOffset.constant = -48.0
-            }
-            UIView.animateWithDuration(0.25, animations: {
-                self.view.layoutIfNeeded()
-            })
-            previousScrollViewOffset = scrollView.contentOffset.y
-        }
+//        if scrollView == collectionView {
+//            if scrollView.contentOffset.y <= 0 {
+//                self.createListingButtonBottomOffset.constant = 0.0
+//            } else if scrollView.contentOffset.y >= scrollView.contentSize.height-48.0 {
+//                self.createListingButtonBottomOffset.constant = -48.0
+//            } else if scrollView.contentOffset.y < previousScrollViewOffset {
+//                self.createListingButtonBottomOffset.constant = 0.0
+//            } else if scrollView.contentOffset.y > previousScrollViewOffset {
+//                self.createListingButtonBottomOffset.constant = -48.0
+//            }
+//            UIView.animateWithDuration(0.25, animations: {
+//                self.view.layoutIfNeeded()
+//            })
+//            previousScrollViewOffset = scrollView.contentOffset.y
+//        }
     }
     
     
@@ -360,14 +386,15 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
 extension BygoVC : UICollectionViewDelegateFlowLayout{
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         switch indexPath.section {
-        case 0: return CGSizeMake(view.bounds.width-16.0, 120.0)
+        case 0: return CGSizeMake(view.bounds.width-16.0, 112.0)
         case 1:
             guard let layoutData = layoutData as? [[String:AnyObject]] else { return CGSizeZero }
             let data = layoutData[indexPath.row]
             guard let type = data["type"] as? Int else { return CGSizeZero }
             switch type {
-            case 0: return CGSizeMake(view.bounds.width, 316.0)
-            case 1: return CGSizeMake((view.bounds.width/2.0)-12.0, 252)
+            case kGALLERY_WITH_TITLE_CELL: return CGSizeMake(view.bounds.width, 336.0)
+            case kITEM_TYPE_CELL: return CGSizeMake((view.bounds.width/2.0)-12.0, 252.0)
+            case kCREATE_NEW_LISTING_CELL: return CGSizeMake(view.bounds.width-16, 96.0)
             default: return CGSizeZero
             }
         case 2: return CGSizeMake(view.bounds.width, 48.0)
@@ -384,7 +411,6 @@ extension BygoVC : UICollectionViewDelegateFlowLayout{
             let data = layoutData[0]
             guard let type = data["type"] as? Int else { return UIEdgeInsetsZero }
             switch type {
-            case 0: return UIEdgeInsetsMake(0.0, 0.0, 8.0, 0.0)
             case 1: return UIEdgeInsetsMake(0.0, 8.0, 8.0, 8.0)
             default: return UIEdgeInsetsZero
             }

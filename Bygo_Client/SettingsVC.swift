@@ -10,7 +10,7 @@ import UIKit
 import Braintree
 import RealmSwift
 
-class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMeetingLocationDelegate, EditFavoriteMeetingLocationDelegate, BTDropInViewControllerDelegate {
+class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewControllerDelegate, HomeAddressDelegate {
 
     // MARK: - Properties
     @IBOutlet var profileImageViewVerticalOffset: NSLayoutConstraint!
@@ -19,10 +19,9 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     @IBOutlet var paymentMethodsContainer:UINavigationController!
     
     private let kGENERAL_SECTION                = 0
-    private let kFAV_MEETING_LOCATIONS_SECTION  = 1
+    private let kHOME_ADDRESS_SECTION           = 1
     private let kLOGOUT_SECTION                 = 2
     
-    // FIXME: Pull text from some localized text repo
     let generalOptions = ["Account", "Payment"]
     
     var model:Model?
@@ -42,7 +41,6 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
         // Configure the Settings view
-        // FIXME: Pull UI constants from design repo
         profileImageView.contentMode            = UIViewContentMode.ScaleAspectFill
         profileImageView.clipsToBounds          = true
         profileImageView.layer.cornerRadius     = profileImageView.bounds.width / 2.0
@@ -59,17 +57,6 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        // shouldMenuOpen = true
-        // TODO: This should probably be delegate function
-        
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        // shouldMenuOpen = false
-        // TODO: This should probably be a delegate function
     }
     
     override func didReceiveMemoryWarning() {
@@ -97,19 +84,6 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     
     private func configureUserSpecificUI() {
         configureUsernameAndProfileImage()
-        
-        // Reload the user's favorite meeting locations
-        guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
-        guard let userID    = localUser.userID else { return }
-        
-        model?.favoriteMeetingLocationServiceProvider.fetchUsersFavoriteMeetingLocations(userID, completionHandler: {
-            (success:Bool) in
-            if success {
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.tableView.reloadSections(NSIndexSet(index: self.kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
-                })
-            }
-        })
     }
     
     
@@ -121,88 +95,40 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == kGENERAL_SECTION {
-            let kNUM_GENERAL_SETTINGS_OPTIONS = 2
-            return kNUM_GENERAL_SETTINGS_OPTIONS
-            
-        } else if section == kFAV_MEETING_LOCATIONS_SECTION {
-            guard let localUser = model?.userServiceProvider.getLocalUser() else { return 0 }
-            guard let userID    = localUser.userID else { return 0 }
-            let realm           = try! Realm()
-            return realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"").count + 2
-            
+            return generalOptions.count
+        } else if section == kHOME_ADDRESS_SECTION {
+            return 1
         } else if section == kLOGOUT_SECTION {
-            let kNUM_LOGOUT_BUTTONS = 1
-            return kNUM_LOGOUT_BUTTONS
+            return 1
         }
         return 0
     }
     
-    
-//    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        // FIXME: Pull text from some localized text repo
-//        switch section {
-//        case kGENERAL_SECTION:
-//            return "General"
-//        case kFAV_MEETING_LOCATIONS_SECTION:
-//            return "Favorite Meeting Places"
-//        default:
-//            return ""
-//        }
-//    }
-    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        // FIXME: Pull text from some localized text repo
         switch indexPath.section {
         case kGENERAL_SECTION:
             let cell = tableView.dequeueReusableCellWithIdentifier("GeneralSetting", forIndexPath: indexPath)
             cell.textLabel?.text = generalOptions[indexPath.row]
             return cell
             
-        case kFAV_MEETING_LOCATIONS_SECTION:
-            
-            let indexOfNewFavoriteLocationButton = tableView.numberOfRowsInSection(kFAV_MEETING_LOCATIONS_SECTION)-2
-            if indexPath.row == indexOfNewFavoriteLocationButton {
-                let cell = UITableViewCell()
-                cell.textLabel?.text = "Add New Favorite Location"
-                cell.textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
-                cell.backgroundColor    = kCOLOR_FIVE
-                cell.textLabel?.textColor = .whiteColor()
-                cell.textLabel?.textAlignment = .Center
-                return cell
+        case kHOME_ADDRESS_SECTION:
+            guard let cell = tableView.dequeueReusableCellWithIdentifier("HomeAddressCell", forIndexPath: indexPath) as? BygoTitleDetailTableViewCell else { return UITableViewCell() }
+            guard let user = model?.userServiceProvider.getLocalUser() else { return cell }
+            if let detail = user.homeAddress_name {
+                cell.titleLabel.text = "Home Address"
+                cell.detailLabel.text = detail
+            } else {
+                cell.titleLabel.text = "Add Your Home Address"
+                cell.detailLabel.text = nil
             }
-            
-            
-            let indexOfInstructionLabel = tableView.numberOfRowsInSection(kFAV_MEETING_LOCATIONS_SECTION)-1
-            if indexPath.row == indexOfInstructionLabel {
-                let cell = UITableViewCell()
-                cell.textLabel?.text = "List some of the places around you where you can meet other people to hand off items."
-                cell.textLabel?.font = UIFont.systemFontOfSize(12.0)
-                cell.textLabel?.numberOfLines = 0
-                cell.textLabel?.textAlignment = .Center
-                cell.textLabel?.textColor = .blackColor()
-                cell.backgroundColor = .clearColor()
-                return cell
-            }
-            
-            // Configure the cell
-            guard let cell = tableView.dequeueReusableCellWithIdentifier("FavoriteMeetingPlace", forIndexPath: indexPath) as? FavoriteMeetingLocationTableViewCell else { return UITableViewCell() }
-            guard let localUser     = model?.userServiceProvider.getLocalUser() else { return cell }
-            guard let userID        = localUser.userID else { return cell }
-            let realm               = try! Realm()
-            let results             = realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"")
-            let location            = results[indexPath.row]
-            guard let name          = location.name else { return cell }
-            cell.titleLabel.text    = name
             return cell
             
         case kLOGOUT_SECTION:
             let cell = UITableViewCell()
-            // FIXME: Pull text form some localized text repo
             cell.textLabel?.text = "Log Out"
             cell.textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
-            cell.textLabel?.textAlignment = .Center
-            cell.textLabel?.textColor = .whiteColor()
-            cell.backgroundColor = kCOLOR_TWO
+            cell.textLabel?.textColor = kCOLOR_TWO
+            cell.backgroundColor = .whiteColor()
             return cell
             
         default:
@@ -216,23 +142,15 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             switch indexPath.row {
             case 0:
                 performSegueWithIdentifier("ShowAccountSettings", sender: nil)
-            case 1:
+                
+            case 2:
                 showPaymentMethods()
+                
             default: break
             }
             
-        case kFAV_MEETING_LOCATIONS_SECTION:
-            switch indexPath.row {
-            case tableView.numberOfRowsInSection(1)-2:
-                performSegueWithIdentifier("ShowNewFavoriteMeetingLocation", sender: nil)
-            default:
-                guard let localUser = model?.userServiceProvider.getLocalUser() else { return }
-                guard let userID    = localUser.userID else { return }
-                let realm           = try! Realm()
-                let results         = realm.objects(FavoriteMeetingLocation).filter("userID == \"\(userID)\"")
-                targetLocation      = results[indexPath.row]
-                performSegueWithIdentifier("ShowEditFavoriteMeetingLocation", sender: nil)
-            }
+        case kHOME_ADDRESS_SECTION:
+            performSegueWithIdentifier("HomeAddressSegue", sender: nil)
             
         case kLOGOUT_SECTION:
             model?.userServiceProvider.logout({(success:Bool)->Void in
@@ -243,6 +161,7 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
                     print("Error logging out")
                 }
             })
+            
         default: break
         }
         
@@ -261,6 +180,11 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     func didUpdateAccountSettings() {
         delegate?.didUpdateAccountSettings()
         configureUsernameAndProfileImage()
+    }
+    
+    // MARK: - HomeAddressDelegate
+    func didUpdateHomeAddress() {
+        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Fade)
     }
     
     // MARK: - Payments
@@ -310,21 +234,6 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
     }
     
     
-    // MARK: - NewFavoriteMeetingLocationDelegate 
-    func didAddNewFavoriteMeetingLocation() {
-        tableView.reloadSections(NSIndexSet(index: kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
-    }
-    
-    
-    // MARK: - EditFavoriteMeetingLocationDelegate
-    func didUpdateFavoriteMeetingLocation() {
-        tableView.reloadSections(NSIndexSet(index: kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
-    }
-    
-    func didDeleteFavoriteMeetingLocation() {
-        tableView.reloadSections(NSIndexSet(index: kFAV_MEETING_LOCATIONS_SECTION), withRowAnimation: .Fade)
-    }
-    
     // MARK: - UI Actions
     @IBAction func menuButtonTapped(sender: AnyObject) {
         delegate?.openMenu()
@@ -340,18 +249,11 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, NewFavoriteMee
             destVC.model = model
             destVC.delegate = self
             
-        } else if segue.identifier == "ShowNewFavoriteMeetingLocation" {
+        } else if segue.identifier == "HomeAddressSegue" {
             guard let navVC = segue.destinationViewController as? UINavigationController else { return }
-            guard let destVC = navVC.topViewController as? NewFavoriteMeetingLocationVC else { return }
-            destVC.delegate = self
-            destVC.model = model
-            
-        } else if segue.identifier == "ShowEditFavoriteMeetingLocation" {
-            guard let navVC = segue.destinationViewController as? UINavigationController else { return }
-            guard let destVC = navVC.topViewController as? EditFavoriteMeetingLocationVC else { return }
+            guard let destVC = navVC.topViewController as? HomeAddressVC else { return }
             destVC.model = model
             destVC.delegate = self
-            destVC.location = targetLocation
         }
         
         delegate?.didMoveOneLevelIntoNavigation()

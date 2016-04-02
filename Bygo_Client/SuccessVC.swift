@@ -38,7 +38,7 @@ class SuccessVC: UIViewController {
         detailLabel.alpha = 0.0
         
         doneButton.backgroundColor = kCOLOR_THREE
-        doneButton.setTitleColor(kCOLOR_SIX, forState: .Normal)
+        doneButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
         doneButtonBottomOffset.constant = -48.0
         doneButton.alpha = 0.0
 

@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 
+// TODO: Rename to GalleryWithTitleCollectionViewCell
 class Discovery_0_CollectionViewCell: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var titleLabel: UILabel!
@@ -42,19 +43,21 @@ class Discovery_0_CollectionViewCell: UICollectionViewCell, UICollectionViewDele
         guard let model = model else { return cell }
         guard let itemTypeIDs = itemTypeIDs else { return cell }
         let typeID = itemTypeIDs[indexPath.row]
-        model.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
-            (success:Bool) in
-            
-            if success {
-                let realm = try! Realm()
-                let itemType = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0]
-                let name = itemType.name
-                let mediaLink = NSURL(string: itemType.imageLinks[0].value!)!
-                dispatch_async(GlobalMainQueue, {
-                    cell.nameLabel.text = name
-                    cell.imageView.hnk_setImageFromURL(mediaLink)
-                })
-            }
+        dispatch_async(GlobalBackgroundQueue, {
+            model.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                (success:Bool) in
+                
+                if success {
+                    let realm = try! Realm()
+                    let itemType = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0]
+                    let name = itemType.name
+                    let mediaLink = NSURL(string: itemType.imageLinks[0].value!)!
+                    dispatch_async(GlobalMainQueue, {
+                        cell.nameLabel.text = name
+                        cell.imageView.hnk_setImageFromURL(mediaLink)
+                    })
+                }
+            })
         })
         return cell
     }

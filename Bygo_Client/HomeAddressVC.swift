@@ -10,7 +10,7 @@ import UIKit
 import GoogleMaps
 import MapKit
 
-class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource  {
+class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource  {
     
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var tableView: UITableView!
@@ -22,7 +22,7 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
     
     
     var model:Model?
-    var delegate:NewFavoriteMeetingLocationDelegate?
+    var delegate:HomeAddressDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,7 +116,7 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCellWithIdentifier("AutocompleteSuggestion", forIndexPath: indexPath) as? AutoCompleteLocationSuggestionTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCellWithIdentifier("AutocompleteSuggestion", forIndexPath: indexPath) as? BygoTitleDetailTableViewCell else { return UITableViewCell() }
         let suggestion = autocompletePredictions[indexPath.row]
         let placeID = suggestion.placeID
         
@@ -127,8 +127,8 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
             }
             
             if let place = place {
-                cell.locationNameLabel.text = place.name
-                cell.streetNameLabel.text = place.formattedAddress
+                cell.titleLabel.text = place.name
+                cell.detailLabel.text = place.formattedAddress
             } else {
                 print("No place details for \(placeID)")
             }
@@ -153,17 +153,31 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
             if let place = place {
                 let name        = place.name
                 let address     = place.formattedAddress
-                let isPrivate   = false
-                self.model?.favoriteMeetingLocationServiceProvider.createNewFavoriteMeetingLocation(placeID, address: address, name: name, isPrivate: isPrivate, completionHandler: { (success:Bool)->Void in
+                let geoPoint    = "\(place.coordinate.latitude), \(place.coordinate.longitude)"
+                print(geoPoint)
+                
+                self.model?.userServiceProvider.updateHomeAddress(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: {
+                    (success:Bool) in
+                    print("Got response")
                     if success {
                         self.searchBar.resignFirstResponder()
                         self.dismissViewControllerAnimated(true, completion: {
-                            self.delegate?.didAddNewFavoriteMeetingLocation()
+                            self.delegate?.didUpdateHomeAddress()
                         })
                     } else {
-                        print("Error creating new favorite meeting location")
+                        
                     }
                 })
+//                self.model?.favoriteMeetingLocationServiceProvider.createNewFavoriteMeetingLocation(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: { (success:Bool)->Void in
+//                    if success {
+//                        self.searchBar.resignFirstResponder()
+//                        self.dismissViewControllerAnimated(true, completion: {
+//                            self.delegate?.didAddNewFavoriteMeetingLocation()
+//                        })
+//                    } else {
+//                        print("Error creating new favorite meeting location")
+//                    }
+//                })
             } else {
                 print("No place details for \(placeID)")
             }
@@ -179,6 +193,6 @@ class NewFavoriteMeetingLocationVC: UIViewController, UISearchBarDelegate, UITab
 }
 
 
-protocol NewFavoriteMeetingLocationDelegate {
-    func didAddNewFavoriteMeetingLocation()
+protocol HomeAddressDelegate {
+    func didUpdateHomeAddress()
 }

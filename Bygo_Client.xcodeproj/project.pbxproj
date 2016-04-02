@@ -56,10 +56,11 @@
 		7336215D1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336215C1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift */; };
 		7336215F1C612E1D00893034 /* AccountSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336215E1C612E1D00893034 /* AccountSettingsVC.swift */; };
 		733621611C612E4300893034 /* DataValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621601C612E4300893034 /* DataValidator.swift */; };
-		733621631C61327900893034 /* NewFavoriteMeetingLocationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */; };
-		7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */; };
+		733621631C61327900893034 /* HomeAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621621C61327900893034 /* HomeAddressVC.swift */; };
+		7336216A1C6147C600893034 /* BygoTitleDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* BygoTitleDetailTableViewCell.swift */; };
 		73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E6B1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift */; };
 		73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E6D1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift */; };
+		73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
 		739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */; };
@@ -190,10 +191,11 @@
 		7336215C1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteMeetingLocationTableViewCell.swift; sourceTree = "<group>"; };
 		7336215E1C612E1D00893034 /* AccountSettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountSettingsVC.swift; sourceTree = "<group>"; };
 		733621601C612E4300893034 /* DataValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataValidator.swift; sourceTree = "<group>"; };
-		733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteMeetingLocationVC.swift; sourceTree = "<group>"; };
-		733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCompleteLocationSuggestionTableViewCell.swift; sourceTree = "<group>"; };
+		733621621C61327900893034 /* HomeAddressVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeAddressVC.swift; sourceTree = "<group>"; };
+		733621691C6147C600893034 /* BygoTitleDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BygoTitleDetailTableViewCell.swift; sourceTree = "<group>"; };
 		73372E6B1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoveryServiceProvider.swift; sourceTree = "<group>"; };
 		73372E6D1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemTypeServiceProvider.swift; sourceTree = "<group>"; };
+		73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewListingCollectionViewCell.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoadingScreen.storyboard; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				73CA5C8D1C8B9C6F004DE3E7 /* SearchBarCollectionViewCell.swift */,
 				73CA5C931C8BA37F004DE3E7 /* ItemTypeCollectionViewCell.swift */,
 				73D73F971CA77E50009F7404 /* Discovery_0_CollectionViewCell.swift */,
+				73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -498,7 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				7336215C1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift */,
-				733621691C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift */,
+				733621691C6147C600893034 /* BygoTitleDetailTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -538,7 +541,7 @@
 			children = (
 				733621551C61053200893034 /* SettingsVC.swift */,
 				7336215E1C612E1D00893034 /* AccountSettingsVC.swift */,
-				733621621C61327900893034 /* NewFavoriteMeetingLocationVC.swift */,
+				733621621C61327900893034 /* HomeAddressVC.swift */,
 				73147DA11C6294D700FD70B8 /* EditFavoriteMeetingLocationVC.swift */,
 			);
 			name = Controllers;
@@ -933,7 +936,7 @@
 				73DE66E31C63EF4B006D9810 /* MeetingTimeResponderView.swift in Sources */,
 				73DE66D11C63E9F0006D9810 /* RentRequestsVC.swift in Sources */,
 				73DD4C9F1C6858E10003698A /* MeetingTimeResponderTableViewCell.swift in Sources */,
-				7336216A1C6147C600893034 /* AutoCompleteLocationSuggestionTableViewCell.swift in Sources */,
+				7336216A1C6147C600893034 /* BygoTitleDetailTableViewCell.swift in Sources */,
 				73DE66A91C6386DD006D9810 /* DashboardVC.swift in Sources */,
 				730CAA461C7822B1000BE681 /* UIElements.swift in Sources */,
 				733621581C6106A200893034 /* FavoriteMeetingLocation.swift in Sources */,
@@ -948,10 +951,11 @@
 				730CF8961C97F47600D934A3 /* NewListingImageVC.swift in Sources */,
 				7336215D1C610E3400893034 /* FavoriteMeetingLocationTableViewCell.swift in Sources */,
 				73DE66F31C6408BB006D9810 /* RentServiceProvider.swift in Sources */,
-				733621631C61327900893034 /* NewFavoriteMeetingLocationVC.swift in Sources */,
+				733621631C61327900893034 /* HomeAddressVC.swift in Sources */,
 				73DE66D71C63ED14006D9810 /* MeetingsVC.swift in Sources */,
 				73DE66BF1C63B6C5006D9810 /* NewListingPhotoCollectionViewCell.swift in Sources */,
 				73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */,
+				73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */,
 				73DE66EB1C63F0C7006D9810 /* MeetingLocationProposalTableViewCell.swift in Sources */,
 				73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */,
 				73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */,
