@@ -66,6 +66,7 @@
 		73372E7F1CB0B0AB0019A6FD /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E7E1CB0B0AB0019A6FD /* HistoryTableViewCell.swift */; };
 		73372E811CB0B3750019A6FD /* HistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E801CB0B3750019A6FD /* HistoryVC.swift */; };
 		73372E831CB0B5420019A6FD /* HistoryServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */; };
+		73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E851CB0CAD80019A6FD /* LoadingScreen.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
 		739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */; };
@@ -186,6 +187,7 @@
 		73372E7E1CB0B0AB0019A6FD /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		73372E801CB0B3750019A6FD /* HistoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryVC.swift; sourceTree = "<group>"; };
 		73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryServiceProvider.swift; sourceTree = "<group>"; };
+		73372E851CB0CAD80019A6FD /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoadingScreen.storyboard; sourceTree = "<group>"; };
@@ -400,8 +402,7 @@
 		733621391C60766600893034 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				730CF8991C9907F200D934A3 /* SuccessVC.swift */,
-				730CF89B1C99131F00D934A3 /* AnimatedCheckmarkView.swift */,
+				73372E841CB0CABC0019A6FD /* Misc. */,
 				739ADBD11C7F5A0700C34CC1 /* LoadingScreen */,
 				730CAA3A1C762F35000BE681 /* Payments */,
 				73147DA71C62EF6200FD70B8 /* Discover */,
@@ -514,6 +515,16 @@
 				733621621C61327900893034 /* HomeAddressVC.swift */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		73372E841CB0CABC0019A6FD /* Misc. */ = {
+			isa = PBXGroup;
+			children = (
+				730CF89B1C99131F00D934A3 /* AnimatedCheckmarkView.swift */,
+				730CF8991C9907F200D934A3 /* SuccessVC.swift */,
+				73372E851CB0CAD80019A6FD /* LoadingScreen.swift */,
+			);
+			name = Misc.;
 			sourceTree = "<group>";
 		};
 		739ADBD11C7F5A0700C34CC1 /* LoadingScreen */ = {
@@ -856,6 +867,7 @@
 				733621631C61327900893034 /* HomeAddressVC.swift in Sources */,
 				73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */,
 				73372E791CB035D00019A6FD /* NotificationServiceProvider.swift in Sources */,
+				73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */,
 				73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */,
 				73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */,
 				73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */,

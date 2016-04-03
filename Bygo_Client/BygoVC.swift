@@ -39,6 +39,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
+        view.backgroundColor = kCOLOR_THREE
+        
         menuButton.tintColor = .whiteColor()
         
         // NSTimer.scheduledTimerWithTimeInterval(10.0, target: self, selector: #selector(BygoVC.changePrompt), userInfo: nil, repeats: true)
@@ -171,7 +173,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         if layoutData == nil {
-            return 0
+            return 1
         } else {
             return 3
         }
@@ -179,7 +181,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
 
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let layoutData = layoutData else { return 0 }
+        guard let layoutData = layoutData else { return 1 }
         switch section {
         case 0: return 1
         case 1: return layoutData.count
@@ -251,7 +253,6 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             case kCREATE_NEW_LISTING_CELL:
                 
                 guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CreateListingCell", forIndexPath: indexPath) as? CreateNewListingCollectionViewCell else { return UICollectionViewCell() }
-//                cell.backgroundColor = .whiteColor()
                 cell.backgroundColor = kCOLOR_FIVE
                 cell.titleLabel.textColor = .whiteColor()
                 cell.detailLabel.textColor = .whiteColor()
@@ -416,20 +417,30 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     
     // MARK: - Refresh
     func refresh() {
-        model?.discoveryServiceProvider.fetchDefaultHomePageData({ (data:AnyObject?) in
+        self.model?.discoveryServiceProvider.fetchDefaultHomePageData({ (data:AnyObject?) in
             if data != nil {
                 self.layoutData = data
                 if self.searchBar != nil {
                     self.searchBar.text = nil
                 }
-                self.collectionView.reloadData()
+                
+                if self.collectionView.numberOfSections() > 1 {
+                    self.collectionView.performBatchUpdates({
+                        self.collectionView.reloadSections(NSIndexSet(index: 1))
+                        }, completion: nil)
+                } else {
+                    self.collectionView.reloadData()
+                }
                 
             } else {
                 // TODO: Present some error message to the user that the homepage data could not be loaded
             }
+            
             self.refreshControl.endRefreshing()
         })
     }
+
+
     
     // MARK: - DiscoveryDelegate
     func didSelectItemType(typeID: String?) {
