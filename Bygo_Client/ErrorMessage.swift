@@ -18,11 +18,14 @@ class ErrorMessage: UIView {
     @IBOutlet private var errorViewTopOffset: NSLayoutConstraint!
     
     var delegate: ErrorMessageDelegate?
+    var error: BygoError?
     var title: String?
     var detail: String?
     
-    init(frame: CGRect, title:String, detail:String?, options:[ErrorMessageOptions]) {
+    init(frame: CGRect, title:String, detail:String?, error:BygoError, priority: ErrorMessagePriority, options:[ErrorMessageOptions]) {
         super.init(frame: frame)
+        
+        self.error = error
         
         backgroundColor = .clearColor()
         
@@ -44,12 +47,12 @@ class ErrorMessage: UIView {
         errorView.centerXAnchor.constraintEqualToAnchor(centerXAnchor).active = true
         errorViewTopOffset = errorView.topAnchor.constraintEqualToAnchor(topAnchor, constant: frame.size.height)
         errorViewTopOffset.active = true
-        errorView.backgroundColor = kCOLOR_TWO
+//        errorView.backgroundColor = kCOLOR_TWO
         
         titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = UIFont.systemFontOfSize(24.0)
-        titleLabel.textColor = .whiteColor()
+//        titleLabel.textColor = .whiteColor()
         titleLabel.text = title
         titleLabel.textAlignment = .Center
         titleLabel.numberOfLines = 0
@@ -62,7 +65,7 @@ class ErrorMessage: UIView {
         detailLabel = UILabel()
         detailLabel.translatesAutoresizingMaskIntoConstraints = false
         detailLabel.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
-        detailLabel.textColor = .whiteColor()
+//        detailLabel.textColor = .whiteColor()
         detailLabel.alpha = 0.75
         detailLabel.text = detail
         detailLabel.textAlignment = .Center
@@ -73,6 +76,17 @@ class ErrorMessage: UIView {
         detailLabel.leadingAnchor.constraintEqualToAnchor(errorView.leadingAnchor, constant: 24.0).active = true
         detailLabel.topAnchor.constraintEqualToAnchor(titleLabel.bottomAnchor, constant: 8.0).active = true
 
+        
+        switch priority {
+        case .High:
+            errorView.backgroundColor = kCOLOR_TWO
+            titleLabel.textColor = .whiteColor()
+            detailLabel.textColor = .whiteColor()
+        default:
+            errorView.backgroundColor = .whiteColor()
+            titleLabel.textColor = kCOLOR_ONE
+            detailLabel.textColor = kCOLOR_ONE
+        }
         
         if options.count > 2 || options.count < 1 {
             errorView.bottomAnchor.constraintEqualToAnchor(detailLabel.bottomAnchor, constant: 24.0).active = true
@@ -87,19 +101,34 @@ class ErrorMessage: UIView {
             
             errorView.addSubview(o)
             
-            o.setTitleColor(.whiteColor(), forState: .Normal)
-            o.setTitleColor(UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5), forState: .Highlighted)
-            o.titleLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
+//            o.setTitleColor(.whiteColor(), forState: .Normal)
+//            o.setTitleColor(UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5), forState: .Highlighted)
+            o.titleLabel?.font = UIFont.systemFontOfSize(18.0)
             o.setTitle(option.rawValue, forState: .Normal)
             
             o.widthAnchor.constraintEqualToAnchor(widthAnchor, multiplier: 1.0/CGFloat(options.count)).active = true
             o.topAnchor.constraintEqualToAnchor(detailLabel.bottomAnchor, constant: 24.0).active = true
             o.heightAnchor.constraintEqualToConstant(56.0).active = true
+            
+            switch priority {
+            case .High:
+                o.setTitleColor(.whiteColor(), forState: .Normal)
+                o.setTitleColor(UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5), forState: .Highlighted)
+                
+            default:
+                o.setTitleColor(kCOLOR_ONE, forState: .Normal)
+                o.setTitleColor(UIColor(red: 44.0/255.0, green: 62.0/255.0, blue: 80.0/255.0, alpha: 0.5), forState: .Highlighted)
+            }
+            
             if i == 0 {
                 o.leadingAnchor.constraintEqualToAnchor(leadingAnchor).active = true
                 errorView.bottomAnchor.constraintEqualToAnchor(o.bottomAnchor, constant: 12.0).active = true
+                if options.count == 1 {
+                    o.titleLabel?.font = UIFont.systemFontOfSize(18.0, weight: UIFontWeightMedium)
+                }
             }
             else {
+                o.titleLabel?.font = UIFont.systemFontOfSize(18.0, weight: UIFontWeightMedium)
                 o.trailingAnchor.constraintEqualToAnchor(trailingAnchor).active = true
             }
             
@@ -138,6 +167,7 @@ class ErrorMessage: UIView {
                 (complete:Bool) in
                 if complete {
                     self.removeFromSuperview()
+                    self.delegate?.okayButtonTapped(self.error!)
                 }
         })
     }
@@ -156,12 +186,30 @@ class ErrorMessage: UIView {
     }
     
     @IBAction func retryButtonTapped(sender: UIButton) {
-        delegate?.retryButtonTapped?()
+        errorViewTopOffset.constant = bounds.height
+        UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseIn, animations: {
+            self.errorView.layoutIfNeeded()
+            self.backgroundView.alpha = 0.0
+            }, completion: {
+                (complete:Bool) in
+                if complete {
+                    self.removeFromSuperview()
+                    self.delegate?.retryButtonTapped(self.error!)
+                }
+        })
     }
 }
 
-@objc protocol ErrorMessageDelegate {
-    optional func retryButtonTapped()
+protocol ErrorMessageDelegate {
+    func retryButtonTapped(error: BygoError)
+    func okayButtonTapped(error: BygoError)
+}
+
+
+enum ErrorMessagePriority {
+    case Low
+    case Medium
+    case High
 }
 
 

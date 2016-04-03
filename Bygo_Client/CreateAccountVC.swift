@@ -291,6 +291,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
             guard let destVC = segue.destinationViewController as? PhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model
+            
         } else if segue.identifier == "VerifyMobileSegue" {
             guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
             destVC.delegate = delegate

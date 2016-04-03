@@ -11,14 +11,13 @@ import UIKit
 class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     
     var model:Model?
-    
     var delegate:LoginDelegate?
+    var isModalPresentation: Bool = false
     
     @IBOutlet var codeLabel: UILabel!
     @IBOutlet var codeTextField: UITextField!
     @IBOutlet var instructionLabel: UILabel!
 
-    @IBOutlet var backButton: UIBarButtonItem!
     @IBOutlet var doneButton: UIBarButtonItem!
     @IBOutlet var resendCodeButton: UIButton!
     @IBOutlet var changePhoneNumberButton: UIButton!
@@ -28,10 +27,18 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        if !isModalPresentation {
+            navigationItem.leftBarButtonItem?.enabled = false
+            navigationItem.leftBarButtonItem?.tintColor = .clearColor()
+        } else {
+            navigationItem.leftBarButtonItem?.enabled = true
+            navigationItem.leftBarButtonItem?.target = self
+            navigationItem.leftBarButtonItem?.action = #selector(cancelButtonTapped(_:))
+        }
         
         view.backgroundColor = kCOLOR_THREE
         codeView.backgroundColor = .whiteColor()
@@ -42,7 +49,9 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
         instructionLabel.alpha = 0.75
         
         resendCodeButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
-        changePhoneNumberButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
+        if changePhoneNumberButton != nil {
+            changePhoneNumberButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
+        }
         
         codeTextField.addTarget(self, action: #selector(VerifyPhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
@@ -54,6 +63,11 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
                 // TODO: Show some error message to the user
             }
         })
+        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -119,6 +133,7 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     @IBAction func doneButtonTapped(sender: AnyObject) {
         guard let code = codeTextField.text else { return }
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        self.codeTextField.resignFirstResponder()
         model?.phoneNumberServiceProvider.checkPhoneNumberVerificationCode(userID, code: code, completionHandler: {
             (success:Bool) in
             if success {
@@ -139,6 +154,10 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
                 // TODO: Show some error message to the user
             }
         })
+    }
+    
+    @IBAction func cancelButtonTapped(sender: AnyObject) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func changePhoneNumberButtonTapped(sender: AnyObject) {

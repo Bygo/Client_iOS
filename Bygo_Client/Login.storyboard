@@ -320,6 +320,12 @@
                         </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Create Account" id="8Fw-F7-xIp">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="h02-L1-Dbf">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="cancelButtonTapped:" destination="Z7z-0s-UYB" id="XQj-s2-0AO"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="HFJ-Wq-Gfd">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -440,6 +446,12 @@
                         </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Verify Mobile Number" id="vIV-TD-qZh">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="jjz-f5-ych">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="cancelButtonTapped:" destination="kEx-w6-OY8" id="rhs-fi-wf1"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="TXH-Db-MGT">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -501,8 +513,8 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="First name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tl5-Fh-LZf">
-                                        <rect key="frame" x="99.5" y="0.0" width="474.5" height="48"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="First name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tl5-Fh-LZf">
+                                        <rect key="frame" x="99.5" y="0.0" width="492.5" height="48"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -513,6 +525,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="hki-kh-8zb" firstAttribute="leading" secondItem="hHP-NN-xLR" secondAttribute="leading" constant="20" id="MeH-xp-CiF"/>
+                                    <constraint firstAttribute="trailing" secondItem="Tl5-Fh-LZf" secondAttribute="trailing" constant="8" id="NWm-lv-wQf"/>
                                     <constraint firstItem="hki-kh-8zb" firstAttribute="centerY" secondItem="hHP-NN-xLR" secondAttribute="centerY" id="ZyB-Xf-Ls2"/>
                                     <constraint firstItem="Tl5-Fh-LZf" firstAttribute="leading" secondItem="hki-kh-8zb" secondAttribute="trailing" constant="8" id="jj8-yT-dbJ"/>
                                     <constraint firstItem="Tl5-Fh-LZf" firstAttribute="centerY" secondItem="hki-kh-8zb" secondAttribute="centerY" id="kdG-N5-QD2"/>
@@ -529,8 +542,8 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Last name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SYF-my-uNr">
-                                        <rect key="frame" x="99.5" y="0.0" width="474.5" height="48"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Last name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SYF-my-uNr">
+                                        <rect key="frame" x="99" y="0.0" width="493" height="48"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -544,6 +557,7 @@
                                     <constraint firstAttribute="height" constant="48" id="SCH-UQ-iOQ"/>
                                     <constraint firstItem="SYF-my-uNr" firstAttribute="height" secondItem="D7u-RH-hxv" secondAttribute="height" id="Ugn-sl-oij"/>
                                     <constraint firstItem="SYF-my-uNr" firstAttribute="centerY" secondItem="9Md-S4-ADl" secondAttribute="centerY" id="UkD-Dx-nOp"/>
+                                    <constraint firstAttribute="trailing" secondItem="SYF-my-uNr" secondAttribute="trailing" constant="8" id="Wt7-eU-mnY"/>
                                     <constraint firstItem="SYF-my-uNr" firstAttribute="leading" secondItem="9Md-S4-ADl" secondAttribute="trailing" constant="8" id="cMb-TP-fIm"/>
                                     <constraint firstItem="9Md-S4-ADl" firstAttribute="leading" secondItem="D7u-RH-hxv" secondAttribute="leading" constant="20" id="mmJ-eY-F6u"/>
                                 </constraints>
@@ -557,8 +571,8 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="+1 " placeholder="+1 123 456 7890" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="u8T-k3-8TN">
-                                        <rect key="frame" x="99.5" y="0.0" width="474.5" height="48"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="+1 " placeholder="+1 123 456 7890" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="u8T-k3-8TN">
+                                        <rect key="frame" x="99" y="0.0" width="493" height="48"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -574,6 +588,7 @@
                                     <constraint firstAttribute="height" constant="48" id="dmD-9F-s5N"/>
                                     <constraint firstItem="PNI-SA-YCB" firstAttribute="leading" secondItem="axi-7o-gPT" secondAttribute="leading" constant="20" id="oik-to-C1g"/>
                                     <constraint firstItem="u8T-k3-8TN" firstAttribute="height" secondItem="axi-7o-gPT" secondAttribute="height" id="wb5-Sw-aZU"/>
+                                    <constraint firstAttribute="trailing" secondItem="u8T-k3-8TN" secondAttribute="trailing" constant="8" id="yRG-sX-RUn"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2x6-JS-Sk7">
@@ -585,8 +600,8 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="you@example.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="USS-pO-qFT">
-                                        <rect key="frame" x="99.5" y="0.0" width="474.5" height="48"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="you@example.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="USS-pO-qFT">
+                                        <rect key="frame" x="99" y="0.0" width="493" height="48"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="emailAddress" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                         <connections>
@@ -601,6 +616,7 @@
                                     <constraint firstItem="USS-pO-qFT" firstAttribute="centerY" secondItem="POL-Ov-Zh7" secondAttribute="centerY" id="G1T-j3-Ugk"/>
                                     <constraint firstItem="POL-Ov-Zh7" firstAttribute="centerY" secondItem="2x6-JS-Sk7" secondAttribute="centerY" id="H9v-QS-lCf"/>
                                     <constraint firstItem="USS-pO-qFT" firstAttribute="height" secondItem="2x6-JS-Sk7" secondAttribute="height" id="LI4-lp-NjH"/>
+                                    <constraint firstAttribute="trailing" secondItem="USS-pO-qFT" secondAttribute="trailing" constant="8" id="TJO-AX-ggs"/>
                                     <constraint firstAttribute="height" constant="48" id="zeR-uU-G7b"/>
                                 </constraints>
                             </view>
@@ -613,8 +629,8 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Min 8 characters" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xo6-V3-wP8">
-                                        <rect key="frame" x="99.5" y="0.0" width="474.5" height="48"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Min 8 characters" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xo6-V3-wP8">
+                                        <rect key="frame" x="99" y="0.0" width="493" height="48"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES" secureTextEntry="YES"/>
                                         <connections>
@@ -627,6 +643,7 @@
                                     <constraint firstItem="xo6-V3-wP8" firstAttribute="leading" secondItem="6eV-9c-2Y4" secondAttribute="trailing" constant="8" id="3mx-ML-NgD"/>
                                     <constraint firstItem="xo6-V3-wP8" firstAttribute="centerY" secondItem="6eV-9c-2Y4" secondAttribute="centerY" id="7a1-Gk-2HH"/>
                                     <constraint firstAttribute="height" constant="48" id="EgM-DF-aDK"/>
+                                    <constraint firstAttribute="trailing" secondItem="xo6-V3-wP8" secondAttribute="trailing" constant="8" id="Gzo-5d-JK5"/>
                                     <constraint firstItem="xo6-V3-wP8" firstAttribute="height" secondItem="03c-S1-xng" secondAttribute="height" id="IXx-WT-DIV"/>
                                     <constraint firstItem="6eV-9c-2Y4" firstAttribute="leading" secondItem="03c-S1-xng" secondAttribute="leading" constant="20" id="Pjc-0b-EdC"/>
                                     <constraint firstItem="6eV-9c-2Y4" firstAttribute="centerY" secondItem="03c-S1-xng" secondAttribute="centerY" id="iZR-pe-HYa"/>

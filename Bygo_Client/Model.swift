@@ -39,6 +39,19 @@ class Model: NSObject {
 }
 
 
+// MARK: - Error Types
+enum BygoError {
+    case PhoneNumberNotFound
+    case HomeAddressNotFound
+    case UserNotFound
+    case ItemTypeNotFound
+    
+    case PhoneNumberNotVerified
+    
+    case Server
+    case Unknown
+}
+
 // MARK: - MultiThreadingQueues
 var GlobalMainQueue: dispatch_queue_t {
     return dispatch_get_main_queue()
@@ -59,3 +72,5 @@ var GlobalUtilityQueue: dispatch_queue_t {
 var GlobalBackgroundQueue: dispatch_queue_t {
     return dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0)
 }
+
+

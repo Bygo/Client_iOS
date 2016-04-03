@@ -151,7 +151,7 @@ class MenuVC: UITableViewController {
     func stringForMenuOption(option:MenuOptions) -> String {
         // FIXME: This needs to return a localized string
         switch option {
-        case .Discover:         return "Discover"
+        case .Discover:     return "Discover"
         case .Dashboard:    return "Dashboard"
         case .Settings:     return "Settings"
         case .Help:         return "Help"

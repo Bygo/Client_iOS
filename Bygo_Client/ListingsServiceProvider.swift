@@ -203,7 +203,7 @@ class ListingsServiceProvider: NSObject {
     }
     
     
-    func createNewListing(userID:String, typeID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
+    func createNewListing(userID:String, typeID:String, image:UIImage, completionHandler:(success:Bool, error:BygoError?)->Void) {
         
         // Create the request
         let urlString = "\(serverURL)/listing/create"
@@ -218,7 +218,7 @@ class ListingsServiceProvider: NSObject {
             // Handle the response
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false, error: .Unknown) })
                 return
             }
             
@@ -245,15 +245,40 @@ class ListingsServiceProvider: NSObject {
                     self.addImageForListing(listingID, image: image, completionHandler: {
                         (success:Bool) in
                         dispatch_async(GlobalMainQueue, {
-                            completionHandler(success: success)
+                            completionHandler(success: success, error: nil)
                         })
                     })
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                    completionHandler(success: false, error: .Unknown)
                 }
+                
+            case 400:
+                print(response)
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let message = json["message"] as? String else { completionHandler(success: false, error: .Unknown); return }
+                    
+                    switch message {
+                    case "Home address not found":
+                        completionHandler(success: false, error: .HomeAddressNotFound)
+                    
+                    case "Phone number not found":
+                        completionHandler(success: false, error: .PhoneNumberNotFound)
+                        
+                    case "Phone number not verified":
+                        completionHandler(success: false, error: .PhoneNumberNotVerified)
+                        
+                    default:
+                        completionHandler(success: false, error: .Unknown)
+                    }
+                } catch {
+                    completionHandler(success: false, error: .Unknown)
+                }
+                
+
             default:
-                print("/create_new/listing : \(statusCode)")
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                print("/listing/create : \(statusCode)")
+                completionHandler(success: false, error: .Unknown)
             }
         })
         task.resume()
@@ -401,3 +426,4 @@ class ListingsServiceProvider: NSObject {
     }
 
 }
+

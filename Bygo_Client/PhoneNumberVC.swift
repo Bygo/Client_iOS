@@ -12,6 +12,7 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     
     var model:Model?
     var delegate:LoginDelegate?
+    var isModalPresentation: Bool = false
     
     @IBOutlet var mobileLabel: UILabel!
     @IBOutlet var mobileTextField: UITextField!
@@ -28,6 +29,15 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         navigationController?.navigationBar.translucent     = false
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
+        if !isModalPresentation {
+            navigationItem.leftBarButtonItem?.enabled = false
+            navigationItem.leftBarButtonItem?.tintColor = .clearColor()
+        } else {
+            navigationItem.leftBarButtonItem?.enabled = true
+            navigationItem.leftBarButtonItem?.target = self
+            navigationItem.leftBarButtonItem?.action = #selector(cancelButtonTapped(_:))
+        }
+        
         view.backgroundColor = kCOLOR_THREE
         mobileTextField.tintColor = kCOLOR_ONE
         mobileView.backgroundColor = .whiteColor()
@@ -39,6 +49,11 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         mobileTextField.addTarget(self, action: #selector(PhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
         doneButton.enabled = false
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        mobileTextField.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
@@ -135,6 +150,10 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         }
     }
     
+    @IBAction func cancelButtonTapped(sender: AnyObject) {
+        mobileTextField.resignFirstResponder()
+        dismissViewControllerAnimated(true, completion: nil)
+    }
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -144,5 +163,4 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
             destVC.model = model
         }
     }
-    
 }

@@ -40,7 +40,7 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
         
         // Other setup
         searchBar.frame.size = CGSizeMake(view.bounds.width - 100.0, 20.0)
-        searchBar.placeholder = "Enter Handoff Location"
+        searchBar.placeholder = "Enter Address"
         let rightNavBarButtonItem = UIBarButtonItem(customView:searchBar)
         self.navigationItem.rightBarButtonItem = rightNavBarButtonItem
         placesClient = GMSPlacesClient()

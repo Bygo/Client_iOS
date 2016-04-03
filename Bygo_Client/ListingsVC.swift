@@ -41,7 +41,7 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         
-        let l = LoadingScreen(frame: view.bounds)
+        let l = LoadingScreen(frame: view.bounds, message: nil)
         view.addSubview(l)
         l.beginAnimation()
         

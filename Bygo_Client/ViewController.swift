@@ -44,6 +44,8 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
             //TODO: Display message to user that the app will not work without location services
             print("Cannot work without location services")
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.userDidLogin(_:)), name: "UserDidLogin", object: nil)
     }
   
     override func didReceiveMemoryWarning() {
@@ -97,11 +99,11 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     }
     
     
-    func showLoginMenu() {
+    func showLoginMenu(delegate: LoginDelegate) {
         let loginSB = UIStoryboard(name: "Login", bundle: NSBundle.mainBundle())
         loginContainer = loginSB.instantiateInitialViewController() as? UINavigationController
         (loginContainer?.topViewController as? WelcomeVC)?.model = model
-        (loginContainer?.topViewController as? WelcomeVC)?.delegate = self
+        (loginContainer?.topViewController as? WelcomeVC)?.delegate = delegate
         presentViewController(loginContainer!, animated: true, completion: nil)
     }
     
@@ -113,7 +115,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         case .Dashboard:    view.bringSubviewToFront(dashboardContainer!.view)
         case .Settings:     view.bringSubviewToFront(settingsContainer!.view)
         case .Help:         break
-        case .SignUp:       showLoginMenu()
+        case .SignUp:       showLoginMenu(self)
         }
         view.bringSubviewToFront(menuContainer!.view)
     }

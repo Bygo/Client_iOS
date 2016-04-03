@@ -509,7 +509,6 @@ extension BygoVC : UICollectionViewDelegateFlowLayout{
 
 
 public protocol HomeDelegate {
-    func showLoginMenu()
     func openMenu()
     func didMoveOneLevelIntoNavigation()
     func didReturnToBaseLevelOfNavigation()
