@@ -187,7 +187,7 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
                 
                 model?.listingServiceProvider.createNewListing(userID, typeID: id, image: image, completionHandler: {
                     (success:Bool) in
-                    if false {
+                    if success {
                         self.performSegueWithIdentifier("SuccessSegue", sender: nil)
                     } else {
                         l.endAnimation()
