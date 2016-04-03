@@ -194,7 +194,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
                                 self.setUserFacebookProfileImage(picture, completionHandler: {
                                     dispatch_async(GlobalMainQueue, {
                                         self.delegate?.userDidLogin(false)
-                                        self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
+                                        self.performSegueWithIdentifier("MobileSegue", sender: nil)
                                     })
                                 })
                                 
@@ -212,22 +212,14 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
     
     // Upload the user's profile image from facebook
     private func setUserFacebookProfileImage(picture: [String:AnyObject]?, completionHandler:()->Void) {
-        print("A")
         if let userID = self.model?.userServiceProvider.getLocalUser()?.userID {
-            print("B")
             if let picture = picture {
-                print("C")
                 if let urlString = picture["url"] as? String {
-                    print("D")
                     if let url = NSURL(string: urlString) {
-                        print("E")
                         URLServiceProvider().downloadImage(url, completionHandler: {
                             (image:UIImage?) in
-                            print("F")
                             if let image = image {
-                                print("G")
                                 self.model?.userServiceProvider.setUserProfileImage(userID, image: image, completionHandler: { (success:Bool) in
-                                    print("H")
                                     completionHandler()
                                 })
                             } else { completionHandler() }
@@ -238,6 +230,7 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
         } else { completionHandler() }
     }
     
+    
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         dismissViewControllerAnimated(true, completion: nil)
     }
@@ -245,15 +238,11 @@ class SignUpVC: UIViewController, UITextFieldDelegate {
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "ShowLogin" {
-            guard let destVC = segue.destinationViewController as? LoginVC else { return }
-            destVC.delegate = delegate
-            destVC.model = model
-        } else if segue.identifier == "VerifyMobileSegue" {
+        if segue.identifier == "VerifyMobileSegue" {
             guard let destVC = segue.destinationViewController as? VerifyPhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model
-        } else if segue.identifier == "ShowRequestPhoneNumber" {
+        } else if segue.identifier == "MobileSegue" {
             guard let destVC = segue.destinationViewController as? PhoneNumberVC else { return }
             destVC.delegate = delegate
             destVC.model = model

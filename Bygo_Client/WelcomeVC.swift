@@ -13,19 +13,13 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
     var model:Model?
     var delegate:LoginDelegate?
     
-    @IBOutlet var greenBackground: UIImageView!
-    @IBOutlet var blueBackground: UIImageView!
-    
     @IBOutlet var bygoLogoImageView: UIImageView!
     
     @IBOutlet var signInButton: UIButton!
     @IBOutlet var registerButton: UIButton!
-    @IBOutlet var cancelButton: UIButton!
-    
+    @IBOutlet var cancelButton: UIBarButtonItem!
     
     var logoCenterPoint: CGPoint!
-//    @IBOutlet var centerLogoHorizontalConstraint: NSLayoutConstraint!
-//    @IBOutlet var centerLogoVerticalConstraint: NSLayoutConstraint!
     
     @IBOutlet var buttonsBottomOffset: NSLayoutConstraint!
     
@@ -33,21 +27,36 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
         // Do any additional setup after loading the view.
         
-        cancelButton.setImage(UIImage(named: "Back")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+//        cancelButton.setImage(UIImage(named: "Back")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+        
+        // UI Design
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         cancelButton.tintColor = .whiteColor()
+        
+        registerButton.backgroundColor = kCOLOR_ONE
+        registerButton.setTitleColor(.whiteColor(), forState: .Normal)
+        signInButton.backgroundColor = .clearColor()
+        signInButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
+        
+        
+        view.backgroundColor = kCOLOR_THREE
+        
         // cancelButton.hidden = true
-        cancelButton.transform = CGAffineTransformMakeRotation(CGFloat((270.0*M_PI)/180.0));
+//        cancelButton.transform = CGAffineTransformMakeRotation(CGFloat((270.0*M_PI)/180.0));
+        
         bygoLogoImageView.alpha = 0.0
-//        bygoLogoImageView.layer.shadowColor = UIColor.blackColor().CGColor
-//        bygoLogoImageView.layer.shadowOpacity = 0.5
-//        bygoLogoImageView.layer.shadowOffset = CGSizeMake(1.0, 1.0)
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(WelcomeVC.panGestureRecognized(_:)))
-        panGestureRecognizer.delegate = self
-        panGestureRecognizer.maximumNumberOfTouches = 1
-        view.addGestureRecognizer(panGestureRecognizer)
+        bygoLogoImageView.image = UIImage(named: "Bygo")?.imageWithRenderingMode(.AlwaysTemplate)
+        bygoLogoImageView.tintColor = kCOLOR_ONE
+        
+//        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(WelcomeVC.panGestureRecognized(_:)))
+//        panGestureRecognizer.delegate = self
+//        panGestureRecognizer.maximumNumberOfTouches = 1
+//        view.addGestureRecognizer(panGestureRecognizer)
+//
         
         signInButton.alpha      = 0.0
         registerButton.alpha    = 0.0
@@ -65,7 +74,7 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidAppear(animated: Bool) {
         buttonsBottomOffset.constant = 8.0
         UIView.animateWithDuration(0.75, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            self.bygoLogoImageView.alpha    = 1.0
+                self.bygoLogoImageView.alpha    = 1.0
                 self.signInButton.alpha     = 1.0
                 self.registerButton.alpha   = 1.0
                 self.view.layoutIfNeeded()
@@ -76,58 +85,11 @@ class WelcomeVC: UIViewController, UIGestureRecognizerDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
-        /*
-        switch recognizer.state {
-        case .Began, .Changed:
-            let location = recognizer.locationInView(view)
-            if bygoLogoImageView.frame.contains(location) {
-                let translation = recognizer.translationInView(view)
-                
-                bygoLogoImageView.center = CGPointMake(bygoLogoImageView.center.x+(translation.x/2.0), bygoLogoImageView.center.y + (translation.y/2.0))
-                recognizer.setTranslation(CGPointZero, inView: recognizer.view)
-                
-                let centerPoint = bygoLogoImageView.center
-                let xDist   = fabs(centerPoint.x - logoCenterPoint.x)
-                let yDist   = fabs(centerPoint.y - logoCenterPoint.y)
-                let dist    = sqrt((xDist*xDist) + (yDist*yDist))
-                
-                let kDISTANCE_NEEDED_TO_DISMISS_VC:CGFloat = 100.0
-                if dist > kDISTANCE_NEEDED_TO_DISMISS_VC {
-                    navigationController?.dismissViewControllerAnimated(true, completion: nil)
-                }
-                
-                let alpha = 1.0 - (dist/kDISTANCE_NEEDED_TO_DISMISS_VC)
-                self.registerButton.alpha = alpha
-                self.signInButton.alpha = alpha
-            }
-            
-        case .Ended:
-            UIView.animateWithDuration(0.5, animations: {
-                self.bygoLogoImageView.center = self.logoCenterPoint
-                self.registerButton.alpha = 1.0
-                self.signInButton.alpha = 1.0
-            })
-            
-        default:
-            break
-        }
-        */
-    }
-    
+
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    @IBAction func registerButtonTapped(sender: AnyObject) {
-
-    }
-
-    @IBAction func signInButtonTapped(sender: AnyObject) {
-
-    }
-
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "CreateAccountSegue" {

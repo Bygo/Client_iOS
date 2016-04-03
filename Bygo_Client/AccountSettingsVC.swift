@@ -13,6 +13,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     // MARK: - Outlets
     @IBOutlet var headerView: UIView!
     @IBOutlet var profileImageView: UIImageView!
+    @IBOutlet var changePhotoButton: UIButton!
     
     @IBOutlet var firstNameLabel: UILabel!
     @IBOutlet var lastNameLabel: UILabel!
@@ -55,6 +56,9 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         headerView.backgroundColor = .clearColor()
         view.backgroundColor = kCOLOR_THREE
         
+        changePhotoButton.backgroundColor = .clearColor()
+        changePhotoButton.setTitleColor(kCOLOR_FIVE, forState: .Normal)
+        
         saveButton.enabled = false
         
         firstNameTextField.addTarget(self, action: #selector(AccountSettingsVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
@@ -64,6 +68,16 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         
         // Set user specific UI
         configureUserSpecificUI()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: <#T##String?#>, object: <#T##AnyObject?#>)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -90,6 +104,33 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         guard let url = NSURL(string: profileLink)      else { print("No url"); return }
         profileImageView.hnk_setImageFromURL(url)
     }
+    
+    
+    // MARK: - Keyboard
+    func keyboardWillShow(notification: NSNotification) {
+        if let _ = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            self.view.frame.origin.y = -80.0
+            UIView.animateWithDuration(0.25, animations: {
+                self.changePhotoButton.alpha = 0.0
+                self.profileImageView.alpha = 0.0
+            })
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        if let _ = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let navBarHeight = self.navigationController?.navigationBar.bounds.height {
+                let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+                    self.view.frame.origin.y = navBarHeight+statusBarHeight
+            }
+            UIView.animateWithDuration(0.25, animations: {
+                self.changePhotoButton.alpha = 1.0
+                self.profileImageView.alpha = 1.0
+            })
+        }
+        
+    }
+    
     
     
     // MARK: - UI Actions
@@ -191,6 +232,13 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
             mobileTextField.resignFirstResponder()
             emailTextField.resignFirstResponder()
         }
+    }
+    
+    @IBAction func tapGestureRecognized(sender: AnyObject) {
+        firstNameTextField.resignFirstResponder()
+        lastNameTextField.resignFirstResponder()
+        mobileTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
     }
     
     // MARK: - Text Field Delegate

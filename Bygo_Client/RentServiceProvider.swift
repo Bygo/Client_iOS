@@ -491,6 +491,7 @@ class RentServiceProvider: NSObject {
         })
     }
     
+    
     func generateNewProposedMeetingTimes() -> [ProposedMeetingTime] {
         let numMeetingTimes     = 24    // Every half hour over the next 12 hours
         let duration:Double     = 30.0  // 1 half hour

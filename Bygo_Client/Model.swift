@@ -26,7 +26,6 @@ enum RentalTimeFrame:String {
 
 class Model: NSObject {
     let userServiceProvider                     = UserServiceProvider(serverURL: serverURL)
-    let favoriteMeetingLocationServiceProvider  = FavoriteMeetingLocationServiceProvider(serverURL: serverURL)
     let listingServiceProvider                  = ListingsServiceProvider(serverURL: serverURL)
     let rentServiceProvider                     = RentServiceProvider(serverURL: serverURL)
     let meetingServiceProvider                  = MeetingServiceProvider(serverURL: serverURL)
@@ -34,12 +33,9 @@ class Model: NSObject {
     let phoneNumberServiceProvider              = PhoneNumberVerificationServiceProvider(serverURL: serverURL)
     let itemTypeServiceProvider                 = ItemTypeServiceProvider(serverURL: serverURL)
     let discoveryServiceProvider                = DiscoveryServiceProvider(serverURL: serverURL)
+    let notificationServiceProvider = NotificationServiceProvider(serverURL: serverURL)
+    let historyServiceProvider = HistoryServiceProvider(serverURL: serverURL)
     let dataValidator = DataValidator()
-    
-    // TODO: Remove this function and get the AdListingsSP to accept the userID instead
-    internal func getLocalUser() -> User? {
-        return userServiceProvider.getLocalUser()
-    }
 }
 
 

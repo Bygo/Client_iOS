@@ -300,6 +300,66 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     
+    func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        print(indexPath)
+        switch indexPath.section {
+        case 1:
+            guard let layoutData = layoutData as? [[String:AnyObject]] else { return false }
+            if layoutData.count == 0 { return false }
+            let data = layoutData[indexPath.row]
+            guard let type = data["type"] as? Int else { return false }
+            switch type {
+            case kITEM_TYPE_CELL: return true
+            case kCREATE_NEW_LISTING_CELL: return true
+            default: return false
+            }
+        default: return false
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+        switch indexPath.section {
+        case 1:
+            guard let layoutData = layoutData as? [[String:AnyObject]] else { return }
+            if layoutData.count == 0 { return }
+            let data = layoutData[indexPath.row]
+            guard let type = data["type"] as? Int else { return }
+            switch type {
+            case kITEM_TYPE_CELL:
+                return
+                
+            case kCREATE_NEW_LISTING_CELL:
+                guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
+                cell.alpha = 0.75
+                
+            default: return
+            }
+        default: return
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
+        switch indexPath.section {
+        case 1:
+            guard let layoutData = layoutData as? [[String:AnyObject]] else { return }
+            if layoutData.count == 0 { return }
+            let data = layoutData[indexPath.row]
+            guard let type = data["type"] as? Int else { return }
+            switch type {
+            case kITEM_TYPE_CELL:
+                return
+                
+            case kCREATE_NEW_LISTING_CELL:
+                guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
+                cell.alpha = 1.0
+                
+            default: return
+            }
+        default: return
+        }
+    }
+    
+    
     private var previousScrollViewOffset:CGFloat = 0.0
     func scrollViewDidScroll(scrollView: UIScrollView) {
 //        if scrollView == collectionView {
@@ -323,7 +383,9 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     // MARK: - UI Action
     @IBAction func menuButtonTapped(sender: AnyObject) {
         delegate?.openMenu()
-        searchBar.resignFirstResponder()
+        if searchBar != nil {
+            searchBar.resignFirstResponder()
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

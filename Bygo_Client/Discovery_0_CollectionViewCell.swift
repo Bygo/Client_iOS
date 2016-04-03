@@ -69,6 +69,20 @@ class Discovery_0_CollectionViewCell: UICollectionViewCell, UICollectionViewDele
         let typeID = itemTypeIDs[indexPath.row]
         delegate?.didSelectItemType(typeID)
     }
+    
+    func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+        guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
+        cell.alpha = 0.75
+    }
+    
+    func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
+        guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
+        cell.alpha = 1.0
+    }
 }
 
 // MARK: - UICollectionViewDelegate

@@ -20,6 +20,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var emailView: UIView!
     @IBOutlet var passwordView: UIView!
     
+    @IBOutlet var phoneDisclaimerLabel: UILabel!
     
     @IBOutlet var firstNameLabel: UILabel!
     @IBOutlet var lastNameLabel: UILabel!
@@ -34,46 +35,34 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     
-    @IBOutlet var firstNameCheckIndicator: UIImageView!
-    @IBOutlet var lastNameCheckIndicator: UIImageView!
-    @IBOutlet var mobileCheckIndicator: UIImageView!
-    @IBOutlet var emailCheckIndicator: UIImageView!
-    @IBOutlet var passwordCheckIndicator: UIImageView!
-    
     @IBOutlet var facebookButton: UIButton!
-    @IBOutlet var backButton: UIButton!
-    @IBOutlet var nextButton: UIButton!
     
+    @IBOutlet var backButton: UIBarButtonItem!
+    @IBOutlet var doneButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        backButton.setImage(UIImage(named: "Back")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-        backButton.tintColor = .whiteColor()
         
         firstNameTextField.tintColor    = kCOLOR_ONE
         lastNameTextField.tintColor     = kCOLOR_ONE
         mobileTextField.tintColor       = kCOLOR_ONE
         emailTextField.tintColor        = kCOLOR_ONE
         passwordTextField.tintColor     = kCOLOR_ONE
-        
-        firstNameCheckIndicator.layer.cornerRadius  = firstNameCheckIndicator.bounds.width/2.0
-        lastNameCheckIndicator.layer.cornerRadius   = lastNameCheckIndicator.bounds.width/2.0
-        mobileCheckIndicator.layer.cornerRadius     = mobileCheckIndicator.bounds.width/2.0
-        emailCheckIndicator.layer.cornerRadius      = emailCheckIndicator.bounds.width/2.0
-        passwordCheckIndicator.layer.cornerRadius   = passwordCheckIndicator.bounds.width/2.0
-        
-        firstNameCheckIndicator.alpha   = 0.0
-        lastNameCheckIndicator.alpha    = 0.0
-        mobileCheckIndicator.alpha      = 0.0
-        emailCheckIndicator.alpha       = 0.0
-        passwordCheckIndicator.alpha    = 0.0
 
-        firstNameView.backgroundColor   = kCOLOR_THREE
-        lastNameView.backgroundColor    = kCOLOR_THREE
-        mobileView.backgroundColor      = kCOLOR_THREE
-        emailView.backgroundColor       = kCOLOR_THREE
-        passwordView.backgroundColor    = kCOLOR_THREE
+        view.backgroundColor = kCOLOR_THREE
+        
+        phoneDisclaimerLabel.textColor = .blackColor()
+        phoneDisclaimerLabel.alpha = 0.75
+        
+        orLabel.textColor = .blackColor()
+        orLabel.font = UIFont.systemFontOfSize(12.0, weight: UIFontWeightMedium)
+        orLabel.alpha = 0.75
+        
+        firstNameView.backgroundColor   = .whiteColor()
+        lastNameView.backgroundColor    = .whiteColor()
+        mobileView.backgroundColor      = .whiteColor()
+        emailView.backgroundColor       = .whiteColor()
+        passwordView.backgroundColor    = .whiteColor()
         
         firstNameTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         lastNameTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
@@ -81,7 +70,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
         emailTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         passwordTextField.addTarget(self, action: #selector(CreateAccountVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
-        nextButton.alpha = 0.0
+        doneButton.enabled = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -92,67 +81,40 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
     func isUserDataValid() -> Bool {
         guard let model = model else { return false }
         
-        var isValid = true
+        guard let firstName = firstNameTextField.text else {
+            return false
+        }
+        guard let lastName = lastNameTextField.text else {
+            return false
+        }
+        guard let mobile = mobileTextField.text else {
+            return false
+        }
+        guard let email = emailTextField.text else {
+            return false
+        }
+        guard let password = passwordTextField.text else {
+            return false
+        }
         
-        if let firstName = firstNameTextField.text {
-            if model.dataValidator.isValidFirstName(firstName) {
-                firstNameCheckIndicator.alpha = 1.0
-            } else {
-                firstNameCheckIndicator.alpha = 0.0
-                isValid = false
-            }
-        } else { isValid = false }
+        if !model.dataValidator.isValidFirstName(firstName) {
+            return false
+        }
+        if !model.dataValidator.isValidLastName(lastName) {
+            return false
+        }
+        if !model.dataValidator.isValidPhoneNumber(mobile)  { return false
+        }
+        if !model.dataValidator.isValidEmail(email) {
+            return false
+        }
+        if !model.dataValidator.isValidPassword(password)   { return false
+        }
         
-        if let lastName = lastNameTextField.text {
-            if model.dataValidator.isValidLastName(lastName) {
-                lastNameCheckIndicator.alpha = 1.0
-            } else {
-                lastNameCheckIndicator.alpha = 0.0
-                isValid = false
-            }
-        } else { isValid = false }
         
-        if let mobile = mobileTextField.text {
-            if model.dataValidator.isValidPhoneNumber(mobile) {
-                mobileCheckIndicator.alpha = 1.0
-            } else {
-                mobileCheckIndicator.alpha = 0.0
-                isValid = false
-            }
-        } else { isValid = false }
-        
-        if let email = emailTextField.text {
-            if model.dataValidator.isValidEmail(email) {
-                emailCheckIndicator.alpha = 1.0
-            } else {
-                emailCheckIndicator.alpha = 0.0
-                isValid = false
-            }
-        } else { isValid = false }
-        
-        if let password = passwordTextField.text {
-            if model.dataValidator.isValidPassword(password) {
-                passwordCheckIndicator.alpha = 1.0
-            } else {
-                passwordCheckIndicator.alpha = 0.0
-                isValid = false
-            }
-        } else { isValid = false }
-        
-        return isValid
+        return true
     }
     
-    func enableNextButtonIfNeeded() {
-        if isUserDataValid() {
-            UIView.animateWithDuration(0.5, animations: {
-                self.nextButton.alpha = 1.0
-            })
-        } else {
-            UIView.animateWithDuration(0.5, animations: {
-                self.nextButton.alpha = 0.0
-            })
-        }
-    }
     
     // MARK: - TextFieldDelegate
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
@@ -188,7 +150,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
                 let remainder = decimalString.substringFromIndex(index)
                 formattedString.appendString(remainder)
                 textField.text = formattedString as String
-                enableNextButtonIfNeeded()
+                doneButton.enabled = isUserDataValid()
                 return false
             }
         }
@@ -196,46 +158,14 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        var targetView:UIView?
-        switch textField {
-        case firstNameTextField:
-            targetView = firstNameView
-        case lastNameTextField:
-            targetView = lastNameView
-        case mobileTextField:
-            targetView = mobileView
-        case emailTextField:
-            targetView = emailView
-        case passwordTextField:
-            targetView = passwordView
-        default:
-            break
-        }
-        
-        firstNameView.backgroundColor   = kCOLOR_THREE
-        lastNameView.backgroundColor    = kCOLOR_THREE
-        mobileView.backgroundColor      = kCOLOR_THREE
-        emailView.backgroundColor       = kCOLOR_THREE
-        passwordView.backgroundColor    = kCOLOR_THREE
-        targetView?.backgroundColor     = .whiteColor()
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        firstNameView.backgroundColor   = kCOLOR_THREE
-        lastNameView.backgroundColor    = kCOLOR_THREE
-        mobileView.backgroundColor      = kCOLOR_THREE
-        emailView.backgroundColor       = kCOLOR_THREE
-        passwordView.backgroundColor    = kCOLOR_THREE
-    }
     
     func textFieldDidChange(textfield: UITextField) {
-        enableNextButtonIfNeeded()
+        doneButton.enabled = isUserDataValid()
     }
     
     func textFieldShouldClear(textField: UITextField) -> Bool {
-        nextButton.alpha = 0.0
-        isUserDataValid()
+        doneButton.enabled = false
+        
         if textField == mobileTextField {
             textField.text = "+1 "
             return false
@@ -306,10 +236,6 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
                                     })
                                 })
                                 
-//                                dispatch_async(GlobalMainQueue, {
-//                                    self.delegate?.userDidLogin(false)
-//                                    self.performSegueWithIdentifier("MobileSegue", sender: nil)
-//                                })
                             } else {
                                 print("Error creating new user")
                             }
@@ -324,25 +250,16 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
     
     // Upload the user's profile image from facebook
     private func setUserFacebookProfileImage(picture: [String:AnyObject]?, completionHandler:()->Void) {
-        print("A")
         if let userID = self.model?.userServiceProvider.getLocalUser()?.userID {
-            print("B")
             if let picture = picture {
-                print("C")
                 if let data = picture["data"] as? [String:AnyObject] {
-                    print("Z")
                     if let urlString = data["url"] as? String {
-                        print("D")
                         if let url = NSURL(string: urlString) {
-                            print("E")
                             URLServiceProvider().downloadImage(url, completionHandler: {
                                 (image:UIImage?) in
-                                print("F")
                                 if let image = image {
-                                    print("G")
                                     self.model?.userServiceProvider.setUserProfileImage(userID, image: image, completionHandler: {
                                         (success:Bool) in
-                                        print("H")
                                         completionHandler()
                                     })
                                 } else { completionHandler() }
@@ -353,6 +270,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
             } else { completionHandler() }
         } else { completionHandler() }
     }
+    
     
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translationInView(view)

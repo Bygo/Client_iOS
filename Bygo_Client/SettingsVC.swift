@@ -107,8 +107,8 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewCo
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         switch indexPath.section {
         case kGENERAL_SECTION:
-            let cell = tableView.dequeueReusableCellWithIdentifier("GeneralSetting", forIndexPath: indexPath)
-            cell.textLabel?.text = generalOptions[indexPath.row]
+            guard let cell = tableView.dequeueReusableCellWithIdentifier("GeneralSetting", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+            cell.titleLabel?.text = generalOptions[indexPath.row]
             return cell
             
         case kHOME_ADDRESS_SECTION:

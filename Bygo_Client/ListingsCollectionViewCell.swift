@@ -12,9 +12,6 @@ class ListingsCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var mainImageImageView: UIImageView!
     @IBOutlet var itemTitleLabel: UILabel!
-    @IBOutlet var meetingDetailLabel: UILabel!
-    @IBOutlet var rentalValueLabel: UILabel!
-    @IBOutlet var renterImageView: UIImageView!
     
     override func prepareForReuse() {
         mainImageImageView.image = nil

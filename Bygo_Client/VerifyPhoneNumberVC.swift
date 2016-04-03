@@ -18,7 +18,8 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var codeTextField: UITextField!
     @IBOutlet var instructionLabel: UILabel!
 
-    @IBOutlet var doneButton: UIButton!
+    @IBOutlet var backButton: UIBarButtonItem!
+    @IBOutlet var doneButton: UIBarButtonItem!
     @IBOutlet var resendCodeButton: UIButton!
     @IBOutlet var changePhoneNumberButton: UIButton!
     
@@ -27,9 +28,21 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        codeView.backgroundColor = kCOLOR_THREE
         
-        doneButton.alpha = 0.0
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        view.backgroundColor = kCOLOR_THREE
+        codeView.backgroundColor = .whiteColor()
+        doneButton.enabled = false
+        
+        instructionLabel.font = UIFont.systemFontOfSize(12.0, weight: UIFontWeightMedium)
+        instructionLabel.textColor = .blackColor()
+        instructionLabel.alpha = 0.75
+        
+        resendCodeButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
+        changePhoneNumberButton.setTitleColor(kCOLOR_ONE, forState: .Normal)
         
         codeTextField.addTarget(self, action: #selector(VerifyPhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
@@ -58,18 +71,6 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func enableDoneButtonIfNeeded() {
-        if isUserDataValid() {
-            UIView.animateWithDuration(0.5, animations: {
-                self.doneButton.alpha = 1.0
-            })
-        } else {
-            UIView.animateWithDuration(0.5, animations: {
-                self.doneButton.alpha = 0.0
-            })
-        }
-    }
-    
     
     func updatePhoneNumber(phoneNumber: String) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
@@ -96,16 +97,9 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        codeView.backgroundColor = .whiteColor()
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        codeView.backgroundColor = kCOLOR_THREE
-    }
     
     func textFieldDidChange(textfield: UITextField) {
-        enableDoneButtonIfNeeded()
+        doneButton.enabled = isUserDataValid()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {

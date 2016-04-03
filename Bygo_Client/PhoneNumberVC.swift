@@ -17,18 +17,28 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var mobileTextField: UITextField!
     @IBOutlet var mobileView: UIView!
     
-    @IBOutlet var nextButton: UIButton!
+    @IBOutlet var phoneDisclaimerLabel: UILabel!
+    
+    @IBOutlet var doneButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        mobileTextField.tintColor = kCOLOR_ONE
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         
-        mobileView.backgroundColor = kCOLOR_THREE
+        view.backgroundColor = kCOLOR_THREE
+        mobileTextField.tintColor = kCOLOR_ONE
+        mobileView.backgroundColor = .whiteColor()
+        
+        phoneDisclaimerLabel.font = UIFont.systemFontOfSize(12.0, weight: UIFontWeightMedium)
+        phoneDisclaimerLabel.textColor = .blackColor()
+        phoneDisclaimerLabel.alpha = 0.75
         
         mobileTextField.addTarget(self, action: #selector(PhoneNumberVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
-        nextButton.alpha = 0.0
+        doneButton.enabled = false
     }
     
     override func didReceiveMemoryWarning() {
@@ -46,17 +56,6 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func enableNextButtonIfNeeded() {
-        if isUserDataValid() {
-            UIView.animateWithDuration(0.5, animations: {
-                self.nextButton.alpha = 1.0
-            })
-        } else {
-            UIView.animateWithDuration(0.5, animations: {
-                self.nextButton.alpha = 0.0
-            })
-        }
-    }
     
     
     // MARK: - TextField Delegate
@@ -93,23 +92,15 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
                 let remainder = decimalString.substringFromIndex(index)
                 formattedString.appendString(remainder)
                 textField.text = formattedString as String
-                enableNextButtonIfNeeded()
+                doneButton.enabled = isUserDataValid()
                 return false
             }
         }
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        mobileView.backgroundColor = .whiteColor()
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        mobileView.backgroundColor = kCOLOR_THREE
-    }
-    
     func textFieldDidChange(textfield: UITextField) {
-        enableNextButtonIfNeeded()
+        doneButton.enabled = isUserDataValid()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {

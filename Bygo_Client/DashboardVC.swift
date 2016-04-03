@@ -9,23 +9,18 @@
 import UIKit
 import RealmSwift
 
-private let kALL_MY_LISTINGS_INDEX = 0
-//private let kSHARED_ITEMS_INDEX = 1
-private let kRENTED_ITEMS_INDEX = 1//2
-private let kRENT_REQUESTS_INDEX = 2//3
-private let kMEETINGS_INDEX = 3//4
-//private let kCREATE_LISTING_INDEX = 4//5
-
-
-class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
     var model:Model?
     var delegate:DashboardDelegate?
-    var targetListType:ListingsListType?
-    @IBOutlet var headerView: UIView!
-    @IBOutlet var infoTextVerticalOffset: NSLayoutConstraint!
     
-//    var imagePicker:UIImagePickerController = UIImagePickerController()
+    
+    @IBOutlet var headerView: UIView!
+    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var notificationsVerticalOffset: NSLayoutConstraint!
+    
+    private var notificationData: AnyObject?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,19 +39,14 @@ class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerCon
         headerView.backgroundColor  = kCOLOR_THREE
         tableView.backgroundColor   = kCOLOR_THREE
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.didFetchNewRentRequest(_:)), name: Notifications.DidFetchNewRentRequest.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.rentRequestWasAccepted(_:)), name: Notifications.RentRequestWasAccepted.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DashboardVC.rentRequestWasRejected(_:)), name: Notifications.RentRequestWasRejected.rawValue, object: nil)
-
-        tableView.reloadData()
+        collectionView.backgroundColor = .clearColor()
         
-//        refreshData({
-//            (success:Bool) in
-//            if success {
-//                self.tableView.reloadData()
-//            }
-//        })
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(DashboardVC.refreshNotifications), forControlEvents: .ValueChanged)
+        tableView.addSubview(refreshControl!)
         
+        refreshNotifications()
+        refreshOpenOrders()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -73,248 +63,220 @@ class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerCon
     }
     
     func userDidLogin() {
-        refreshData({
-            (success:Bool) in
-            if success {
-                self.tableView.reloadData()
-            }
-        })
+        
     }
     
     func userDidLogout() {
-        tableView.reloadData()
+        
     }
     
-    private func refreshData(completionHandler:(success:Bool)->Void) {
-        fetchListings({
+    
+    private func refreshOpenOrders() {
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.listingServiceProvider.fetchUsersRentedListings(userID, completionHandler: {
             (success:Bool) in
             if success {
-                self.fetchRentRequests({
-                    (success:Bool) in
-                    if success {
-                        self.fetchMeetings(completionHandler)
-                    } else {
-                        print("Error fetching meetings")
-                    }
+                dispatch_async(GlobalMainQueue, {
+                    self.tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Fade)
                 })
-            } else {
-                print("Error fetching listings")
             }
         })
     }
     
-    private func fetchListings(completionHandler:(success:Bool)->Void) {
-        guard let userID = model?.getLocalUser()?.userID else { return }
-        model?.listingServiceProvider.fetchUsersListings(userID, completionHandler: completionHandler)
-    }
-    
-    private func fetchRentRequests(completionHandler:(success:Bool)->Void) {
-        guard let userID = model?.getLocalUser()?.userID else { return }
-        model?.rentServiceProvider.fetchUsersRentEvents(userID, completionHandler: completionHandler)
-    }
-    
-    private func fetchMeetings(completionHandler:(success:Bool)->Void) {
-        guard let userID = model?.getLocalUser()?.userID else { return }
-        model?.meetingServiceProvider.fetchUsersMeetingEvents(userID, completionHandler: completionHandler)
+    func refreshNotifications() {
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.notificationServiceProvider.fetchUsersNotificationData(userID, completionHandler: {
+            (data: AnyObject?) in
+            self.refreshControl?.endRefreshing()
+            self.notificationData = data
+            dispatch_async(GlobalMainQueue, {
+                self.collectionView.reloadData()
+                self.collectionView.layoutIfNeeded()
+            })
+        })
     }
     
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 2
+        return 3
+    }
+
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            return "Open Orders"
+        case 1:
+            return "Pending Orders"
+        default:
+            return nil
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 4
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return 1 }
+            let realm = try! Realm()
+            let count = realm.objects(Listing).filter("renterID == \"\(userID)\"").count
+            if count == 0 {
+                return 1
+            } else {
+                return count
+            }
+            
         case 1:
             return 1
+        case 2:
+            return 2
         default:
             return 0
         }
     }
     
     
+    private func configureNoOpenOrdersCell(indexPath: NSIndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+        cell.titleLabel.text = "You are not using anything from Bygo"
+        cell.backgroundColor = .clearColor()
+        return cell
+    }
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath)
-        cell.textLabel?.font = UIFont.systemFontOfSize(16.0)
-        
         switch indexPath.section {
         case 0:
-            switch indexPath.row {
-            case kALL_MY_LISTINGS_INDEX:
-                cell.textLabel?.text = "Your Listings"
-                cell.accessoryType = .DisclosureIndicator
-                
-            case kRENTED_ITEMS_INDEX:
-                cell.textLabel?.text    = "No Rented Items"
-                cell.accessoryType      = .DisclosureIndicator
-                
-                // Configure the cell
-                guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
-                dispatch_async(GlobalBackgroundQueue, {
-                    let realm               = try! Realm()
-                    let numSharedListings   = realm.objects(Listing).filter("renterID == \"\(userID)\"").count
-                    if numSharedListings > 0 {
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else {
+                return configureNoOpenOrdersCell(indexPath)
+            }
+            let realm = try! Realm()
+            let listings = realm.objects(Listing).filter("renterID == \"\(userID)\"")
+            
+            if listings.count == 0 {
+                return configureNoOpenOrdersCell(indexPath)
+            } else {
+                let listing = listings[indexPath.row]
+                guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+                guard let typeID = listing.typeID else { return cell }
+                model?.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        let realm = try! Realm()
+                        guard let name = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0].name else { return }
                         dispatch_async(GlobalMainQueue, {
-                            if numSharedListings == 1 { cell.textLabel?.text = "1 Rented Item" }
-                            else { cell.textLabel?.text = "\(numSharedListings) Rented Items" }
+                            cell.titleLabel.text = name
                         })
                     }
                 })
-                
-            case kRENT_REQUESTS_INDEX:
-                cell.textLabel?.text    = "No Rent Requests"
-                cell.accessoryType      = .DisclosureIndicator
-                
-                // Configure the cell
-                guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
-                dispatch_async(GlobalBackgroundQueue, {
-                    let realm           = try! Realm()
-                    let numRentRequests = realm.objects(RentEvent).filter("ownerID == \"\(userID)\" AND (status == \"Proposed\" OR status == \"Inquired\")").count
-                    if numRentRequests > 0 {
-                        dispatch_async(GlobalMainQueue, {
-                            if numRentRequests == 1 { cell.textLabel?.text = "1 Rent Request" }
-                            else { cell.textLabel?.text = "\(numRentRequests) Rent Requests" }
-                        })
-                    }
-                })
-                
-            case kMEETINGS_INDEX:
-                cell.textLabel?.text    = "No Upcoming Meetings"
-                cell.accessoryType      = .DisclosureIndicator
-                
-                // Configure the cell
-                guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return cell }
-                dispatch_async(GlobalBackgroundQueue, {
-                    let realm = try! Realm()
-                    let numMeetings = realm.objects(MeetingEvent).filter("(ownerID == \"\(userID)\" OR renterID == \"\(userID)\") AND (status == \"Scheduled\" OR status == \"Delayed\")").count
-                    if numMeetings > 0 {
-                        dispatch_async(GlobalMainQueue, {
-                            if numMeetings == 1 { cell.textLabel?.text = "1 Upcoming Meeting" }
-                            else { cell.textLabel?.text = "\(numMeetings) Upcoming Meetings" }
-                        })
-                    }
-                })
- 
-            default:
-                break
+                return cell
             }
             
         case 1:
-            cell.textLabel?.text            = "Create New Listing"
-            cell.textLabel?.font            = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
-            cell.textLabel?.textAlignment   = .Center
-            cell.textLabel?.textColor       = .whiteColor()
-            cell.backgroundColor            = kCOLOR_FIVE
+            // TODO: Populate with data
+            guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+            cell.titleLabel.text = "You have not placed any orders"
+            cell.backgroundColor = .clearColor()
+            return cell
             
-        default: break
+        case 2:
+            guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+            
+            switch indexPath.row {
+            case 0:
+                cell.titleLabel.text = "Your Listings"
+                cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                
+            case 1:
+                cell.titleLabel.text = "Your History"
+                cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                
+            default:
+                return cell
+            }
+            return cell
+            
+        default:
+            return UITableViewCell()
         }
-        
-        return cell
     }
     
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
-        
         switch indexPath.section {
         case 0:
-            switch indexPath.row {
-            case kALL_MY_LISTINGS_INDEX:
-                targetListType = .All
-                performSegueWithIdentifier("ShowListings", sender: nil)
-                
-            case kRENTED_ITEMS_INDEX:
-                performSegueWithIdentifier("ShowRentedListings", sender: nil)
-                
-            case kRENT_REQUESTS_INDEX:
-                performSegueWithIdentifier("ShowRentRequests", sender: nil)
-                
-            case kMEETINGS_INDEX:
-                performSegueWithIdentifier("ShowMeetings", sender: nil)
-                
-            default:
-                break
-            }
+            break
         case 1:
-            performSegueWithIdentifier("ShowCreateNewListing", sender: nil)
-//            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
-//                imagePicker.sourceType     = .Camera
-//                imagePicker.cameraDevice   = UIImagePickerControllerCameraDevice.Rear
-//                imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo
-////                imagePicker.delegate       = self
-//                imagePicker.allowsEditing  = true
-//                imagePicker.showsCameraControls = true
-//                
-//                let sb = UIStoryboard(name: "Dashboard", bundle: NSBundle.mainBundle())
-//                guard let overlay = sb.instantiateViewControllerWithIdentifier("OverlayVC") as? NewListingVC else { return }
-//                
-//                overlay.imagePicker = imagePicker
-//                imagePicker.cameraOverlayView = overlay.view
-//                
-//                imagePicker.view.addSubview(overlay.view)
-//                imagePicker.view.bringSubviewToFront(overlay.view)
-//                imagePicker.delegate = overlay
-//                
-//                let photoLibraryButton = UIButton(frame: CGRectMake(100, 100, 80, 80))
-//                photoLibraryButton.backgroundColor = .orangeColor()
-//                photoLibraryButton.setImage(UIImage(named: "Photos")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-//                photoLibraryButton.tintColor = .whiteColor()
-//                        view.addSubview(photoLibraryButton)
-//                photoLibraryButton.addTarget(self, action: "adsf:", forControlEvents: .TouchUpInside)
-//                imagePicker.view.addSubview(photoLibraryButton)
-//                
-//                presentViewController(imagePicker, animated: true, completion: nil)
-//                
-//            } else if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary) {
-//                imagePicker.sourceType     = .PhotoLibrary
-//                imagePicker.delegate       = self
-//                imagePicker.allowsEditing  = false
-//                presentViewController(imagePicker, animated: true, completion: nil)
-//            }
-
-
+            break
+        case 2:
+            if indexPath.row == 0 {
+                performSegueWithIdentifier("ShowListings", sender: nil)
+            } else if indexPath.row == 1 {
+                performSegueWithIdentifier("ShowHistory", sender: nil)
+            }
         default:
             break
         }
     }
     
-    @IBAction func adsf(sender: AnyObject) {
-        print("asdf")
+    
+    
+    
+    // MARK: - CollectionViewDataSource
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
     }
     
-    func rentRequestsDidUpdate() {
-        tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0), NSIndexPath(forRow: kMEETINGS_INDEX, inSection: 0)], withRowAnimation: .Fade)
-    }
-    
-    
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView == tableView {
-            if scrollView.contentOffset.y < 0.0 {
-                infoTextVerticalOffset.constant = 50.0 + scrollView.contentOffset.y/2.0
-            }
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let notificationData = notificationData as? [[String:AnyObject]] else { return 1 }
+        let count = notificationData.count
+        if count == 0 {
+            return 1
+        } else {
+            return count
         }
     }
     
-    // MARK: - Notification Handlers
-    func didFetchNewRentRequest(notification:NSNotification) {
-        dispatch_async(GlobalMainQueue, {
-            self.tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0)], withRowAnimation: .Fade)
-        })
+    private func configureNoNotificationsCell(indexPath: NSIndexPath) -> UICollectionViewCell {
+        guard let noNotificationsCell = collectionView.dequeueReusableCellWithReuseIdentifier("InfoCell", forIndexPath: indexPath) as? BygoInfoCollectionViewCell else { return UICollectionViewCell() }
+        noNotificationsCell.backgroundColor = .whiteColor()
+        noNotificationsCell.infoLabel.text = "No Notifications!\n\nPull down to refresh"
+        return noNotificationsCell
     }
     
-    func rentRequestWasAccepted(notification:NSNotification) {
-        dispatch_async(GlobalMainQueue, {
-            self.tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0), NSIndexPath(forRow: kMEETINGS_INDEX, inSection: 0), NSIndexPath(forRow: kRENTED_ITEMS_INDEX, inSection: 0)], withRowAnimation: .Fade)
-        })
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        guard let notificationData = notificationData as? [[String:AnyObject]] else {
+            return configureNoNotificationsCell(indexPath)
+        }
+        let count = notificationData.count
+        if count == 0 {
+            return configureNoNotificationsCell(indexPath)
+        }
+
+        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("NotificationCell", forIndexPath: indexPath) as? NotificationCollectionViewCell else { return UICollectionViewCell() }
+        cell.imageView.image = UIImage(named: "DeliveryTruck")?.imageWithRenderingMode(.AlwaysTemplate)
+        cell.imageView.tintColor = kCOLOR_ONE
+        cell.imageView.alpha = 0.75
+        cell.titleLabel.text = "1 Delivery"
+        cell.detailLabel.text = "The Xbox One Console will be delivered in approximately 20 minutes."
+        cell.backgroundColor = .whiteColor()
+        return cell
     }
     
-    func rentRequestWasRejected(notification:NSNotification) {
-        dispatch_async(GlobalMainQueue, {
-            self.tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: kRENT_REQUESTS_INDEX, inSection: 0), NSIndexPath(forRow: kMEETINGS_INDEX, inSection: 0), NSIndexPath(forRow: kRENTED_ITEMS_INDEX, inSection: 0)], withRowAnimation: .Fade)
-        })
+    
+    // MARK: - CollectionViewDelegate
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+    }
+    
+    
+    // MARK: - Scrollview Delegate
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        if scrollView == tableView {
+            if scrollView.contentOffset.y < 0.0 {
+                notificationsVerticalOffset.constant = scrollView.contentOffset.y/2.0
+            }
+        }
     }
     
     
@@ -329,45 +291,34 @@ class DashboardVC: UITableViewController, RentRequestsDelegate, UIImagePickerCon
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowListings" {
             guard let destVC            = segue.destinationViewController as? ListingsVC else { return }
-            guard let targetListType    = targetListType else { return }
             destVC.model                = model
-            destVC.type                 = targetListType
-            
-        } else if segue.identifier == "ShowRentedListings" {
-            guard let destVC = segue.destinationViewController as? RentedListingsVC else { return }
+        } else if segue.identifier == "ShowHistory" {
+            guard let destVC = segue.destinationViewController as? HistoryVC else { return }
             destVC.model = model
-            
-        } else if segue.identifier == "ShowCreateNewListing" {
-//            guard let navVC     = segue.destinationViewController as? UINavigationController else { return }
-//            guard let destVC    = navVC.topViewController as? NewListingNameVC else { return }
-//            destVC.model        = model
-            
-        } else if segue.identifier == "ShowRentRequests" {
-            guard let destVC    = segue.destinationViewController as? RentRequestsVC else { return }
-            destVC.model        = model
-            destVC.delegate     = self
-
-        } else if segue.identifier == "ShowMeetings" {
-            guard let destVC    = segue.destinationViewController as? MeetingsVC else { return }
-            destVC.model        = model
         }
+        
         delegate?.didMoveOneLevelIntoNavigation()
     }
     
 }
 
 
+// MARK: - UICollectionViewDelegate
+extension DashboardVC : UICollectionViewDelegateFlowLayout{
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        return CGSizeMake(headerView.bounds.width-16.0, headerView.bounds.height-16.0)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
+    }
+}
+
+
+
 protocol DashboardDelegate {
     func openMenu()
     func didMoveOneLevelIntoNavigation()
     func didReturnToBaseLevelOfNavigation()
-}
-
-
-// MARK: - Items List Type
-enum ListingsListType {
-    case All
-    case Shared
-    case Rented
 }
 

@@ -19,18 +19,18 @@ class ListingsServiceProvider: NSObject {
     
     func fetchUsersListings(userID:String, completionHandler:(success:Bool)->Void) {
         // First check the local cache
+        
+        // TODO: If it has been more than a day since the last fetch, delete the cached results and fetch again
+        
         let realm = try! Realm()
         let cachedResults = realm.objects(Listing).filter("ownerID == \"\(userID)\"")
         if cachedResults.count > 0 { completionHandler(success: true); return }
         
-        // If no FavoriteMeetingLocations were found for this user, query the database
-        
-        print("USER ID: \(userID)")
-        
         // Create the request
-        let urlString       = "\(serverURL)/request/users_listings"
-        let params          = ["user_id":userID]
-        guard let request   = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
+        let urlString       = "\(serverURL)/listing/get_users_listings/user_id=\(userID)"
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
+        
+        print("Executing request")
         
         // Execute the request
         let session = NSURLSession.sharedSession()
@@ -38,49 +38,142 @@ class ListingsServiceProvider: NSObject {
             
             // Handle the server response
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+
+            print(response)
+
             if error != nil {
                 dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
                 return
             }
             
-            let realm = try! Realm()
-            
             let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            
+            print(statusCode)
             switch statusCode {
             case 200: // Catching status code 200, success
                 
                 do {
+                    
+                    print(200)
                     // Parse the JSON response
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-                    guard let listingsData = json["listings"] as? [[String:AnyObject]] else { return }
+                    guard let listingsData = json["listings_data"] as? [[String:AnyObject]] else { return }
                     
                     print("\n\nLISTINGS DATA\n\(listingsData)")
                     
+                    let realm = try! Realm()
+                    
                     for listingData in listingsData {
-                        guard let listingID         = listingData["listing_id"] as? String else { return }
-                        guard let name              = listingData["name"] as? String else { return }
-                        guard let ownerID           = listingData["owner_id"] as? String else { return }
-                        let renterID                = listingData["renter_id"] as? String
-                        guard let status            = listingData["status"] as? String else { return }
-                        guard let itemDescription   = listingData["item_description"] as? String else { return }
-                        let rating                  = listingData["rating"] as? Double
-                        let mediaLinks              = listingData["image_media_links"] as? [String]
-                        
-                        let dateFormatter           = NSDateFormatter()
-                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                        guard let dateLastModified  = dateFormatter.dateFromString(listingData["date_last_modified"] as! String) else { return }
+                        guard let listingID = listingData["listing_id"] as? String else { return }
+                        guard let ownerID   = listingData["owner_id"] as? String else { return }
+                        guard let status    = listingData["status"] as? String else { return }
+                        guard let typeID    = listingData["type_id"] as? String else { return }
+                        let renterID        = listingData["renter_id"] as? String
+                        let itemDescription = listingData["item_description"] as? String
+                        let rating          = listingData["rating"] as? Double
+                        let mediaLinks      = listingData["image_media_links"] as? [String]
                         
                         
                         // Add the FavoriteMeetingLocation entity to the local cache
                         let listing                 = Listing()
                         listing.listingID           = listingID
-                        listing.name                = name
                         listing.ownerID             = ownerID
+                        listing.typeID              = typeID
                         listing.renterID            = renterID
                         listing.status              = status
                         listing.itemDescription     = itemDescription
                         listing.rating.value        = rating
-                        listing.dateLastModified    = dateLastModified
+
+                        if let mediaLinks = mediaLinks {
+                            for link in mediaLinks {
+                                let realmLink   = RealmString()
+                                realmLink.value = link
+                                listing.imageLinks.append(realmLink)
+                            }
+                        }
+                        
+                        try! realm.write {
+                            realm.add(listing)
+                        }
+                    }
+                    
+                    completionHandler(success: true)
+                    
+                } catch {
+                    print("Catching error")
+                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                }
+            default:
+                print("/request/users_listings : \(statusCode)")
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+            }
+        })
+        task.resume()
+    }
+    
+    func fetchUsersRentedListings(userID:String, completionHandler:(success:Bool)->Void) {
+        // First check the local cache
+        
+        // TODO: If it has been more than a day since the last fetch, delete the cached results and fetch again
+        
+        let realm = try! Realm()
+        let cachedResults = realm.objects(Listing).filter("renterID == \"\(userID)\"")
+        if cachedResults.count > 0 { completionHandler(success: true); return }
+        
+        // Create the request
+        let urlString       = "\(serverURL)/listing/get_users_rented_listings/user_id=\(userID)"
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
+        
+        
+        // Execute the request
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: {
+            
+            // Handle the server response
+            (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            
+            print(response)
+            
+            if error != nil {
+                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                return
+            }
+            
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            
+            print(statusCode)
+            switch statusCode {
+            case 200: // Catching status code 200, success
+                
+                do {
+                    
+                    print(200)
+                    // Parse the JSON response
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let listingsData = json["listings_data"] as? [[String:AnyObject]] else { return }
+                    
+                    let realm = try! Realm()
+                    
+                    for listingData in listingsData {
+                        guard let listingID = listingData["listing_id"] as? String else { return }
+                        guard let ownerID   = listingData["owner_id"] as? String else { return }
+                        guard let status    = listingData["status"] as? String else { return }
+                        guard let typeID    = listingData["type_id"] as? String else { return }
+                        let renterID        = listingData["renter_id"] as? String
+                        let itemDescription = listingData["item_description"] as? String
+                        let rating          = listingData["rating"] as? Double
+                        let mediaLinks      = listingData["image_media_links"] as? [String]
+                        
+                        
+                        // Add the FavoriteMeetingLocation entity to the local cache
+                        let listing                 = Listing()
+                        listing.listingID           = listingID
+                        listing.ownerID             = ownerID
+                        listing.typeID              = typeID
+                        listing.renterID            = renterID
+                        listing.status              = status
+                        listing.itemDescription     = itemDescription
+                        listing.rating.value        = rating
                         
                         if let mediaLinks = mediaLinks {
                             for link in mediaLinks {
@@ -95,17 +188,20 @@ class ListingsServiceProvider: NSObject {
                         }
                     }
                     
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
+                    completionHandler(success: true)
+                    
                 } catch {
+                    print("Catching error")
                     dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
                 }
             default:
-                print("/request/users_listings : \(statusCode)")
+                print("/listing/get_users_rented_listings: \(statusCode)")
                 dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
             }
         })
         task.resume()
     }
+    
     
     func createNewListing(userID:String, typeID:String, image:UIImage, completionHandler:(success:Bool)->Void) {
         
@@ -231,62 +327,6 @@ class ListingsServiceProvider: NSObject {
         task.resume()
     }
     
-    func updateListing(listingID:String, name:String, categoryID:String, totalValue:Double, hourlyRate:Double, dailyRate:Double, weeklyRate:Double, itemDescription:String, completionHandler:(success:Bool)->Void) {
-        
-        // Create the request
-        let urlString = "\(serverURL)/update/listing"
-        let params = ["listing_id":listingID, "name":name, "category_id":categoryID, "total_value":totalValue, "hourly_rate":hourlyRate, "daily_rate":dailyRate, "weekly_rate":weeklyRate, "item_description":itemDescription] as [String:AnyObject]
-        guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else { return }
-        
-        
-        // Execute the request
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request, completionHandler: {
-            
-            // Handle the response
-            (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
-            if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
-                return
-            }
-            
-            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
-            switch statusCode {
-            case 200:   // Catching status code 200, success
-                do {
-                    
-                    // Parse the JSON response object
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-                    guard let name              = json["name"] as? String else { return }
-                    guard let itemDescription   = json["item_description"] as? String else { return }
-                    let dateFormatter           = NSDateFormatter()
-                    dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                    guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        // Update the local data cache
-                        let realm   = try! Realm()
-                        guard let listing = realm.objects(Listing).filter("listingID == \"\(listingID)\"").first else { return }
-                        
-                        try! realm.write {
-                            listing.name                = name
-                            listing.itemDescription     = itemDescription
-                            listing.dateLastModified    = dateLastModified
-                        }
-                        
-                        completionHandler(success: true)
-                    })
-                } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
-                }
-            default:
-                print("/update/listing : \(statusCode)")
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
-            }
-        })
-        task.resume()
-    }
-    
     
     func fetchListing(listingID:String, completionHandler:(success:Bool)->Void) {
         print("fetch listing")
@@ -325,28 +365,21 @@ class ListingsServiceProvider: NSObject {
                     // Parse the JSON response
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let listingID         = json["listing_id"]        as? String else { return }
-                    guard let name              = json["name"]              as? String else { return }
                     guard let ownerID           = json["owner_id"]          as? String else { return }
                     let renterID                = json["renter_id"]         as? String
                     guard let status            = json["status"]            as? String else { return }
                     guard let itemDescription   = json["item_description"]  as? String else { return }
                     let rating                  = json["rating"]            as? Double
-                    let dateFormatter           = NSDateFormatter()
-                    dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                    guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     
                     
-                    print("refresh listing update")
                     // Add the FavoriteMeetingLocation entity to the local cache
                     let listing = Listing()
                     listing.listingID           = listingID
-                    listing.name                = name
                     listing.ownerID             = ownerID
                     listing.renterID            = renterID
                     listing.status              = status
                     listing.itemDescription     = itemDescription
                     listing.rating.value        = rating
-                    listing.dateLastModified    = dateLastModified
                     
                     try! realm.write {
                         realm.add(listing)

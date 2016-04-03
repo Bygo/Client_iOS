@@ -11,7 +11,7 @@ import UIKit
 class MenuVC: UITableViewController {
     
     // MARK: - Menu Features
-    let menuOptions = [MenuOptions.Discover, MenuOptions.Dashboard, MenuOptions.History, MenuOptions.Settings, MenuOptions.Help]
+    let menuOptions = [MenuOptions.Discover, MenuOptions.Dashboard, MenuOptions.Settings, MenuOptions.Help]
     let nonUserMenuOptions = [MenuOptions.Discover, MenuOptions.SignUp]
     
     
@@ -92,14 +92,16 @@ class MenuVC: UITableViewController {
             switch indexPath.row {
             case 0:
                 cell.iconImageView.image = UIImage(named: "Rent")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+
             case 1:
                 cell.iconImageView.image = UIImage(named: "Dashboard")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+                
             case 2:
-                cell.iconImageView.image = UIImage(named: "History")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-            case 3:
                 cell.iconImageView.image = UIImage(named: "Settings")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-            case 4:
+                
+            case 3:
                 cell.iconImageView.image = UIImage(named: "Help")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+                
             default:
                 break
             }
@@ -151,7 +153,6 @@ class MenuVC: UITableViewController {
         switch option {
         case .Discover:         return "Discover"
         case .Dashboard:    return "Dashboard"
-        case .History:      return "History"
         case .Settings:     return "Settings"
         case .Help:         return "Help"
         case .SignUp:       return "Sign Up"
@@ -164,7 +165,6 @@ class MenuVC: UITableViewController {
 enum MenuOptions {
     case Discover
     case Dashboard
-    case History
     case Settings
     case SignUp
     case Help

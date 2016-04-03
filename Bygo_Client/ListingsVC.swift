@@ -24,39 +24,35 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var noListingsLabel: UILabel!
-    @IBOutlet var sharedBarButtonItem: UIBarButtonItem!
     
     private var focusIndex:NSIndexPath?
     
     var model:Model?
-    var type:ListingsListType = .All
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = kCOLOR_THREE
-
+        
         title = "Your Listings"
-        sharedBarButtonItem.tintColor = UIColor(colorLiteralRed: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
         configureNoListingsLabel()
+        
+
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.listingServiceProvider.fetchUsersListings(userID, completionHandler: {
+            (success:Bool) in
+            print("SUCCESS")
+            dispatch_async(GlobalMainQueue, {
+                self.collectionView.reloadData()
+            })
+        })
     }
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     
     private func configureNoListingsLabel() {
-        switch type {
-        case .All:
-            noListingsLabel.text = "You have not created any Listings"
-        case .Shared:
-            noListingsLabel.text = "You are not sharing any Items"
-        default:
-            break
-        }
+        noListingsLabel.text = "You have not created any Listings"
+        noListingsLabel.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
+        noListingsLabel.backgroundColor = kCOLOR_THREE
     }
     
     
@@ -68,22 +64,17 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     private func getQueryFilter() -> String {
         let nullFilter = "ownerID == nil"
-        guard let localUser = model?.userServiceProvider.getLocalUser() else { return nullFilter }
-        guard let userID    = localUser.userID else { return nullFilter }
-        
-        switch type {
-        case .All:
-            return "ownerID == \"\(userID)\""
-        case .Shared:
-            return "(ownerID == \"\(userID)\") AND (renterID != nil)"
-        case .Rented:
-            return "(renterID == \"\(userID)\")"
-        }
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return nullFilter }
+        return "ownerID == \"\(userID)\""
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        print("Num items in section")
         let realm = try! Realm()
         let count = realm.objects(Listing).filter(self.getQueryFilter()).count
+        
+        print("COUNT: \(count)")
         
         if count == 0 {
             noListingsLabel.hidden = false
@@ -96,57 +87,58 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         return count
     }
     
-    func configureCell(cell:ListingsCollectionViewCell, atIndexPath indexPath:NSIndexPath) {
-        cell.renterImageView.layer.cornerRadius     = cell.renterImageView.bounds.width/2.0
-        cell.mainImageImageView.layer.cornerRadius  = 5.0
-        cell.mainImageImageView.contentMode         = UIViewContentMode.ScaleAspectFill
-        cell.mainImageImageView.clipsToBounds       = true
-        cell.mainImageImageView.backgroundColor     = .lightGrayColor()
-        cell.renterImageView.hidden = true
+    func configureCell(cell:ItemTypeCollectionViewCell, atIndexPath indexPath:NSIndexPath) {
         
-        if type == .All {
-            cell.meetingDetailLabel.hidden  = true
-            cell.rentalValueLabel.hidden    = true
-        }
+        cell.backgroundColor = .whiteColor()
         
-        dispatch_async(GlobalUserInteractiveQueue, {
+        dispatch_async(GlobalBackgroundQueue, {
             let realm   = try! Realm()
-            let results = realm.objects(Listing).filter(self.getQueryFilter()).sorted("name", ascending: true)
+            let results = realm.objects(Listing).filter(self.getQueryFilter()).sorted("typeID", ascending: true)
             let listing = results[indexPath.item]
             
-            if let name = listing.name {
-                dispatch_async(GlobalMainQueue, {
-                    cell.itemTitleLabel.text    = name
-                })
+            print(listing)
+            guard let typeID = listing.typeID else { return }
+            print(typeID)
+            
+            // Set the cell's image
+            if let imageMediaLink = listing.imageLinks.first {
+                if let link = imageMediaLink.value {
+                    if let url = NSURL(string: link) {
+                        dispatch_async(GlobalMainQueue, {
+                            cell.imageView.hnk_setImageFromURL(url)
+                        })
+                    }
+                }
             }
-//            
+            
+            // Set the cell's title label
+            self.model?.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                (success:Bool) in
+                let realm = try! Realm()
+                let itemType = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0]
+                guard let name = itemType.name else { return }
+                dispatch_async(GlobalMainQueue, {
+                    cell.nameLabel.text = name
+                })
+            })
+            
 //            if let renterID = listing.renterID {
 //                // TOOD: Grab the image of the renter
 //                cell.renterImageView.hidden = false
 //            }
-//            
-            if let imageMediaLink = listing.imageLinks.first {
-                if let link = imageMediaLink.value {
-                    if let url = NSURL(string: link) {
-                        cell.mainImageImageView.hnk_setImageFromURL(url)
-                    }
-                }
-            }
         })
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
         
-        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ListingCell", forIndexPath: indexPath) as? ListingsCollectionViewCell else { return UICollectionViewCell() }
         configureCell(cell, atIndexPath: indexPath)
+        
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         focusIndex = indexPath
-        if type == .All {
-            performSegueWithIdentifier("ShowEditListing", sender: nil)
-        }
     }
     
     // MARK: - EditListingsDelegate
@@ -162,21 +154,7 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         navigationController?.popViewControllerAnimated(true)
     }
     
-    @IBAction func sharedButtonTapped(sender: AnyObject) {
-        switch type {
-        case .All:
-            sharedBarButtonItem.tintColor = .whiteColor()
-            type = .Shared
-        case .Shared:
-            sharedBarButtonItem.tintColor = UIColor(colorLiteralRed: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
-            type = .All
-        default: break
-        }
-        
-        configureNoListingsLabel()
-        collectionView.reloadData()
-    }
-    
+
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowEditListing" {
@@ -196,10 +174,10 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
 // MARK: - UICollectionViewDelegate
 extension ListingsVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(view.bounds.width, view.bounds.height/6.0)
+        return CGSizeMake((view.bounds.width/2.0)-13.0, 252.0)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(8.0, 0.0, 8.0, 0.0)
+        return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
     }
 }

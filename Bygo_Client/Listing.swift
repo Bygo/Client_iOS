@@ -13,7 +13,6 @@ class Listing: Object {
     
     dynamic var listingID:String?       = nil
     dynamic var status:String?          = nil
-    dynamic var name:String?            = nil
     dynamic var itemDescription:String? = nil
     let rating      = RealmOptional<Double>()
     let imageLinks = List<RealmString>()

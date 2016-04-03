@@ -21,8 +21,9 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBOutlet var passwordTextField: UITextField!
     
     @IBOutlet var facebookButton: UIButton!
-    @IBOutlet var backButton: UIButton!
-    @IBOutlet var doneButton: UIButton!
+
+    @IBOutlet var backButton: UIBarButtonItem!
+    @IBOutlet var doneButton: UIBarButtonItem!
     
     var delegate:LoginDelegate?
     var model:Model?
@@ -30,19 +31,26 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        backButton.setImage(UIImage(named: "Back")?.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-        backButton.tintColor = .whiteColor()
+        navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
+        navigationController?.navigationBar.translucent     = false
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        
+        view.backgroundColor = kCOLOR_THREE
         
         mobileTextField.tintColor   = kCOLOR_ONE
         passwordTextField.tintColor = kCOLOR_ONE
         
-        mobileView.backgroundColor      = kCOLOR_THREE
-        passwordView.backgroundColor    = kCOLOR_THREE
+        mobileView.backgroundColor      = .whiteColor()
+        passwordView.backgroundColor    = .whiteColor()
+        
+        orLabel.textColor = .blackColor()
+        orLabel.font = UIFont.systemFontOfSize(12.0, weight: UIFontWeightMedium)
+        orLabel.alpha = 0.75
         
         mobileTextField.addTarget(self, action: #selector(LoginVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         passwordTextField.addTarget(self, action: #selector(LoginVC.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
         
-        doneButton.alpha = 0.0
+        doneButton.enabled = false
     }
     
 
@@ -64,15 +72,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     func enableDoneButtonIfNeeded() {
-        if isUserDataValid() {
-            UIView.animateWithDuration(0.5, animations: {
-                self.doneButton.alpha = 1.0
-            })
-        } else {
-            UIView.animateWithDuration(0.5, animations: {
-                self.doneButton.alpha = 0.0
-            })
-        }
+        doneButton.enabled = isUserDataValid()
     }
     
     // MARK: - TextField Delegate
@@ -115,38 +115,19 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        var targetView:UIView?
-        switch textField {
-        case mobileTextField:
-            targetView = mobileView
-        case passwordTextField:
-            targetView = passwordView
-        default:
-            break
-        }
-        
-        mobileView.backgroundColor = kCOLOR_THREE
-        passwordView.backgroundColor = kCOLOR_THREE
-        targetView?.backgroundColor = .whiteColor()
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        mobileView.backgroundColor = kCOLOR_THREE
-        passwordView.backgroundColor = kCOLOR_THREE
-    }
     
     func textFieldDidChange(textfield: UITextField) {
         enableDoneButtonIfNeeded()
     }
     
     func textFieldShouldClear(textField: UITextField) -> Bool {
-        doneButton.alpha = 0.0
-        isUserDataValid()
+        doneButton.enabled = false
+        
         if textField == mobileTextField {
             textField.text = "+1 "
             return false
         }
+        
         return true
     }
     
@@ -164,6 +145,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     
     // MARK: - UI Actions
     @IBAction func backButtonTapped(sender: AnyObject) {
+        mobileTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
         navigationController?.popViewControllerAnimated(true)
     }
     
