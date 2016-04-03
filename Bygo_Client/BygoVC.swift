@@ -244,7 +244,16 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                         let mediaLink = NSURL(string: itemType.imageLinks[0].value!)!
                         dispatch_async(GlobalMainQueue, {
                             cell.nameLabel.text = name
-                            cell.imageView.hnk_setImageFromURL(mediaLink)
+                            cell.imageView.alpha = 0.0
+                            cell.imageView.hnk_setImageFromURL(mediaLink, placeholder: nil, format: nil, failure: nil, success: {
+                                (image: UIImage) in
+                                dispatch_async(GlobalMainQueue, {
+                                    cell.imageView.image = image
+                                    UIView.animateWithDuration(0.2, animations: {
+                                        cell.imageView.alpha = 1.0
+                                    })
+                                })
+                            })
                         })
                     }
                 })

@@ -27,7 +27,6 @@ class LoadingScreen: UIView {
     }
     
     func beginAnimation() {
-//        alpha = 1.0
         UIView.animateWithDuration(0.25, animations: {
             self.alpha = 1.0
             }, completion: {
@@ -44,6 +43,7 @@ class LoadingScreen: UIView {
                      rotationAnimation.repeatCount = repeat;
                      
                      [view.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+                     
                     */
                     
                     let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")

@@ -14,7 +14,7 @@ class ItemTypeCollectionViewCell: UICollectionViewCell {
     @IBOutlet var nameLabel: UILabel!
  
     override func prepareForReuse() {
+        imageView.image = nil
         backgroundColor = .whiteColor()
     }
-    
 }

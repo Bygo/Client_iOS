@@ -38,13 +38,21 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         title = "Your Listings"
         configureNoListingsLabel()
         
-
+        
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        
+        let l = LoadingScreen(frame: view.bounds)
+        view.addSubview(l)
+        l.beginAnimation()
+        
         model?.listingServiceProvider.fetchUsersListings(userID, completionHandler: {
             (success:Bool) in
-            print("SUCCESS")
             dispatch_async(GlobalMainQueue, {
-                self.collectionView.reloadData()
+                self.collectionView.performBatchUpdates({
+                    self.collectionView.reloadSections(NSIndexSet(index: 0))
+                    l.endAnimation()
+                }, completion: nil)
+                // self.collectionView.reloadData()
             })
         })
     }
@@ -70,11 +78,8 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        print("Num items in section")
         let realm = try! Realm()
         let count = realm.objects(Listing).filter(self.getQueryFilter()).count
-        
-        print("COUNT: \(count)")
         
         if count == 0 {
             noListingsLabel.hidden = false
@@ -96,16 +101,23 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
             let results = realm.objects(Listing).filter(self.getQueryFilter()).sorted("typeID", ascending: true)
             let listing = results[indexPath.item]
             
-            print(listing)
             guard let typeID = listing.typeID else { return }
-            print(typeID)
             
             // Set the cell's image
             if let imageMediaLink = listing.imageLinks.first {
                 if let link = imageMediaLink.value {
                     if let url = NSURL(string: link) {
                         dispatch_async(GlobalMainQueue, {
-                            cell.imageView.hnk_setImageFromURL(url)
+                            cell.imageView.alpha = 0.0
+                            cell.imageView.hnk_setImageFromURL(url, placeholder: nil, format: nil, failure: nil, success: {
+                                (image: UIImage) in
+                                dispatch_async(GlobalMainQueue, {
+                                    cell.imageView.image = image
+                                    UIView.animateWithDuration(0.2, animations: {
+                                        cell.imageView.alpha = 1.0
+                                    })
+                                })
+                            })
                         })
                     }
                 }
@@ -121,19 +133,12 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                     cell.nameLabel.text = name
                 })
             })
-            
-//            if let renterID = listing.renterID {
-//                // TOOD: Grab the image of the renter
-//                cell.renterImageView.hidden = false
-//            }
         })
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ItemTypeCell", forIndexPath: indexPath) as? ItemTypeCollectionViewCell else { return UICollectionViewCell() }
-        
         configureCell(cell, atIndexPath: indexPath)
-        
         return cell
     }
     
