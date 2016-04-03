@@ -178,6 +178,13 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
                 
                 guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
                 guard let image = image else { return }
+                
+                searchBar?.resignFirstResponder()
+                
+                let l = LoadingScreen(frame: view.bounds)
+                view.addSubview(l)
+                l.beginAnimation()
+                
                 model?.listingServiceProvider.createNewListing(userID, typeID: id, image: image, completionHandler: {
                     (success:Bool) in
                     if success {

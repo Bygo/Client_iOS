@@ -69,7 +69,6 @@
 		73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E851CB0CAD80019A6FD /* LoadingScreen.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
-		739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */; };
 		739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBD41C7F5E5B00C34CC1 /* Image.swift */; };
 		73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */; };
 		73BA58D21C82637900C03FCD /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58D11C82637900C03FCD /* SearchBar.swift */; };
@@ -190,7 +189,6 @@
 		73372E851CB0CAD80019A6FD /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
-		739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoadingScreen.storyboard; sourceTree = "<group>"; };
 		739ADBD41C7F5E5B00C34CC1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountVC.swift; sourceTree = "<group>"; };
 		73BA58D11C82637900C03FCD /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
@@ -403,7 +401,6 @@
 			isa = PBXGroup;
 			children = (
 				73372E841CB0CABC0019A6FD /* Misc. */,
-				739ADBD11C7F5A0700C34CC1 /* LoadingScreen */,
 				730CAA3A1C762F35000BE681 /* Payments */,
 				73147DA71C62EF6200FD70B8 /* Discover */,
 				73DE66A31C63864E006D9810 /* Dashboard */,
@@ -525,14 +522,6 @@
 				73372E851CB0CAD80019A6FD /* LoadingScreen.swift */,
 			);
 			name = Misc.;
-			sourceTree = "<group>";
-		};
-		739ADBD11C7F5A0700C34CC1 /* LoadingScreen */ = {
-			isa = PBXGroup;
-			children = (
-				739ADBD21C7F5A1900C34CC1 /* LoadingScreen.storyboard */,
-			);
-			name = LoadingScreen;
 			sourceTree = "<group>";
 		};
 		73BA58D01C82636300C03FCD /* Views */ = {
@@ -733,7 +722,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				733620F21C60743F00893034 /* Assets.xcassets in Resources */,
-				739ADBD31C7F5A1A00C34CC1 /* LoadingScreen.storyboard in Resources */,
 				73EDA6951C88D34400F95421 /* tent.jpg in Resources */,
 				73EDA68F1C88D28C00F95421 /* sayan.jpg in Resources */,
 				733620ED1C60743E00893034 /* Main.storyboard in Resources */,

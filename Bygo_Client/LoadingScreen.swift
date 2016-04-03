@@ -28,7 +28,7 @@ class LoadingScreen: UIView {
     
     func beginAnimation() {
 //        alpha = 1.0
-        UIView.animateWithDuration(0.1, animations: {
+        UIView.animateWithDuration(0.25, animations: {
             self.alpha = 1.0
             }, completion: {
                 (complete:Bool) in
@@ -58,7 +58,7 @@ class LoadingScreen: UIView {
     }
     
     func endAnimation() {
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animateWithDuration(0.25, animations: {
             self.alpha = 0.0
             }, completion: {
                 (complete:Bool) in
