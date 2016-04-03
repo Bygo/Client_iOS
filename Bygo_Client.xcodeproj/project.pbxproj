@@ -67,6 +67,7 @@
 		73372E811CB0B3750019A6FD /* HistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E801CB0B3750019A6FD /* HistoryVC.swift */; };
 		73372E831CB0B5420019A6FD /* HistoryServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */; };
 		73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E851CB0CAD80019A6FD /* LoadingScreen.swift */; };
+		73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
 		739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBD41C7F5E5B00C34CC1 /* Image.swift */; };
@@ -90,7 +91,6 @@
 		73DE66F31C6408BB006D9810 /* RentServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DE66F21C6408BB006D9810 /* RentServiceProvider.swift */; };
 		73EDA6861C86E00500F95421 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73EDA6851C86E00500F95421 /* AVFoundation.framework */; };
 		73EDA6881C86E01E00F95421 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73EDA6871C86E01E00F95421 /* CoreMedia.framework */; };
-		73EDA68A1C86EDA000F95421 /* NewListingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EDA6891C86EDA000F95421 /* NewListingVC.swift */; };
 		73EDA68E1C88D28C00F95421 /* nick.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 73EDA68C1C88D28C00F95421 /* nick.jpg */; };
 		73EDA68F1C88D28C00F95421 /* sayan.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 73EDA68D1C88D28C00F95421 /* sayan.jpg */; };
 		73EDA6921C88D33D00F95421 /* guitar.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 73EDA6901C88D33D00F95421 /* guitar.jpg */; };
@@ -187,6 +187,7 @@
 		73372E801CB0B3750019A6FD /* HistoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryVC.swift; sourceTree = "<group>"; };
 		73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryServiceProvider.swift; sourceTree = "<group>"; };
 		73372E851CB0CAD80019A6FD /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
+		73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		739ADBD41C7F5E5B00C34CC1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -209,7 +210,6 @@
 		73DE66F21C6408BB006D9810 /* RentServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RentServiceProvider.swift; sourceTree = "<group>"; };
 		73EDA6851C86E00500F95421 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		73EDA6871C86E01E00F95421 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		73EDA6891C86EDA000F95421 /* NewListingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NewListingVC.swift; path = Assets.xcassets/NewListingVC.swift; sourceTree = "<group>"; };
 		73EDA68C1C88D28C00F95421 /* nick.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nick.jpg; sourceTree = "<group>"; };
 		73EDA68D1C88D28C00F95421 /* sayan.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sayan.jpg; sourceTree = "<group>"; };
 		73EDA6901C88D33D00F95421 /* guitar.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = guitar.jpg; sourceTree = "<group>"; };
@@ -520,6 +520,7 @@
 				730CF89B1C99131F00D934A3 /* AnimatedCheckmarkView.swift */,
 				730CF8991C9907F200D934A3 /* SuccessVC.swift */,
 				73372E851CB0CAD80019A6FD /* LoadingScreen.swift */,
+				73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */,
 			);
 			name = Misc.;
 			sourceTree = "<group>";
@@ -548,7 +549,6 @@
 				73372E761CB0158C0019A6FD /* DashboardVC.swift */,
 				73372E801CB0B3750019A6FD /* HistoryVC.swift */,
 				73DE66AA1C639519006D9810 /* ListingsVC.swift */,
-				73EDA6891C86EDA000F95421 /* NewListingVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -829,7 +829,6 @@
 				73372E7D1CB0475C0019A6FD /* RequestCollectionViewCell.swift in Sources */,
 				732E50A31C9A40BB00E8A247 /* OrderVC.swift in Sources */,
 				73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */,
-				73EDA68A1C86EDA000F95421 /* NewListingVC.swift in Sources */,
 				73DE66F11C640453006D9810 /* MeetingEvent.swift in Sources */,
 				7336213E1C6076B700893034 /* MenuContainerVC.swift in Sources */,
 				7336211A1C60749B00893034 /* User.swift in Sources */,
@@ -856,6 +855,7 @@
 				73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */,
 				73372E791CB035D00019A6FD /* NotificationServiceProvider.swift in Sources */,
 				73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */,
+				73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */,
 				73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */,
 				73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */,
 				73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */,

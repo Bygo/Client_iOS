@@ -105,7 +105,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Open Orders"
+            return "Current Orders"
         case 1:
             return "Pending Orders"
         default:
@@ -137,7 +137,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     
     private func configureNoOpenOrdersCell(indexPath: NSIndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
-        cell.titleLabel.text = "You are not using anything from Bygo"
+        cell.titleLabel.text = "You have no current orders"
         cell.backgroundColor = .clearColor()
         return cell
     }
@@ -173,7 +173,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         case 1:
             // TODO: Populate with data
             guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
-            cell.titleLabel.text = "You have not placed any orders"
+            cell.titleLabel.text = "You have no pending orders"
             cell.backgroundColor = .clearColor()
             return cell
             

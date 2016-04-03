@@ -187,10 +187,15 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
                 
                 model?.listingServiceProvider.createNewListing(userID, typeID: id, image: image, completionHandler: {
                     (success:Bool) in
-                    if success {
+                    if false {
                         self.performSegueWithIdentifier("SuccessSegue", sender: nil)
                     } else {
-                        // TODO: Present some error message
+                        l.endAnimation()
+                        
+                        let window = UIApplication.sharedApplication().keyWindow!
+                        let e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong while trying to create your listing.", options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+                        window.addSubview(e)
+                        e.show()
                     }
                 })
                 
