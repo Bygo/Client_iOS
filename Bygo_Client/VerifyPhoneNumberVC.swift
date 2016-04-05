@@ -67,7 +67,7 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
     }
     
     override func viewDidAppear(animated: Bool) {
-        
+        codeTextField.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
@@ -112,7 +112,6 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
         return true
     }
     
-    
     func textFieldDidChange(textfield: UITextField) {
         doneButton.enabled = isUserDataValid()
     }
@@ -124,13 +123,6 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
     
     
     // MARK: - UI Actions
-    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translationInView(view)
-        if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
-            codeTextField.resignFirstResponder()
-        }
-    }
-    
     @IBAction func doneButtonTapped(sender: AnyObject) {
         guard let code = codeTextField.text else { return }
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
@@ -186,7 +178,7 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
     }
     
     @IBAction func changePhoneNumberButtonTapped(sender: AnyObject) {
-        
+        // TODO: Implement this
     }
     
     // MARK: - ErrorMessageDelegate
@@ -230,6 +222,7 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
     
     func okayButtonTapped(error: BygoError) {
         return
+        
     }
     
     func retryButtonTapped(error: BygoError) {

@@ -94,7 +94,7 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
                     if let error = error {
                         print("Autocomplete error \(error)")
                     }
-                    if let results = results as? [GMSAutocompletePrediction] {
+                    if let results = results {
                         self.autocompletePredictions = results
                         self.tableView.reloadData()
                     }
@@ -118,7 +118,7 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCellWithIdentifier("AutocompleteSuggestion", forIndexPath: indexPath) as? BygoTitleDetailTableViewCell else { return UITableViewCell() }
         let suggestion = autocompletePredictions[indexPath.row]
-        let placeID = suggestion.placeID
+        guard let placeID = suggestion.placeID else { return cell }
         
         placesClient?.lookUpPlaceID(placeID, callback: { (place, error) -> Void in
             if let error = error {
@@ -142,7 +142,8 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
         
         // TODO: Get the locationID for this autocomplete suggestion. Add it to the user's favorite handoff locations
         let suggestion  = autocompletePredictions[indexPath.row]
-        let placeID     = suggestion.placeID
+        guard let placeID     = suggestion.placeID else { return }
+        
         placesClient?.lookUpPlaceID(placeID, callback: {
             (place, error)->Void in
             if let error = error {
@@ -152,7 +153,7 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
             
             if let place = place {
                 let name        = place.name
-                let address     = place.formattedAddress
+                guard let address     = place.formattedAddress else { return }
                 let geoPoint    = "\(place.coordinate.latitude), \(place.coordinate.longitude)"
                 print(geoPoint)
                 
@@ -163,7 +164,6 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
                 
                 self.model?.userServiceProvider.updateHomeAddress(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: {
                     (success:Bool, error: BygoError?) in
-                    print("Got response")
                     dispatch_async(GlobalMainQueue, {
                         if success {
                             self.searchBar.resignFirstResponder()

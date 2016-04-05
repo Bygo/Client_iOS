@@ -52,7 +52,6 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate
     }
     
     override func viewDidAppear(animated: Bool) {
-        
         mobileTextField.becomeFirstResponder()
     }
     
@@ -70,8 +69,6 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate
         
         return true
     }
-    
-    
     
     // MARK: - TextField Delegate
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
@@ -124,13 +121,6 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate
     }
 
     // MARK: - UI Actions
-    @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translationInView(view)
-        if abs(translation.y) > abs(translation.x) && translation.y > 0.0 {
-            mobileTextField.resignFirstResponder()
-        }
-    }
-    
     @IBAction func nextButtonTapped(sender: AnyObject) {
         guard let model = model else { return }
         if model.dataValidator.isValidPhoneNumber(mobileTextField.text!) {

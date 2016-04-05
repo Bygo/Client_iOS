@@ -24,12 +24,16 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
 
     @IBOutlet var backButton: UIBarButtonItem!
     @IBOutlet var doneButton: UIBarButtonItem!
+    @IBOutlet var tapRecognizer: UITapGestureRecognizer!
+    
     
     var delegate:LoginDelegate?
     var model:Model?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginVC.tapGestureRecognized(_:)))
         
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
@@ -115,6 +119,13 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
         return true
     }
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        view.addGestureRecognizer(tapRecognizer)
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        view.removeGestureRecognizer(tapRecognizer)
+    }
     
     func textFieldDidChange(textfield: UITextField) {
         enableDoneButtonIfNeeded()
@@ -213,6 +224,8 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
     }
     
     @IBAction func facebookButtonTapped(sender: AnyObject) {
+        
+        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: true)
         model?.userServiceProvider.attemptFacebookLogin({
             (data:[String:AnyObject]?) in
             if let data = data {
@@ -223,6 +236,7 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
                 guard let facebookID    = data["id"] as? String else { return }
                 let signUpMethod        = "Facebook"
                 
+                UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: true)
                 self.navigationController?.navigationBar.userInteractionEnabled = false
                 let l = LoadingScreen(frame: self.view.bounds, message: nil)
                 self.view.addSubview(l)
@@ -260,6 +274,11 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
             mobileTextField.resignFirstResponder()
             passwordTextField.resignFirstResponder()
         }
+    }
+    
+    @IBAction func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+        mobileTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
     }
     
     // MARK: - ErrorMessageDelegate

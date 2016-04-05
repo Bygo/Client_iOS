@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import RealmSwift
 
-class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate, HomeDelegate, DashboardDelegate {
+class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, SettingsDelegate, HomeDelegate, DashboardDelegate, HelpDelegate {
 
     let model = Model()
     
@@ -18,6 +18,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     @IBOutlet var settingsContainer:UIViewController?
     @IBOutlet var discoverContainer:UIViewController?
     @IBOutlet var dashboardContainer:UIViewController?
+    @IBOutlet var helpContainer:UIViewController?
     @IBOutlet var loginContainer:UINavigationController?
     
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
@@ -59,11 +60,13 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         removeModule(&settingsContainer)
         removeModule(&discoverContainer)
         removeModule(&dashboardContainer)
+        removeModule(&helpContainer)
         
         addModule("Menu", vc: &menuContainer)
         addModule("Settings", vc: &settingsContainer)
         addModule("Dashboard", vc: &dashboardContainer)
         addModule("Discover", vc: &discoverContainer)
+        addModule("Help", vc: &helpContainer)
         
         (menuContainer as? MenuContainerVC)?.delegate   = self
         (menuContainer as? MenuContainerVC)?.model      = model
@@ -76,6 +79,8 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         
         ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.model           = model
         ((discoverContainer as? UINavigationController)?.topViewController as? BygoVC)?.delegate        = self
+        
+        ((helpContainer as? UINavigationController)?.topViewController as? HelpVC)?.delegate = self
         
         view.bringSubviewToFront(discoverContainer!.view)
         view.bringSubviewToFront(menuContainer!.view)
@@ -114,7 +119,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         case .Discover:     view.bringSubviewToFront(discoverContainer!.view)
         case .Dashboard:    view.bringSubviewToFront(dashboardContainer!.view)
         case .Settings:     view.bringSubviewToFront(settingsContainer!.view)
-        case .Help:         break
+        case .Help:         view.bringSubviewToFront(helpContainer!.view)
         case .SignUp:       showLoginMenu(self)
         }
         view.bringSubviewToFront(menuContainer!.view)
@@ -171,7 +176,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     
     // MARK: - Settings Delegate
     func didUpdateAccountSettings() {
-//        (menuContainer as? MenuContainerVC)?.userDidUpdateAccountSettings()
+        // (menuContainer as? MenuContainerVC)?.userDidUpdateAccountSettings()
     }
     
     func didLogout() {

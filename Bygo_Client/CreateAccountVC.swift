@@ -40,8 +40,12 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
     @IBOutlet var backButton: UIBarButtonItem!
     @IBOutlet var doneButton: UIBarButtonItem!
     
+    @IBOutlet var tapRecognizer: UITapGestureRecognizer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(CreateAccountVC.tapGestureRecognized(_:)))
         
         firstNameTextField.tintColor    = kCOLOR_ONE
         lastNameTextField.tintColor     = kCOLOR_ONE
@@ -158,6 +162,14 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
         return true
     }
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        view.addGestureRecognizer(tapRecognizer)
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        view.removeGestureRecognizer(tapRecognizer)
+    }
+    
     
     func textFieldDidChange(textfield: UITextField) {
         doneButton.enabled = isUserDataValid()
@@ -227,6 +239,9 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
     }
     
     @IBAction func facebookButtonTapped(sender: AnyObject) {
+        
+        UIApplication.sharedApplication().setStatusBarStyle(.Default, animated: true)
+        
         model?.userServiceProvider.attemptFacebookLogin({
             (data:[String:AnyObject]?) in
             if let data = data {
@@ -237,6 +252,7 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
                 let picture = data["picture"] as? [String:AnyObject]
                 let signUpMethod        = "Facebook"
                 
+                UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: true)
                 self.navigationController?.navigationBar.userInteractionEnabled = false
                 let l = LoadingScreen(frame: self.view.bounds, message: nil)
                 self.view.addSubview(l)
@@ -307,6 +323,15 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
             emailTextField.resignFirstResponder()
             passwordTextField.resignFirstResponder()
         }
+    }
+    
+    @IBAction func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+        // TODO: Refactor this into a dismissKeyboard() func
+        firstNameTextField.resignFirstResponder()
+        lastNameTextField.resignFirstResponder()
+        mobileTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
     }
     
     // MARK: - ErrorMessageDelegate

@@ -21,6 +21,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     @IBOutlet var refreshControl: UIRefreshControl!
     @IBOutlet var menuButton: UIBarButtonItem!
     
+    @IBOutlet var tapRecognizer: UITapGestureRecognizer!
+    
     var delegate:HomeDelegate?
     var model:Model?
     var selectedTypeID: String?
@@ -34,7 +36,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        
+        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(BygoVC.tapGestureRecognized(_:)))
         
         navigationController?.navigationBar.barTintColor    = kCOLOR_ONE
         navigationController?.navigationBar.translucent     = false
@@ -44,12 +47,8 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         
         menuButton.tintColor = .whiteColor()
         
-        // NSTimer.scheduledTimerWithTimeInterval(10.0, target: self, selector: #selector(BygoVC.changePrompt), userInfo: nil, repeats: true)
-        
         view.backgroundColor = kCOLOR_THREE
         collectionView?.backgroundColor = .clearColor()
-        
-        //        configureCreateListingButton()
         
         title = "Discover"
         
@@ -70,9 +69,9 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         createListingButton.titleLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
         createListingButton.setTitle("Create a Listing", forState: .Normal)
         
-//        createListingButton.layer.shadowColor = UIColor.blackColor().CGColor
-//        createListingButton.layer.shadowOpacity = 0.5
-//        createListingButton.layer.shadowOffset = CGSizeMake(1.0, 1.0)
+        //        createListingButton.layer.shadowColor = UIColor.blackColor().CGColor
+        //        createListingButton.layer.shadowOpacity = 0.5
+        //        createListingButton.layer.shadowOffset = CGSizeMake(1.0, 1.0)
     }
     
     override func prefersStatusBarHidden() -> Bool {
@@ -153,8 +152,10 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     func textFieldDidBeginEditing(textField: UITextField) {
         if textField == searchBar {
             delegate?.didMoveOneLevelIntoNavigation()
+            view.addGestureRecognizer(tapRecognizer)
         }
     }
+    
     
     func textFieldShouldClear(textField: UITextField) -> Bool {
         self.layoutData = []
@@ -174,6 +175,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 refresh()
             }
             
+            view.removeGestureRecognizer(tapRecognizer)
             delegate?.didReturnToBaseLevelOfNavigation()
         }
     }
@@ -326,7 +328,9 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 performSegueWithIdentifier("CreateNewListing", sender: nil)
                 
             case kHOW_DOES_BYGO_WORK_CELL:
-                performSegueWithIdentifier("HowDoesBygoWork", sender: nil)
+                let loginSB = UIStoryboard(name: "HowDoesBygoWork", bundle: NSBundle.mainBundle())
+                let howDoesBygoWorkVC = loginSB.instantiateInitialViewController() as? UINavigationController
+                presentViewController(howDoesBygoWorkVC!, animated: true, completion: nil)
 
             default: return
             }
@@ -377,6 +381,12 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
         }
     }
     
+    @IBAction func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+        searchBar.resignFirstResponder()
+    }
+    
+    
+    // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "CreateNewListing" { 

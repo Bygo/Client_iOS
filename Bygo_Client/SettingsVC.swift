@@ -7,10 +7,9 @@
 //
 
 import UIKit
-import Braintree
 import RealmSwift
 
-class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewControllerDelegate, HomeAddressDelegate {
+class SettingsVC: UITableViewController, AccountSettingsDelegate, HomeAddressDelegate {
 
     // MARK: - Properties
     @IBOutlet var profileImageViewVerticalOffset: NSLayoutConstraint!
@@ -47,6 +46,10 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewCo
         profileImageView.layer.masksToBounds    = true
         profileImageView.layer.borderWidth      = 0.0
         
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(SettingsVC.configureUserSpecificUI), forControlEvents: .ValueChanged)
+        tableView.addSubview(refreshControl!)
+        
         // Configure the user specific settings
         configureUserSpecificUI()
     }
@@ -77,12 +80,13 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewCo
         guard let lastName  = localUser.lastName else { return }
         usernameLabel.text  = "\(firstName) \(lastName)"
         
+        refreshControl?.endRefreshing()
         guard let profileLink = localUser.profileImageLink else { profileImageView.image = nil; return }
         guard let url = NSURL(string: profileLink) else { profileImageView.image = nil; return }
         profileImageView.hnk_setImageFromURL(url)
     }
     
-    private func configureUserSpecificUI() {
+    func configureUserSpecificUI() {
         configureUsernameAndProfileImage()
     }
     
@@ -189,47 +193,10 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, BTDropInViewCo
     
     // MARK: - Payments
     private func showPaymentMethods() {
-        /*
-        let meetingSB = UIStoryboard(name: "Payments", bundle: NSBundle.mainBundle())
-        paymentMethodsContainer = meetingSB.instantiateViewControllerWithIdentifier("PaymentMethods") as? UINavigationController
-        (paymentMethodsContainer?.topViewController as? PaymentMethodsVC)?.model = model
-        presentViewController(paymentMethodsContainer, animated: true, completion: nil)
-        */
         
-        // Create a BTDropInViewController
-        model?.paymentsServiceProvider.getBraintreeClient({
-            (braintreeClient:BTAPIClient?) in
-            print(braintreeClient)
-        })
-        
-        
-//        braintreeClient {
-//            let dropInViewController = BTDropInViewController(APIClient: braintreeClient)
-//            dropInViewController.delegate = self
-//            
-//            // This is where you might want to customize your view controller (see below)
-//            
-//            // The way you present your BTDropInViewController instance is up to you.
-//            // In this example, we wrap it in a new, modally-presented navigation controller:
-//            dropInViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
-//                barButtonSystemItem: UIBarButtonSystemItem.Cancel,
-//                target: self, action: "userDidCancelPayment")
-//            let navigationController = UINavigationController(rootViewController: dropInViewController)
-//            presentViewController(navigationController, animated: true, completion: nil)
-//        }
     }
     
     func userDidCancelPayment() {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func dropInViewController(viewController: BTDropInViewController, didSucceedWithTokenization paymentMethodNonce: BTPaymentMethodNonce) {
-        // Send payment method nonce to your server for processing
-        // postNonceToServer(paymentMethodNonce.nonce)
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func dropInViewControllerDidCancel(viewController: BTDropInViewController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
