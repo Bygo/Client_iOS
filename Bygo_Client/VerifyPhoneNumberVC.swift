@@ -135,17 +135,18 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
         
         model?.phoneNumberServiceProvider.checkPhoneNumberVerificationCode(userID, code: code, completionHandler: {
             (success:Bool, error:BygoError?) in
-            
-            self.navigationController?.navigationBar.userInteractionEnabled = true
-            
-            if success {
-                self.delegate?.phoneNumberDidVerify(true)
-            } else {
-                dispatch_async(GlobalMainQueue, {
+            dispatch_async(GlobalMainQueue, {
+                self.navigationController?.navigationBar.userInteractionEnabled = true
+                
+                if success {
+                    self.delegate?.phoneNumberDidVerify(true)
+                } else {
+                    
                     l.endAnimation()
                     self.handleError(error)
-                })
-            }
+                    
+                }
+            })
         })
     }
     

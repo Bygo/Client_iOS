@@ -135,18 +135,20 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate
             
             model.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: {
                 (success:Bool, error: BygoError?) -> Void in
-                self.navigationController?.navigationBar.userInteractionEnabled = true
-                
-                print(error)
-                
-                if success {
-                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
-                } else {
-                    dispatch_async(GlobalMainQueue, {
+                dispatch_async(GlobalMainQueue, {
+                    self.navigationController?.navigationBar.userInteractionEnabled = true
+                    
+                    print(error)
+                    
+                    if success {
+                        self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
+                    } else {
+                        
                         l.endAnimation()
                         self.handleError(error)
-                    })
-                }
+                        
+                    }
+                })
             })
             
         } else {

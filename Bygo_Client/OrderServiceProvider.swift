@@ -82,6 +82,12 @@ class OrderServiceProvider: NSObject {
                     case "Item type not found":
                         completionHandler(success: false, error: .ItemTypeNotFound)
                         
+                    case "Phone number not found":
+                        completionHandler(success: false, error: .PhoneNumberNotFound)
+                        
+                    case "Phone number not verified":
+                        completionHandler(success: false, error: .PhoneNumberNotVerified)
+                        
                     default:
                         completionHandler(success: false, error: .Unknown)
                     }

@@ -224,16 +224,18 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
             
             model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: mobileTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "Phone Number", completionHandler: {
                 (success:Bool, error: BygoError?)->Void in
-                self.navigationController?.navigationBar.userInteractionEnabled = true
-                if success {
-                    self.delegate?.userDidLogin(false)
-                    self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
-                } else {
-                    dispatch_async(GlobalMainQueue, {
+                dispatch_async(GlobalMainQueue, {
+                    self.navigationController?.navigationBar.userInteractionEnabled = true
+                    if success {
+                        self.delegate?.userDidLogin(false)
+                        self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
+                    } else {
+                        
                         l.endAnimation()
                         self.handleError(error)
-                    })
-                }
+                        
+                    }
+                })
             })
         }
     }
@@ -266,21 +268,19 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
                     } else {
                         self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: {
                             (success:Bool, error: BygoError?)->Void in
-                            self.navigationController?.navigationBar.userInteractionEnabled = true
-                            if success {
-                                self.setUserFacebookProfileImage(picture, completionHandler: {
-                                    dispatch_async(GlobalMainQueue, {
+                            dispatch_async(GlobalMainQueue, {
+                                self.navigationController?.navigationBar.userInteractionEnabled = true
+                                if success {
+                                    self.setUserFacebookProfileImage(picture, completionHandler: {
                                         self.delegate?.userDidLogin(false)
                                         self.performSegueWithIdentifier("MobileSegue", sender: nil)
                                     })
-                                })
-                                
-                            } else {
-                                dispatch_async(GlobalMainQueue, {
+                                    
+                                } else {
                                     l.endAnimation()
                                     self.handleError(error)
-                                })
-                            }
+                                }
+                            })
                         })
                     }
                 })

@@ -135,7 +135,10 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDele
     // MARK: - CreateOrder
     private func createOrder() {
         print("Create order")
-        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else {
+            handleError(.UserNotFound)
+            return
+        }
         guard let typeID = typeID else { return }
         guard let duration = Int(rentalDurationTextField.text!) else { return }
         guard let rentalFee = Double(String(rentalValueTextField.text!.characters.dropFirst())) else { return }
@@ -167,8 +170,8 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDele
                 })
             }
         } else {
-            //TODO: Display message to user that the app will not work without location services
-            print("Location services disabled")
+            handleError(.LocationServicesRequired)
+            return
         }
     }
     
@@ -188,14 +191,14 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDele
         }
         
         switch error {
-        case .PhoneNumberAlreadyRegistered:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+        case .UserNotFound:
+            e = ErrorMessage(frame: window.bounds, title: "Login Required", detail: "Tap \"Okay\" to login", error: .UserNotFound, priority: .Low, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Okay])
             
-        case .EmailAddressAlreadyRegistered:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
+        case .PhoneNumberNotFound:
+            e = ErrorMessage(frame: window.bounds, title: "Mobile Number Required", detail: "Tap \"Okay\" to verify the mobile number associated with this account", error: error, priority: .Low, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Okay])
             
-        case .HomeAddressNotFound:
-            e = ErrorMessage(frame: window.bounds, title: "Address Required", detail: "Tap \"Okay\" to list the address where we can pickup this item when someone orders it", error: error, priority: .Low, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Okay])
+        case .PhoneNumberNotVerified:
+            e = ErrorMessage(frame: window.bounds, title: "Verify Mobile Number", detail: "Tap \"Okay\" to verify the mobile number associated with this account", error: error, priority: .Low, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Okay])
         
         case .LocationServicesRequired:
             e = ErrorMessage(frame: window.bounds, title: "Location Services Required", detail: "Please enable location services for Bygo in your phone's Settings", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
@@ -213,9 +216,6 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDele
 
     func okayButtonTapped(error: BygoError) {
         switch error {
-        case .HomeAddressNotFound:
-            self.performSegueWithIdentifier("HomeAddress", sender: nil)
-            
         case .PhoneNumberNotVerified:
             self.performSegueWithIdentifier("VerifyMobile", sender: nil)
             
@@ -288,6 +288,21 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDele
             let realm = try! Realm()
             guard let itemName = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0].name else { destVC.detailString = nil; return }
             destVC.detailString = "We'll notify you when we find a \(itemName) to fill your order."
+            
+        } else if segue.identifier == "PhoneNumber" {
+            guard let navVC = segue.destinationViewController as? UINavigationController else { return }
+            guard let destVC = navVC.topViewController as? PhoneNumberVC else { return }
+            destVC.model = model
+            destVC.isModalPresentation = true
+            destVC.delegate = self
+            
+        } else if segue.identifier == "VerifyMobile" {
+            guard let navVC = segue.destinationViewController as? UINavigationController else { return }
+            guard let destVC = navVC.topViewController as? VerifyPhoneNumberVC else { return }
+            destVC.model = model
+            destVC.isModalPresentation = true
+            destVC.delegate = self
+            
         }
     }
 }

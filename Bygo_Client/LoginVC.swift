@@ -205,15 +205,17 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
             if model.dataValidator.isValidPassword(passwordTextField.text!) {
                 model.userServiceProvider.login(mobileTextField.text!, password: passwordTextField.text!, completionHandler: {
                     (success:Bool, error: BygoError?)->Void in
-                    self.navigationController?.navigationBar.userInteractionEnabled = true
-                    if success {
-                        self.delegate?.userDidLogin(true)
-                    } else {
-                        dispatch_async(GlobalMainQueue, {
+                    dispatch_async(GlobalMainQueue, {
+                        self.navigationController?.navigationBar.userInteractionEnabled = true
+                        if success {
+                            self.delegate?.userDidLogin(true)
+                        } else {
+                            
                             l.endAnimation()
                             self.handleError(error)
-                        })
-                    }
+                            
+                        }
+                    })
                 })
             } else {
                 print("Password was not valid")
@@ -249,16 +251,16 @@ class LoginVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
                     } else {
                         self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: {
                             (success:Bool, error: BygoError?)->Void in
+                            dispatch_async(GlobalMainQueue, {
                             self.navigationController?.navigationBar.userInteractionEnabled = true
-                            if success {
-                                self.delegate?.userDidLogin(false)
-                                self.performSegueWithIdentifier("MobileSegue", sender: nil)
-                            } else {
-                                dispatch_async(GlobalMainQueue, {
+                                if success {
+                                    self.delegate?.userDidLogin(false)
+                                    self.performSegueWithIdentifier("MobileSegue", sender: nil)
+                                } else {
                                     l.endAnimation()
                                     self.handleError(error)
-                                })
-                            }
+                                }
+                            })
                         })
                     }
                 })
