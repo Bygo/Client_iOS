@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhoneNumberVC: UIViewController, UITextFieldDelegate {
+class PhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
     
     var model:Model?
     var delegate:LoginDelegate?
@@ -134,25 +134,79 @@ class PhoneNumberVC: UIViewController, UITextFieldDelegate {
     @IBAction func nextButtonTapped(sender: AnyObject) {
         guard let model = model else { return }
         if model.dataValidator.isValidPhoneNumber(mobileTextField.text!) {
-            // TODO: Send message to model to update the user's phone number
             guard let localUser = model.userServiceProvider.getLocalUser() else { return }
             let phoneNumber = mobileTextField.text!
-            model.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: { (success:Bool) -> Void in
+            mobileTextField.resignFirstResponder()
+            
+            self.navigationController?.navigationBar.userInteractionEnabled = false
+            let l = LoadingScreen(frame: self.view.bounds, message: nil)
+            self.view.addSubview(l)
+            l.beginAnimation()
+            
+            model.userServiceProvider.updateLocalUser(localUser.firstName!, lastName: localUser.lastName!, email: localUser.email!, phoneNumber: phoneNumber, completionHandler: {
+                (success:Bool, error: BygoError?) -> Void in
+                self.navigationController?.navigationBar.userInteractionEnabled = true
+                
+                print(error)
+                
                 if success {
                     self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
                 } else {
-                    print("Something went wrong while updating the user")
+                    dispatch_async(GlobalMainQueue, {
+                        l.endAnimation()
+                        self.handleError(error)
+                    })
                 }
             })
             
         } else {
-            // TODO: Give user some indication of missing phone n umber
+            // TODO: Give user some indication of missing phone number
         }
     }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         mobileTextField.resignFirstResponder()
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    // MARK: - ErrorMessageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .PhoneNumberAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+    
+    func okayButtonTapped(error: BygoError) {
+        return
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        // TODO: Retry updating phone number
+        return
     }
     
     // MARK: - Navigation

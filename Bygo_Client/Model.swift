@@ -47,6 +47,13 @@ enum BygoError {
     case ItemTypeNotFound
     
     case PhoneNumberNotVerified
+    case PhoneNumberAlreadyVerified
+    case PhoneNumberAlreadyRegistered
+    case VerificationCodeExpired
+    case VerificationCodeInvalid
+    case VerificationCodeSent
+    
+    case EmailAddressAlreadyRegistered
     
     case Server
     case Unknown

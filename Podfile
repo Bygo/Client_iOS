@@ -3,6 +3,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Bygo_Client' do
+pod 'Realm'
 pod 'RealmSwift'
 pod 'GoogleMaps'
 pod 'Google/CloudMessaging'

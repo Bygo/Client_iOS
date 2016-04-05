@@ -1,18 +1,18 @@
 //
-//  QuickRequestCollectionViewCell.swift
+//  CreateNewListingCollectionViewCell.swift
 //  Bygo_Client
 //
-//  Created by Nicholas Garfield on 5/3/16.
+//  Created by Nicholas Garfield on 1/4/16.
 //  Copyright © 2016 Nicholas Garfield. All rights reserved.
 //
 
 import UIKit
 
-class ItemTypeCollectionViewCell: UICollectionViewCell {
+class DiscoveryInfoCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var nameLabel: UILabel!
-    
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var detailLabel: UILabel!
+ 
     override var highlighted: Bool {
         get {
             return super.highlighted
@@ -27,11 +27,4 @@ class ItemTypeCollectionViewCell: UICollectionViewCell {
             }
         }
     }
- 
-    override func prepareForReuse() {
-        imageView.image = nil
-        backgroundColor = .whiteColor()
-    }
-    
-    
 }

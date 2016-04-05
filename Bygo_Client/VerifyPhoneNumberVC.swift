@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
+class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
     
     var model:Model?
     var delegate:LoginDelegate?
@@ -57,13 +57,13 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
         
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
-            (success:Bool) in
+            (success:Bool, error: BygoError?) in
             if !success {
-                print("Error sending code")
-                // TODO: Show some error message to the user
+                dispatch_async(GlobalMainQueue, {
+                    self.handleError(error)
+                })
             }
         })
-        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -86,12 +86,13 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     }
     
     
+    // TODO: What is this for??
     func updatePhoneNumber(phoneNumber: String) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
-            (success:Bool) in
+            (success:Bool, error: BygoError?) in
             if !success {
-                print("Error sending code")
+                
                 // TODO: Show some error message to the user
             }
         })
@@ -134,25 +135,49 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
         guard let code = codeTextField.text else { return }
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         self.codeTextField.resignFirstResponder()
+        
+        self.navigationController?.navigationBar.userInteractionEnabled = false
+        let l = LoadingScreen(frame: self.view.bounds, message: nil)
+        self.view.addSubview(l)
+        l.beginAnimation()
+        
         model?.phoneNumberServiceProvider.checkPhoneNumberVerificationCode(userID, code: code, completionHandler: {
-            (success:Bool) in
+            (success:Bool, error:BygoError?) in
+            
+            self.navigationController?.navigationBar.userInteractionEnabled = true
+            
             if success {
                 self.delegate?.phoneNumberDidVerify(true)
             } else {
-                print("Error while checking phone verification code")
-                // TODO: Show some error message to the user
+                dispatch_async(GlobalMainQueue, {
+                    l.endAnimation()
+                    self.handleError(error)
+                })
             }
         })
     }
     
     @IBAction func resendCodeButtonTapped(sender: AnyObject) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        
+        self.navigationController?.navigationBar.userInteractionEnabled = false
+        let l = LoadingScreen(frame: self.view.bounds, message: nil)
+        self.view.addSubview(l)
+        l.beginAnimation()
+        
         model?.phoneNumberServiceProvider.sendPhoneNumberVerificationCode(userID, completionHandler: {
-            (success:Bool) in
-            if !success {
-                print("Error sending code")
-                // TODO: Show some error message to the user
-            }
+            (success:Bool, error: BygoError?) in
+            self.navigationController?.navigationBar.userInteractionEnabled = true
+            dispatch_async(GlobalMainQueue, {
+                l.endAnimation()
+                dispatch_async(GlobalMainQueue, {
+                    if success {
+                        self.handleError(.VerificationCodeSent)
+                    } else {
+                        self.handleError(error)
+                    }
+                })
+            })
         })
     }
     
@@ -162,5 +187,52 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func changePhoneNumberButtonTapped(sender: AnyObject) {
         
+    }
+    
+    // MARK: - ErrorMessageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .VerificationCodeSent:
+            e = ErrorMessage(frame: window.bounds, title: "Verification Code Sent", detail: "Please allow for up to 2 minutes for code to arrive via SMS", error: error, priority: .Low, options: [ErrorMessageOptions.Okay])
+        
+        case .PhoneNumberAlreadyVerified:
+            e = ErrorMessage(frame: window.bounds, title: "Already Verified", detail: "This phone number has already been verified with your account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .VerificationCodeExpired:
+            e = ErrorMessage(frame: window.bounds, title: "Verification Code Expired", detail: "Tap \"Okay\" to send a new code via SMS", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .VerificationCodeInvalid:
+            e = ErrorMessage(frame: window.bounds, title: "Verification Code Invalid", detail: "Tap \"Okay\" to send a new code via SMS", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+    
+    func okayButtonTapped(error: BygoError) {
+        return
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        return
     }
 }

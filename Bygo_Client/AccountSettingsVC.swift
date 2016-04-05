@@ -187,20 +187,34 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         guard let model         = model                     else { return }
         guard let firstName     = firstNameTextField.text   else { return }
         guard let lastName      = lastNameTextField.text    else { return }
-        guard let phoneNumber   = mobileTextField.text else { return }
+        guard let phoneNumber   = mobileTextField.text      else { return }
         guard let email         = emailTextField.text       else { return }
         if !model.dataValidator.isValidPhoneNumber(phoneNumber) { return }
         if !model.dataValidator.isValidEmail(email)             { return }
         if !model.dataValidator.isValidFirstName(firstName)     { return }
         if !model.dataValidator.isValidLastName(lastName)       { return }
         
+        firstNameTextField.resignFirstResponder()
+        lastNameTextField.resignFirstResponder()
+        mobileTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        
+        
+        self.navigationController?.navigationBar.userInteractionEnabled = false
+        let l = LoadingScreen(frame: self.view.bounds, message: "Updating account")
+        self.view.addSubview(l)
+        l.beginAnimation()
+        
         // Update the local user Account
-        model.userServiceProvider.updateLocalUser(firstName, lastName: lastName, email: email, phoneNumber: phoneNumber, completionHandler: {(success:Bool)->Void in
+        model.userServiceProvider.updateLocalUser(firstName, lastName: lastName, email: email, phoneNumber: phoneNumber, completionHandler: {(success:Bool, error: BygoError?)->Void in
             if success {
                 if let newProfileImage = self.newProfileImage {
                     guard let userID = model.userServiceProvider.getLocalUser()?.userID else { return }
                     model.userServiceProvider.setUserProfileImage(userID, image: newProfileImage, completionHandler: {
                         (success:Bool) in
+                        
+                        self.navigationController?.navigationBar.userInteractionEnabled = true
+
                         if success {
                             dispatch_async(GlobalMainQueue, {
                                 self.dismissViewControllerAnimated(true, completion: {
@@ -208,7 +222,11 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
                                 })
                             })
                         } else {
-                            print("FAILED")
+
+                            dispatch_async(GlobalMainQueue, {
+                                l.endAnimation()
+                                // TODO: Handle error
+                            })
                         }
                     })
                 } else {
@@ -219,7 +237,11 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
                     })
                 }
             } else {
-                // TODO: Throw an error message
+                dispatch_async(GlobalMainQueue, {
+                    self.navigationController?.navigationBar.userInteractionEnabled = true
+                    l.endAnimation()
+                    // TODO: Handle Error
+                })
             }
         })
     }

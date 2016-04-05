@@ -191,7 +191,7 @@
                                             <outlet property="nameLabel" destination="C1h-nC-fQ6" id="5En-dR-NXK"/>
                                         </connections>
                                     </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CreateListingCell" id="x8n-vi-XVa" userLabel="ItemTypeCell" customClass="CreateNewListingCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DiscoveryInfoCell" id="x8n-vi-XVa" userLabel="ItemTypeCell" customClass="DiscoveryInfoCollectionViewCell" customModule="Bygo_Client" customModuleProvider="target">
                                         <rect key="frame" x="330" y="168" width="116" height="146"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -269,6 +269,7 @@
                         <outlet property="menuButton" destination="Ed7-5Q-uGs" id="b8n-Fn-moP"/>
                         <segue destination="sPQ-EY-eOA" kind="presentation" identifier="OrderSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="N3O-uy-Adm"/>
                         <segue destination="LIR-Oc-h7k" kind="presentation" identifier="CreateNewListing" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="EYs-fV-s9c"/>
+                        <segue destination="0yO-WK-Gm6" kind="presentation" identifier="HowDoesBygoWork" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="DN5-BH-iPA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vTt-Sm-4Fm" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -332,7 +333,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yMW-jx-9CA" customClass="SearchBar" customModule="Bygo_Client" customModuleProvider="target">
-                                                    <rect key="frame" x="8" y="49" width="490" height="44"/>
+                                                    <rect key="frame" x="8" y="56" width="490" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="oVp-xx-xK9"/>
                                                     </constraints>
@@ -343,10 +344,10 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
+                                            <constraint firstItem="yMW-jx-9CA" firstAttribute="centerY" secondItem="9ox-1b-PPE" secondAttribute="centerY" id="17Z-LI-6yK"/>
                                             <constraint firstItem="yMW-jx-9CA" firstAttribute="centerX" secondItem="9ox-1b-PPE" secondAttribute="centerX" id="BFW-IU-rwX"/>
                                             <constraint firstAttribute="leadingMargin" secondItem="yMW-jx-9CA" secondAttribute="leading" id="RDt-Vn-Je7"/>
                                             <constraint firstItem="Mzi-om-ckj" firstAttribute="top" secondItem="9ox-1b-PPE" secondAttribute="top" constant="24" id="Vcc-Y6-jiu"/>
-                                            <constraint firstItem="yMW-jx-9CA" firstAttribute="top" secondItem="Mzi-om-ckj" secondAttribute="bottom" constant="5.5" id="Xfe-i2-Ra1"/>
                                             <constraint firstItem="Mzi-om-ckj" firstAttribute="leading" secondItem="9ox-1b-PPE" secondAttribute="leadingMargin" id="Xh8-AV-Hgd"/>
                                             <constraint firstItem="Mzi-om-ckj" firstAttribute="centerX" secondItem="9ox-1b-PPE" secondAttribute="centerX" id="tvk-bd-Mso"/>
                                         </constraints>
@@ -1049,6 +1050,48 @@
             </objects>
             <point key="canvasLocation" x="3190" y="2914"/>
         </scene>
+        <!--How Does Bygo WorkVC-->
+        <scene sceneID="ESK-Kz-UIZ">
+            <objects>
+                <viewController id="5jd-Gd-LiO" customClass="HowDoesBygoWorkVC" customModule="Bygo_Client" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="djM-v2-gza"/>
+                        <viewControllerLayoutGuide type="bottom" id="lOJ-AT-ZDO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="2wj-Kj-PhR">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VSb-VV-oKp">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <connections>
+                                    <outlet property="delegate" destination="5jd-Gd-LiO" id="Gmx-gU-hE3"/>
+                                </connections>
+                            </scrollView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="9Be-b7-qWo">
+                                <rect key="frame" x="281" y="543" width="39" height="37"/>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="VSb-VV-oKp" firstAttribute="height" secondItem="2wj-Kj-PhR" secondAttribute="height" id="SHq-LK-s95"/>
+                            <constraint firstItem="9Be-b7-qWo" firstAttribute="centerX" secondItem="2wj-Kj-PhR" secondAttribute="centerX" id="jna-Ey-CR6"/>
+                            <constraint firstItem="VSb-VV-oKp" firstAttribute="width" secondItem="2wj-Kj-PhR" secondAttribute="width" id="nJ0-sj-Kax"/>
+                            <constraint firstItem="lOJ-AT-ZDO" firstAttribute="top" secondItem="9Be-b7-qWo" secondAttribute="bottom" constant="20" id="u3M-mb-KIV"/>
+                            <constraint firstItem="VSb-VV-oKp" firstAttribute="centerY" secondItem="2wj-Kj-PhR" secondAttribute="centerY" id="v9D-9c-fKY"/>
+                            <constraint firstItem="VSb-VV-oKp" firstAttribute="centerX" secondItem="2wj-Kj-PhR" secondAttribute="centerX" id="yvA-eh-6ue"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Fg7-eh-n1t"/>
+                    <connections>
+                        <outlet property="pageControl" destination="9Be-b7-qWo" id="c9m-5L-VuB"/>
+                        <outlet property="scrollView" destination="VSb-VV-oKp" id="jSm-35-BCQ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dMb-Vc-Viv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1679" y="2123"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="bW0-kv-jjh">
             <objects>
@@ -1064,6 +1107,23 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gdk-hp-pZJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2418" y="1341"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ZwL-FM-UmR">
+            <objects>
+                <navigationController navigationBarHidden="YES" id="0yO-WK-Gm6" sceneMemberID="viewController">
+                    <nil key="simulatedTopBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vi1-MB-D8v">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="5jd-Gd-LiO" kind="relationship" relationship="rootViewController" id="Uxr-vI-YKY"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lSK-Zc-pQm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1679" y="1341"/>
         </scene>
         <!--Verify Mobile Number-->
         <scene sceneID="Brv-y4-z1c">

@@ -10,16 +10,6 @@ import UIKit
 import RealmSwift
 import Haneke
 
-
-private let kSHAPE_1_WIDTH_FACTOR:CGFloat   = 2.0
-private let kSHAPE_1_HEIGHT_FACTOR:CGFloat  = 2.0
-private let kSHAPE_2_WIDTH_FACTOR:CGFloat   = 2.0
-private let kSHAPE_2_HEIGHT_FACTOR:CGFloat  = 1.0
-private let kSHAPE_3_WIDTH_FACTOR:CGFloat   = 1.0
-private let kSHAPE_3_HEIGHT_FACTOR:CGFloat  = 1.0
-private let kSHAPE_4_WIDTH_FACTOR:CGFloat   = 1.0
-private let kSHAPE_4_HEIGHT_FACTOR:CGFloat  = 2.0
-
 class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var collectionView: UICollectionView!

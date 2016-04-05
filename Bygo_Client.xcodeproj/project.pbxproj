@@ -43,7 +43,6 @@
 		733621401C6076D500893034 /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336213F1C6076D500893034 /* MenuVC.swift */; };
 		733621421C60778900893034 /* MenuOptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621411C60778900893034 /* MenuOptionTableViewCell.swift */; };
 		733621451C60F31A00893034 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733621441C60F31A00893034 /* Login.storyboard */; };
-		7336214A1C60F44700893034 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621491C60F44700893034 /* SignUpVC.swift */; };
 		7336214C1C60F48600893034 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214B1C60F48600893034 /* LoginVC.swift */; };
 		7336214E1C60F4E100893034 /* PhoneNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214D1C60F4E100893034 /* PhoneNumberVC.swift */; };
 		733621501C60F52F00893034 /* VerifyPhoneNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */; };
@@ -56,7 +55,7 @@
 		7336216A1C6147C600893034 /* BygoTitleDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733621691C6147C600893034 /* BygoTitleDetailTableViewCell.swift */; };
 		73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E6B1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift */; };
 		73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E6D1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift */; };
-		73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */; };
+		73372E711CAF45820019A6FD /* DiscoveryInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E701CAF45820019A6FD /* DiscoveryInfoCollectionViewCell.swift */; };
 		73372E731CAF80130019A6FD /* NotificationCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E721CAF80130019A6FD /* NotificationCollectionViewCell.swift */; };
 		73372E751CB015090019A6FD /* BygoGeneralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E741CB015090019A6FD /* BygoGeneralTableViewCell.swift */; };
 		73372E771CB0158C0019A6FD /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E761CB0158C0019A6FD /* DashboardVC.swift */; };
@@ -70,6 +69,7 @@
 		73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
+		736C822B1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736C822A1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift */; };
 		739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBD41C7F5E5B00C34CC1 /* Image.swift */; };
 		73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */; };
 		73BA58D21C82637900C03FCD /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BA58D11C82637900C03FCD /* SearchBar.swift */; };
@@ -163,7 +163,6 @@
 		7336213F1C6076D500893034 /* MenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		733621411C60778900893034 /* MenuOptionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuOptionTableViewCell.swift; sourceTree = "<group>"; };
 		733621441C60F31A00893034 /* Login.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
-		733621491C60F44700893034 /* SignUpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		7336214B1C60F48600893034 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		7336214D1C60F4E100893034 /* PhoneNumberVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVC.swift; sourceTree = "<group>"; };
 		7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyPhoneNumberVC.swift; sourceTree = "<group>"; };
@@ -176,7 +175,7 @@
 		733621691C6147C600893034 /* BygoTitleDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BygoTitleDetailTableViewCell.swift; sourceTree = "<group>"; };
 		73372E6B1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoveryServiceProvider.swift; sourceTree = "<group>"; };
 		73372E6D1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemTypeServiceProvider.swift; sourceTree = "<group>"; };
-		73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewListingCollectionViewCell.swift; sourceTree = "<group>"; };
+		73372E701CAF45820019A6FD /* DiscoveryInfoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoveryInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		73372E721CAF80130019A6FD /* NotificationCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCollectionViewCell.swift; sourceTree = "<group>"; };
 		73372E741CB015090019A6FD /* BygoGeneralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BygoGeneralTableViewCell.swift; sourceTree = "<group>"; };
 		73372E761CB0158C0019A6FD /* DashboardVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
@@ -190,6 +189,7 @@
 		73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
+		736C822A1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HowDoesBygoWorkVC.swift; sourceTree = "<group>"; };
 		739ADBD41C7F5E5B00C34CC1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountVC.swift; sourceTree = "<group>"; };
 		73BA58D11C82637900C03FCD /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
@@ -290,6 +290,7 @@
 		73147DAC1C62EFAF00FD70B8 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				736C822A1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift */,
 				730CF8951C97F47600D934A3 /* NewListingImageVC.swift */,
 				730CF8971C97F5BA00D934A3 /* NewListingTypeVC.swift */,
 				732E50A21C9A40BB00E8A247 /* OrderVC.swift */,
@@ -304,7 +305,7 @@
 				73CA5C8D1C8B9C6F004DE3E7 /* SearchBarCollectionViewCell.swift */,
 				73CA5C931C8BA37F004DE3E7 /* ItemTypeCollectionViewCell.swift */,
 				73D73F971CA77E50009F7404 /* Discovery_0_CollectionViewCell.swift */,
-				73372E701CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift */,
+				73372E701CAF45820019A6FD /* DiscoveryInfoCollectionViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -477,12 +478,11 @@
 		733621651C61329500893034 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				733621491C60F44700893034 /* SignUpVC.swift */,
-				7336214D1C60F4E100893034 /* PhoneNumberVC.swift */,
-				7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */,
-				7336214B1C60F48600893034 /* LoginVC.swift */,
 				73672D2B1C7FC06600352631 /* WelcomeVC.swift */,
 				73BA58CE1C81644900C03FCD /* CreateAccountVC.swift */,
+				7336214B1C60F48600893034 /* LoginVC.swift */,
+				7336214D1C60F4E100893034 /* PhoneNumberVC.swift */,
+				7336214F1C60F52F00893034 /* VerifyPhoneNumberVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -832,10 +832,10 @@
 				73DE66F11C640453006D9810 /* MeetingEvent.swift in Sources */,
 				7336213E1C6076B700893034 /* MenuContainerVC.swift in Sources */,
 				7336211A1C60749B00893034 /* User.swift in Sources */,
-				7336214A1C60F44700893034 /* SignUpVC.swift in Sources */,
 				73CA5C901C8B9CA9004DE3E7 /* BygoVC.swift in Sources */,
 				73D73F981CA77E50009F7404 /* Discovery_0_CollectionViewCell.swift in Sources */,
 				73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */,
+				736C822B1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift in Sources */,
 				733620EA1C60743E00893034 /* ViewController.swift in Sources */,
 				7336211F1C6074E200893034 /* UserServiceProvider.swift in Sources */,
 				73CA5C8E1C8B9C6F004DE3E7 /* SearchBarCollectionViewCell.swift in Sources */,
@@ -856,7 +856,7 @@
 				73372E791CB035D00019A6FD /* NotificationServiceProvider.swift in Sources */,
 				73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */,
 				73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */,
-				73372E711CAF45820019A6FD /* CreateNewListingCollectionViewCell.swift in Sources */,
+				73372E711CAF45820019A6FD /* DiscoveryInfoCollectionViewCell.swift in Sources */,
 				73BA58CF1C81644900C03FCD /* CreateAccountVC.swift in Sources */,
 				73372E6E1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift in Sources */,
 				73DE66AB1C639519006D9810 /* ListingsVC.swift in Sources */,

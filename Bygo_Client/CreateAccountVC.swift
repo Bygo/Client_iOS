@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CreateAccountVC: UIViewController, UITextFieldDelegate {
+class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelegate {
 
     var model:Model?
     var delegate:LoginDelegate?
@@ -190,6 +190,38 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
         }
         return true
     }
+    
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .PhoneNumberAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+        
+        case .EmailAddressAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
+        
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
 
     // MARK: - UI Actions
     @IBAction func backButtonTapped(sender: AnyObject) {
@@ -198,12 +230,29 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func nextButtonTapped(sender: AnyObject) {
         if isUserDataValid() {
-            model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: mobileTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "Phone Number", completionHandler: { (success:Bool)->Void in
+            
+            firstNameTextField.resignFirstResponder()
+            lastNameTextField.resignFirstResponder()
+            mobileTextField.resignFirstResponder()
+            passwordTextField.resignFirstResponder()
+            emailTextField.resignFirstResponder()
+            
+            self.navigationController?.navigationBar.userInteractionEnabled = false
+            let l = LoadingScreen(frame: self.view.bounds, message: nil)
+            self.view.addSubview(l)
+            l.beginAnimation()
+            
+            model?.userServiceProvider.createNewUser(firstNameTextField.text!, lastName: lastNameTextField.text!, email: emailTextField.text!, phoneNumber: mobileTextField.text!, facebookID: nil, password: passwordTextField.text!, signupMethod: "Phone Number", completionHandler: {
+                (success:Bool, error: BygoError?)->Void in
+                self.navigationController?.navigationBar.userInteractionEnabled = true
                 if success {
                     self.delegate?.userDidLogin(false)
                     self.performSegueWithIdentifier("VerifyMobileSegue", sender: nil)
                 } else {
-                    print("Error creating new user")
+                    dispatch_async(GlobalMainQueue, {
+                        l.endAnimation()
+                        self.handleError(error)
+                    })
                 }
             })
         }
@@ -220,15 +269,21 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
                 let picture = data["picture"] as? [String:AnyObject]
                 let signUpMethod        = "Facebook"
                 
-                self.model?.userServiceProvider.login(facebookID, completionHandler: { (loginSuccess:Bool)->Void in
+                self.navigationController?.navigationBar.userInteractionEnabled = false
+                let l = LoadingScreen(frame: self.view.bounds, message: nil)
+                self.view.addSubview(l)
+                l.beginAnimation()
+                
+                self.model?.userServiceProvider.login(facebookID, completionHandler: { (loginSuccess:Bool, error: BygoError?)->Void in
                     if loginSuccess {
                         dispatch_async(GlobalMainQueue, {
                             self.delegate?.userDidLogin(true)
                         })
                     } else {
-                        self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: { (success:Bool)->Void in
+                        self.model?.userServiceProvider.createNewUser(firstName, lastName: lastName, email: email, phoneNumber: nil, facebookID: facebookID, password: nil, signupMethod: signUpMethod, completionHandler: {
+                            (success:Bool, error: BygoError?)->Void in
+                            self.navigationController?.navigationBar.userInteractionEnabled = true
                             if success {
-                                
                                 self.setUserFacebookProfileImage(picture, completionHandler: {
                                     dispatch_async(GlobalMainQueue, {
                                         self.delegate?.userDidLogin(false)
@@ -237,7 +292,10 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
                                 })
                                 
                             } else {
-                                print("Error creating new user")
+                                dispatch_async(GlobalMainQueue, {
+                                    l.endAnimation()
+                                    self.handleError(error)
+                                })
                             }
                         })
                     }
@@ -282,7 +340,15 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate {
             passwordTextField.resignFirstResponder()
         }
     }
-
+    
+    // MARK: - ErrorMessageDelegate
+    func okayButtonTapped(error: BygoError) {
+        return
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        // TODO: Attempt to login the user again
+    }
     
     
     // MARK: - Navigation

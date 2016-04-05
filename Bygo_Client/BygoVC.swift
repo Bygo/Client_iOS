@@ -12,6 +12,7 @@ import RealmSwift
 class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, SuccessDelegate, DiscoveryDelegate, UITextFieldDelegate {
     
     @IBOutlet var searchBar: SearchBar!
+    @IBOutlet var searchBarVerticalOffset: NSLayoutConstraint!
     @IBOutlet var promptLabel: UILabel!
     
     @IBOutlet var collectionView: UICollectionView!
@@ -19,7 +20,7 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     @IBOutlet var createListingButtonBottomOffset: NSLayoutConstraint!
     @IBOutlet var refreshControl: UIRefreshControl!
     @IBOutlet var menuButton: UIBarButtonItem!
-
+    
     var delegate:HomeDelegate?
     var model:Model?
     var selectedTypeID: String?
@@ -149,6 +150,12 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
     }
     
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        if textField == searchBar {
+            delegate?.didMoveOneLevelIntoNavigation()
+        }
+    }
+    
     func textFieldShouldClear(textField: UITextField) -> Bool {
         self.layoutData = []
         self.collectionView.reloadSections(NSIndexSet(index: 1))
@@ -166,40 +173,46 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             if textField.text?.characters.count < 1 {
                 refresh()
             }
+            
+            delegate?.didReturnToBaseLevelOfNavigation()
         }
     }
     
     // MARK: UICollectionViewDataSource
 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        if layoutData == nil {
-            return 1
-        } else {
-            return 3
-        }
+        return 3
     }
 
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let layoutData = layoutData else { return 1 }
         switch section {
-        case 0: return 1
-        case 1: return layoutData.count
-        case 2: return 1
-        default : return 0
+        case 0:
+            return 1
+        case 1:
+            guard let layoutData = layoutData else { return 0 }
+            return layoutData.count
+        case 2:
+            return 1
+        default :
+            return 0
         }
     }
     
     private let kGALLERY_WITH_TITLE_CELL = 0
     private let kITEM_TYPE_CELL = 1
     private let kCREATE_NEW_LISTING_CELL = 2
+    private let kHOW_DOES_BYGO_WORK_CELL = 3
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         switch indexPath.section {
         case 0:
             guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("SearchBarCell", forIndexPath: indexPath) as? SearchBarCollectionViewCell else { return UICollectionViewCell() }
             cell.questionLabel.text = nil
+            cell.clipsToBounds = false
             searchBar = cell.searchBar
+            searchBarVerticalOffset = searchBar.centerYAnchor.constraintEqualToAnchor(cell.centerYAnchor, constant: 0)
+            searchBarVerticalOffset.active = true
             cell.searchBar.delegate = self
             return cell
             
@@ -260,16 +273,25 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 return cell
                 
             case kCREATE_NEW_LISTING_CELL:
-                
-                guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CreateListingCell", forIndexPath: indexPath) as? CreateNewListingCollectionViewCell else { return UICollectionViewCell() }
+                guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("DiscoveryInfoCell", forIndexPath: indexPath) as? DiscoveryInfoCollectionViewCell else { return UICollectionViewCell() }
                 cell.backgroundColor = kCOLOR_FIVE
                 cell.titleLabel.textColor = .whiteColor()
                 cell.detailLabel.textColor = .whiteColor()
                 cell.detailLabel.alpha = 0.75
                 cell.titleLabel.text = "Got a Guitar?"
-                cell.detailLabel.text = "List it now and earn some extra cash"
+                cell.detailLabel.text = "Tap here to list it now and earn some cash"
                 return cell
                 
+            case kHOW_DOES_BYGO_WORK_CELL:
+                guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("DiscoveryInfoCell", forIndexPath: indexPath) as? DiscoveryInfoCollectionViewCell else { return UICollectionViewCell() }
+                cell.backgroundColor = kCOLOR_FIVE
+                cell.titleLabel.textColor = .whiteColor()
+                cell.detailLabel.textColor = .whiteColor()
+                cell.detailLabel.alpha = 0.75
+                cell.titleLabel.text = "How does bygo work?"
+                cell.detailLabel.text = "Tap here to find out how you can save and earn money"
+                return cell
+
             default:
                 return collectionView.dequeueReusableCellWithReuseIdentifier("BufferCell", forIndexPath: indexPath)
             }
@@ -302,6 +324,9 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
                 
             case kCREATE_NEW_LISTING_CELL:
                 performSegueWithIdentifier("CreateNewListing", sender: nil)
+                
+            case kHOW_DOES_BYGO_WORK_CELL:
+                performSegueWithIdentifier("HowDoesBygoWork", sender: nil)
 
             default: return
             }
@@ -321,72 +346,26 @@ class BygoVC: UIViewController, UICollectionViewDataSource, UICollectionViewDele
             switch type {
             case kITEM_TYPE_CELL: return true
             case kCREATE_NEW_LISTING_CELL: return true
+            case kHOW_DOES_BYGO_WORK_CELL: return true
             default: return false
             }
         default: return false
         }
     }
     
-    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
-        switch indexPath.section {
-        case 1:
-            guard let layoutData = layoutData as? [[String:AnyObject]] else { return }
-            if layoutData.count == 0 { return }
-            let data = layoutData[indexPath.row]
-            guard let type = data["type"] as? Int else { return }
-            switch type {
-            case kITEM_TYPE_CELL:
-                return
-                
-            case kCREATE_NEW_LISTING_CELL:
-                guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
-                cell.alpha = 0.75
-                
-            default: return
-            }
-        default: return
-        }
-    }
-    
-    func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
-        switch indexPath.section {
-        case 1:
-            guard let layoutData = layoutData as? [[String:AnyObject]] else { return }
-            if layoutData.count == 0 { return }
-            let data = layoutData[indexPath.row]
-            guard let type = data["type"] as? Int else { return }
-            switch type {
-            case kITEM_TYPE_CELL:
-                return
-                
-            case kCREATE_NEW_LISTING_CELL:
-                guard let cell = collectionView.cellForItemAtIndexPath(indexPath) else { return }
-                cell.alpha = 1.0
-                
-            default: return
-            }
-        default: return
-        }
-    }
-    
+
     
     private var previousScrollViewOffset:CGFloat = 0.0
     func scrollViewDidScroll(scrollView: UIScrollView) {
-//        if scrollView == collectionView {
-//            if scrollView.contentOffset.y <= 0 {
-//                self.createListingButtonBottomOffset.constant = 0.0
-//            } else if scrollView.contentOffset.y >= scrollView.contentSize.height-48.0 {
-//                self.createListingButtonBottomOffset.constant = -48.0
-//            } else if scrollView.contentOffset.y < previousScrollViewOffset {
-//                self.createListingButtonBottomOffset.constant = 0.0
-//            } else if scrollView.contentOffset.y > previousScrollViewOffset {
-//                self.createListingButtonBottomOffset.constant = -48.0
-//            }
-//            UIView.animateWithDuration(0.25, animations: {
-//                self.view.layoutIfNeeded()
-//            })
-//            previousScrollViewOffset = scrollView.contentOffset.y
-//        }
+        if scrollView == collectionView {
+            if scrollView.contentOffset.y <= 0 {
+                guard let searchBarVerticalOffset = searchBarVerticalOffset else { return }
+                searchBarVerticalOffset.constant = scrollView.contentOffset.y / 2.0
+            } else {
+                guard let searchBarVerticalOffset = searchBarVerticalOffset else { return }
+                searchBarVerticalOffset.constant = 0.0
+            }
+        }
     }
     
     
@@ -477,6 +456,7 @@ extension BygoVC : UICollectionViewDelegateFlowLayout{
             case kGALLERY_WITH_TITLE_CELL: return CGSizeMake(view.bounds.width, 336.0)
             case kITEM_TYPE_CELL: return CGSizeMake((view.bounds.width/2.0)-12.0, 252.0)
             case kCREATE_NEW_LISTING_CELL: return CGSizeMake(view.bounds.width-16, 96.0)
+            case kHOW_DOES_BYGO_WORK_CELL: return CGSizeMake(view.bounds.width-16, 96.0)
             default: return CGSizeZero
             }
         case 2: return CGSizeMake(view.bounds.width, 48.0)

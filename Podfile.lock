@@ -59,6 +59,7 @@ DEPENDENCIES:
   - Google/CloudMessaging
   - GoogleMaps
   - HanekeSwift
+  - Realm
   - RealmSwift
 
 SPEC CHECKSUMS:

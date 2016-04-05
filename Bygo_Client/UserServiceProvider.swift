@@ -45,7 +45,7 @@ class UserServiceProvider: NSObject {
     
     
     // MARK: - Create New
-    func createNewUser(firstName:String, lastName:String, email:String, phoneNumber:String?, facebookID:String?, password:String?, signupMethod:String, completionHandler:(success:Bool)->Void) {
+    func createNewUser(firstName:String, lastName:String, email:String, phoneNumber:String?, facebookID:String?, password:String?, signupMethod:String, completionHandler:(success:Bool, error: BygoError?)->Void) {
         
         // Create the request
         let urlString = "\(serverURL)/user/create"
@@ -57,7 +57,7 @@ class UserServiceProvider: NSObject {
         if let facebookID   = facebookID { params.updateValue(facebookID, forKey: "facebook_id") }
         if let password     = password { params.updateValue(password, forKey: "password") }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
+            completionHandler(success: false, error: .Unknown)
             return
         }
         
@@ -65,16 +65,12 @@ class UserServiceProvider: NSObject {
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
                 return
             }
             
             let statusCode = (response as? NSHTTPURLResponse)!.statusCode
             switch statusCode {
-            case 200: // Catching status code 200. User was already in database. If signup method was facebook, user_id is returned
-                
-                // TODO: Handle this login case
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: true) })
                 
             case 201: // Catching status code 201. New user was created
                 do {
@@ -82,9 +78,6 @@ class UserServiceProvider: NSObject {
                     // Parse JSON response data
                     let json                    = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let userID            = json["user_id"] as? String else { return }
-//                    let dateFormatter           = NSDateFormatter()
-//                    dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-//                    guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     
                     // Create new user
                     dispatch_async(dispatch_get_main_queue(), {
@@ -106,14 +99,34 @@ class UserServiceProvider: NSObject {
                         NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
                         NSUserDefaults.standardUserDefaults().synchronize()
                         
-                        completionHandler(success: true)
+                        completionHandler(success: true, error: nil)
                     })
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                    completionHandler(success: false, error: .Unknown)
                 }
+                
+            case 400:
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let message = json["message"] as? String else { completionHandler(success: false, error: .Unknown); return }
+                    
+                    switch message {
+                    case "Phone number already registered":
+                        completionHandler(success: false, error: .PhoneNumberAlreadyRegistered)
+                        
+                    case "Email address already registered":
+                        completionHandler(success: false, error: .EmailAddressAlreadyRegistered)
+                        
+                    default:
+                        completionHandler(success: false, error: .Unknown)
+                    }
+                } catch {
+                    completionHandler(success: false, error: .Unknown)
+                }
+                
             default:
                 print("/create_new/user \(statusCode)")
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
             }
         })
         task.resume()
@@ -239,7 +252,7 @@ class UserServiceProvider: NSObject {
     
     // MARK: - Login Handlers
     // Send call to Bygo server to login with phone number and password
-    func login(phoneNumber:String, password:String, completionHandler:(success:Bool)->Void) {
+    func login(phoneNumber:String, password:String, completionHandler:(success:Bool, error: BygoError?)->Void) {
         
         // Create the request
         let urlString   = "\(serverURL)/user/login"
@@ -248,7 +261,7 @@ class UserServiceProvider: NSObject {
             params["notification_token"] = notificationToken
         }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
+            completionHandler(success: false, error: .Unknown)
             return
         }
         
@@ -296,7 +309,7 @@ class UserServiceProvider: NSObject {
     }
     
     // Send call to Bygo server to login with facebookID
-    func login(facebookID:String, completionHandler:(success:Bool)->Void) {
+    func login(facebookID:String, completionHandler:(success:Bool, error: BygoError?)->Void) {
         
         // Create the request
         let urlString = "\(serverURL)/user/login_facebook"
@@ -305,7 +318,7 @@ class UserServiceProvider: NSObject {
             params["notification_token"] = notificationToken
         }
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
+            completionHandler(success: false, error: .Unknown)
             return
         }
         
@@ -320,10 +333,10 @@ class UserServiceProvider: NSObject {
     }
     
     // Handle the Bygo server login response
-    private func loginServerResponseHandler(data:NSData?, response:NSURLResponse?, error:NSError?, completionHandler:(success:Bool)->Void) {
+    private func loginServerResponseHandler(data:NSData?, response:NSURLResponse?, error:NSError?, completionHandler:(success:Bool, error:BygoError?)->Void) {
         if error != nil {
             print("Server returned an error \(error)")
-            dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+            dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false, error: .Unknown) })
             return
         }
         
@@ -380,15 +393,31 @@ class UserServiceProvider: NSObject {
                 NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
                 NSUserDefaults.standardUserDefaults().synchronize()
                 
-                completionHandler(success: true)
+                completionHandler(success: true, error: nil)
                 
             } catch {
-                completionHandler(success: false)
+                completionHandler(success: false, error: .Unknown)
+            }
+            
+        case 400:
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                guard let message = json["message"] as? String else { completionHandler(success: false, error: .Unknown); return }
+                
+                switch message {
+                case "User not found":
+                    completionHandler(success: false, error: .UserNotFound)
+                    
+                default:
+                    completionHandler(success: false, error: .Unknown)
+                }
+            } catch {
+                completionHandler(success: false, error: .Unknown)
             }
             
         default:
             print("/login : \(statusCode)")
-            completionHandler(success: false)
+            completionHandler(success: false, error: .Unknown)
         }
     }
     
@@ -413,14 +442,14 @@ class UserServiceProvider: NSObject {
     }
     
     // MARK: - Update
-    func updateLocalUser(firstName:String, lastName:String, email:String, phoneNumber:String, completionHandler:(success:Bool)->Void) {
+    func updateLocalUser(firstName:String, lastName:String, email:String, phoneNumber:String, completionHandler:(success:Bool, error: BygoError?)->Void) {
         
         // Create the request
         guard let userID = getLocalUser()?.userID else { return }
         let urlString = "\(serverURL)/user/update/user_id=\(userID)"
         let params = ["user_id":userID, "first_name":firstName, "last_name":lastName, "email":email, "phone_number":phoneNumber] as [String:String]
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
+            completionHandler(success: false, error: .Unknown)
             return
         }
         
@@ -428,7 +457,7 @@ class UserServiceProvider: NSObject {
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request, completionHandler: { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
                 return
             }
             
@@ -439,15 +468,10 @@ class UserServiceProvider: NSObject {
                     
                     // Parse JSON data
                     let json                        = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
-//                    let dateFormatter               = NSDateFormatter()
-//                    dateFormatter.dateFormat        = "yyyy MM dd HH:mm:SS"
-//                    guard let dateLastModified      = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     guard let firstName             = json["first_name"] as? String else { return }
                     guard let lastName              = json["last_name"] as? String else { return }
                     guard let phoneNumber           = json["phone_number"] as? String else { return }
-//                    guard let isPhoneNumberVerified = json["is_phone_number_verified"] as? Bool else { return }
                     guard let email                 = json["email"] as? String else { return }
-//                    guard let isEmailVerified       = json["is_email_verified"] as? Bool else { return }
                     
                     
                     // Update the local user
@@ -458,19 +482,37 @@ class UserServiceProvider: NSObject {
                             localUser.firstName             = firstName
                             localUser.lastName              = lastName
                             localUser.phoneNumber           = phoneNumber
-//                            localUser.isPhoneNumberVerified = isPhoneNumberVerified
                             localUser.email                 = email
-//                            localUser.isEmailVerified       = isEmailVerified
-//                            localUser.dateLastModified      = dateLastModified
                         }
                         
-                        completionHandler(success: true)
+                        completionHandler(success: true, error: nil)
                     })
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                    completionHandler(success: false, error: .Unknown)
                 }
+            case 400:
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let message = json["message"] as? String else { completionHandler(success: false, error: .Unknown); return }
+                    
+                    print(message)
+                    
+                    switch message {
+                    case "Phone number already registered":
+                        completionHandler(success: false, error: .PhoneNumberAlreadyRegistered)
+                        
+                    case "Email address already registered":
+                        completionHandler(success: false, error: .EmailAddressAlreadyRegistered)
+                        
+                    default:
+                        completionHandler(success: false, error: .Unknown)
+                    }
+                } catch {
+                    completionHandler(success: false, error: .Unknown)
+                }
+                
             default:
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
             }
         })
         task.resume()

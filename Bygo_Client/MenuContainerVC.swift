@@ -145,10 +145,10 @@ class MenuContainerVC: UIViewController, MenuDelegate {
         menuVC?.userDidLogout()
     }
     
-//    func userDidUpdateAccountSettings() {
-//        menuVC?.userDidUpdateAccountSettings()
-//    }
     
+    @IBAction func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+        closeMenuAnimationWithVelocity(0.0)
+    }
     
     // MARK: - MenuDelegate
     func didSelectMenuOption(option: MenuOptions) {

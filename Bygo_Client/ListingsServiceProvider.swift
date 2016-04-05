@@ -253,7 +253,7 @@ class ListingsServiceProvider: NSObject {
                 }
                 
             case 400:
-                print(response)
+                
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let message = json["message"] as? String else { completionHandler(success: false, error: .Unknown); return }
