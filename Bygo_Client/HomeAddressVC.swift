@@ -165,6 +165,7 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
                 self.model?.userServiceProvider.updateHomeAddress(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: {
                     (success:Bool, error: BygoError?) in
                     dispatch_async(GlobalMainQueue, {
+                        self.navigationController?.navigationBar.userInteractionEnabled = true
                         if success {
                             self.searchBar.resignFirstResponder()
                             self.dismissViewControllerAnimated(true, completion: {

@@ -35,6 +35,7 @@ class Model: NSObject {
     let discoveryServiceProvider                = DiscoveryServiceProvider(serverURL: serverURL)
     let notificationServiceProvider = NotificationServiceProvider(serverURL: serverURL)
     let historyServiceProvider = HistoryServiceProvider(serverURL: serverURL)
+    let orderServiceProvider = OrderServiceProvider(serverURL: serverURL)
     let dataValidator = DataValidator()
 }
 
@@ -54,6 +55,8 @@ enum BygoError {
     case VerificationCodeSent
     
     case EmailAddressAlreadyRegistered
+    
+    case LocationServicesRequired
     
     case Server
     case Unknown

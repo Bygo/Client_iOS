@@ -122,8 +122,10 @@ class SettingsVC: UITableViewController, AccountSettingsDelegate, HomeAddressDel
                 cell.titleLabel.text = "Home Address"
                 cell.detailLabel.text = detail
             } else {
-                cell.titleLabel.text = "Add Your Home Address"
+                cell.titleLabel.text = nil
                 cell.detailLabel.text = nil
+                cell.textLabel?.text = "Add Your Home Address"
+                cell.textLabel?.font = UIFont.systemFontOfSize(16.0, weight: UIFontWeightMedium)
             }
             return cell
             

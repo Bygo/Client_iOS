@@ -8,11 +8,15 @@
 
 import UIKit
 import RealmSwift
+import GoogleMaps
+import MapKit
 
-class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
+class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate, LoginDelegate, ErrorMessageDelegate {
     
     var typeID: String?
     var model: Model?
+    
+    let locationManager = CLLocationManager()
     
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var sendButton: UIBarButtonItem!
@@ -21,6 +25,7 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
     @IBOutlet var rentalValueTextField: UITextField!
     @IBOutlet var rentalDurationLabel: UILabel!
     @IBOutlet var rentalValueLabel: UILabel!
+    @IBOutlet var loginContainer:UINavigationController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,7 +117,7 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
     
     @IBAction func sendButtonTapped(sender: AnyObject) {
         rentalDurationTextField.resignFirstResponder()
-        performSegueWithIdentifier("SentSegue", sender: nil)
+        createOrder()
     }
     
     @IBAction func panGestureRecognized(recognizer: UIPanGestureRecognizer) {
@@ -125,6 +130,150 @@ class OrderVC: UIViewController, UITextFieldDelegate, SuccessDelegate {
     func doneButtonTapped() {
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    
+    // MARK: - CreateOrder
+    private func createOrder() {
+        print("Create order")
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        guard let typeID = typeID else { return }
+        guard let duration = Int(rentalDurationTextField.text!) else { return }
+        guard let rentalFee = Double(String(rentalValueTextField.text!.characters.dropFirst())) else { return }
+        
+        
+        locationManager.requestWhenInUseAuthorization()
+        if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedWhenInUse {
+            if let currentLocation:CLLocation = locationManager.location {
+                let lat = currentLocation.coordinate.latitude
+                let lon = currentLocation.coordinate.longitude
+                let geoPt = "\(lat), \(lon)"
+                
+                self.navigationController?.navigationBar.userInteractionEnabled = false
+                let l = LoadingScreen(frame: view.bounds, message: "Creating Listing")
+                view.addSubview(l)
+                l.beginAnimation()
+                
+                model?.orderServiceProvider.createOrder(userID, typeID: typeID, geoPoint: geoPt, duration: duration, rentalFee: rentalFee, completionHandler: {
+                    (success:Bool, error:BygoError?) in
+                    dispatch_async(GlobalMainQueue, {
+                        self.navigationController?.navigationBar.userInteractionEnabled = true
+                        if success {
+                            self.performSegueWithIdentifier("SentSegue", sender: nil)
+                        } else {
+                            l.endAnimation()
+                            self.handleError(error)
+                        }
+                    })
+                })
+            }
+        } else {
+            //TODO: Display message to user that the app will not work without location services
+            print("Location services disabled")
+        }
+    }
+    
+    // MARK: - ErrorMessageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .PhoneNumberAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .EmailAddressAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .HomeAddressNotFound:
+            e = ErrorMessage(frame: window.bounds, title: "Address Required", detail: "Tap \"Okay\" to list the address where we can pickup this item when someone orders it", error: error, priority: .Low, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Okay])
+        
+        case .LocationServicesRequired:
+            e = ErrorMessage(frame: window.bounds, title: "Location Services Required", detail: "Please enable location services for Bygo in your phone's Settings", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+
+    func okayButtonTapped(error: BygoError) {
+        switch error {
+        case .HomeAddressNotFound:
+            self.performSegueWithIdentifier("HomeAddress", sender: nil)
+            
+        case .PhoneNumberNotVerified:
+            self.performSegueWithIdentifier("VerifyMobile", sender: nil)
+            
+        case .PhoneNumberNotFound:
+            self.performSegueWithIdentifier("PhoneNumber", sender: nil)
+            
+        case .UserNotFound:
+            showLoginMenu()
+            
+        default:
+            return
+        }
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        print("\n\nRETRY!!")
+        createOrder()
+    }
+    
+    
+    // MARK: - Login
+    func showLoginMenu() {
+        let loginSB = UIStoryboard(name: "Login", bundle: NSBundle.mainBundle())
+        loginContainer = loginSB.instantiateInitialViewController() as? UINavigationController
+        (loginContainer?.topViewController as? WelcomeVC)?.model = model
+        (loginContainer?.topViewController as? WelcomeVC)?.delegate = self
+        presentViewController(loginContainer!, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: - HomeAddress Delegate
+    func didUpdateHomeAddress() {
+        createOrder()
+    }
+    
+    // MARK: - LoginDelegate
+    func userDidLogin(shouldDismissLogin: Bool) {
+        NSNotificationCenter.defaultCenter().postNotificationName("UserDidLogin", object: false)
+        dispatch_async(GlobalMainQueue, {
+            if shouldDismissLogin {
+                self.loginContainer?.dismissViewControllerAnimated(true, completion: {
+                    self.loginContainer = nil
+                    self.createOrder()
+                })
+            }
+        })
+    }
+    
+    func phoneNumberDidVerify(shouldDismissLogin: Bool) {
+        dispatch_async(GlobalMainQueue, {
+            if shouldDismissLogin {
+                self.dismissViewControllerAnimated(true, completion: {
+                    self.createOrder()
+                })
+            }
+        })
+    }
+
 
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation

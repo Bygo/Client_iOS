@@ -85,6 +85,8 @@
 		73D7998F1CB36D6D0034CBC3 /* Help.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73D7998E1CB36D6D0034CBC3 /* Help.storyboard */; };
 		73D799911CB36E550034CBC3 /* HelpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799901CB36E550034CBC3 /* HelpVC.swift */; };
 		73D799931CB3726A0034CBC3 /* HowDoesBygoWork.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73D799921CB3726A0034CBC3 /* HowDoesBygoWork.storyboard */; };
+		73D799951CB390520034CBC3 /* OrderServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799941CB390520034CBC3 /* OrderServiceProvider.swift */; };
+		73D799971CB45E620034CBC3 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799961CB45E620034CBC3 /* Order.swift */; };
 		73DD4C991C6575F90003698A /* RealmString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C981C6575F90003698A /* RealmString.swift */; };
 		73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */; };
 		73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73DE66A41C63867D006D9810 /* Dashboard.storyboard */; };
@@ -208,6 +210,8 @@
 		73D7998E1CB36D6D0034CBC3 /* Help.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Help.storyboard; sourceTree = "<group>"; };
 		73D799901CB36E550034CBC3 /* HelpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpVC.swift; sourceTree = "<group>"; };
 		73D799921CB3726A0034CBC3 /* HowDoesBygoWork.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = HowDoesBygoWork.storyboard; sourceTree = "<group>"; };
+		73D799941CB390520034CBC3 /* OrderServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderServiceProvider.swift; sourceTree = "<group>"; };
+		73D799961CB45E620034CBC3 /* Order.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
 		73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingServiceProvider.swift; sourceTree = "<group>"; };
 		73DD4CC11C6FB1FD0003698A /* Bygo_Client-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bygo_Client-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -393,6 +397,7 @@
 			isa = PBXGroup;
 			children = (
 				7336211E1C6074E200893034 /* UserServiceProvider.swift */,
+				73D799941CB390520034CBC3 /* OrderServiceProvider.swift */,
 				73372E6B1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift */,
 				73372E6D1CA8DC4E0019A6FD /* ItemTypeServiceProvider.swift */,
 				73147DBE1C62F37700FD70B8 /* ListingsServiceProvider.swift */,
@@ -456,6 +461,7 @@
 			isa = PBXGroup;
 			children = (
 				733621191C60749B00893034 /* User.swift */,
+				73D799961CB45E620034CBC3 /* Order.swift */,
 				73DD4C981C6575F90003698A /* RealmString.swift */,
 				73147DB41C62F2D300FD70B8 /* ItemType.swift */,
 				73147DC01C62F44D00FD70B8 /* Listing.swift */,
@@ -893,6 +899,7 @@
 				733621211C60755000893034 /* URLServiceProvider.swift in Sources */,
 				730CAA441C766128000BE681 /* PaymentsServiceProvider.swift in Sources */,
 				7336214C1C60F48600893034 /* LoginVC.swift in Sources */,
+				73D799951CB390520034CBC3 /* OrderServiceProvider.swift in Sources */,
 				733620F01C60743E00893034 /* Bygo_Client.xcdatamodeld in Sources */,
 				73DD4C991C6575F90003698A /* RealmString.swift in Sources */,
 				730CF8981C97F5BA00D934A3 /* NewListingTypeVC.swift in Sources */,
@@ -901,6 +908,7 @@
 				730CAA401C76300F000BE681 /* PaymentMethodTableViewCell.swift in Sources */,
 				733620E81C60743E00893034 /* AppDelegate.swift in Sources */,
 				73372E751CB015090019A6FD /* BygoGeneralTableViewCell.swift in Sources */,
+				73D799971CB45E620034CBC3 /* Order.swift in Sources */,
 				733621561C61053200893034 /* SettingsVC.swift in Sources */,
 				73147DB51C62F2D300FD70B8 /* ItemType.swift in Sources */,
 			);

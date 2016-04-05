@@ -193,7 +193,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         // Create the 'Cancel' option
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
             (alert: UIAlertAction!) -> Void in
-            print("Cancelled")
+            
         })
         
         // Show the action sheet
@@ -227,7 +227,6 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         lastNameTextField.resignFirstResponder()
         mobileTextField.resignFirstResponder()
         emailTextField.resignFirstResponder()
-        
         
         self.navigationController?.navigationBar.userInteractionEnabled = false
         let l = LoadingScreen(frame: self.view.bounds, message: "Updating account")
@@ -349,7 +348,6 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     }
     
     @IBAction func textFieldDidChange(textField: UITextField) {
-        print("What")
         saveButton.enabled = isUserDataValid()
     }
     

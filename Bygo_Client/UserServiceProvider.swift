@@ -31,10 +31,8 @@ class UserServiceProvider: NSObject {
     // Get the local user
     func getLocalUser() -> User? {
         guard let userID = NSUserDefaults.standardUserDefaults().valueForKey("LocalUserID") as? String else { return nil }
-        print("UserID: \(userID)")
         let result:Results<User> = try! Realm().objects(User).filter("userID == \"\(userID)\"")
         guard let user = result.first else { return nil }
-        print(user)
         return user
     }
     
@@ -80,27 +78,25 @@ class UserServiceProvider: NSObject {
                     guard let userID            = json["user_id"] as? String else { return }
                     
                     // Create new user
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let user                    = User()
-                        user.userID                 = userID
-                        user.firstName              = firstName
-                        user.lastName               = lastName
-                        user.password               = password
-                        user.facebookID             = facebookID
-                        user.phoneNumber            = phoneNumber
-                        user.email                  = email
-                        
-                        let realm = try! Realm()
-                        try! realm.write {
-                            realm.add(user)
-                        }
-                        
-                        // Save the LocalUserID to user defaults for easy login when the user closes and reopens the app
-                        NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
-                        NSUserDefaults.standardUserDefaults().synchronize()
-                        
-                        completionHandler(success: true, error: nil)
-                    })
+                    let user                    = User()
+                    user.userID                 = userID
+                    user.firstName              = firstName
+                    user.lastName               = lastName
+                    user.password               = password
+                    user.facebookID             = facebookID
+                    user.phoneNumber            = phoneNumber
+                    user.email                  = email
+                    
+                    let realm = try! Realm()
+                    try! realm.write {
+                        realm.add(user)
+                    }
+                    
+                    // Save the LocalUserID to user defaults for easy login when the user closes and reopens the app
+                    NSUserDefaults.standardUserDefaults().setObject(userID, forKey: "LocalUserID")
+                    NSUserDefaults.standardUserDefaults().synchronize()
+                    
+                    completionHandler(success: true, error: nil)
                 } catch {
                     completionHandler(success: false, error: .Unknown)
                 }

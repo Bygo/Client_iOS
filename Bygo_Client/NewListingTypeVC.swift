@@ -214,6 +214,7 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         
         guard let image = image else { return }
         
+        self.navigationController?.navigationBar.userInteractionEnabled = false
         let l = LoadingScreen(frame: view.bounds, message: "Creating Listing")
         view.addSubview(l)
         l.beginAnimation()
@@ -221,11 +222,14 @@ class NewListingTypeVC: UIViewController, UICollectionViewDelegate, UICollection
         model?.listingServiceProvider.createNewListing(userID, typeID: id, image: image, completionHandler: {
             (success:Bool, error: BygoError?) in
             dispatch_async(GlobalMainQueue, {
+                self.navigationController?.navigationBar.userInteractionEnabled = true
                 if success {
                     self.performSegueWithIdentifier("SuccessSegue", sender: nil)
                 } else {
                     l.endAnimation()
                     let window = UIApplication.sharedApplication().keyWindow!
+                    
+                    // TODO: Refactor error handling into separate function
                     var e: ErrorMessage?
                     
                     guard let error = error else {
