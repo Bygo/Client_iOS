@@ -10,7 +10,7 @@ import UIKit
 import GoogleMaps
 import MapKit
 
-class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource  {
+class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, ErrorMessageDelegate  {
     
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var tableView: UITableView!
@@ -156,28 +156,26 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
                 let geoPoint    = "\(place.coordinate.latitude), \(place.coordinate.longitude)"
                 print(geoPoint)
                 
+                self.navigationController?.navigationBar.userInteractionEnabled = false
+                let l = LoadingScreen(frame: self.view.bounds, message: "Updating home address")
+                self.view.addSubview(l)
+                l.beginAnimation()
+                
                 self.model?.userServiceProvider.updateHomeAddress(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: {
-                    (success:Bool) in
+                    (success:Bool, error: BygoError?) in
                     print("Got response")
-                    if success {
-                        self.searchBar.resignFirstResponder()
-                        self.dismissViewControllerAnimated(true, completion: {
-                            self.delegate?.didUpdateHomeAddress()
-                        })
-                    } else {
-                        
-                    }
-                })
-//                self.model?.favoriteMeetingLocationServiceProvider.createNewFavoriteMeetingLocation(placeID, address: address, name: name, geoPoint: geoPoint, completionHandler: { (success:Bool)->Void in
-//                    if success {
-//                        self.searchBar.resignFirstResponder()
-//                        self.dismissViewControllerAnimated(true, completion: {
-//                            self.delegate?.didAddNewFavoriteMeetingLocation()
-//                        })
-//                    } else {
-//                        print("Error creating new favorite meeting location")
-//                    }
-//                })
+                    dispatch_async(GlobalMainQueue, {
+                        if success {
+                            self.searchBar.resignFirstResponder()
+                            self.dismissViewControllerAnimated(true, completion: {
+                                self.delegate?.didUpdateHomeAddress()
+                            })
+                        } else {
+                            l.endAnimation()
+                            self.handleError(error)
+                        }
+                    })
+                })  
             } else {
                 print("No place details for \(placeID)")
             }
@@ -190,6 +188,28 @@ class HomeAddressVC: UIViewController, UISearchBarDelegate, UITableViewDelegate,
         searchBar.resignFirstResponder()
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    // MARK: - ErrorMessageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+    
+    func okayButtonTapped(error: BygoError) {
+        return
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        // TODO: Attempt to login the user again
+    }
+    
+
 }
 
 

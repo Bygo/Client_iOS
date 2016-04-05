@@ -518,9 +518,7 @@ class UserServiceProvider: NSObject {
         task.resume()
     }
     
-    
-    
-    func updateHomeAddress(googlePlacesID:String, address:String, name:String, geoPoint:String, completionHandler:(success:Bool)->Void) {
+    func updateHomeAddress(googlePlacesID:String, address:String, name:String, geoPoint:String, completionHandler:(success:Bool, error: BygoError?)->Void) {
         
         // Create the request
         guard let userID = getLocalUser()?.userID else { return }
@@ -528,7 +526,7 @@ class UserServiceProvider: NSObject {
         let params:[String:AnyObject] = ["google_places_id":googlePlacesID, "address":address, "name":name, "geo_point":geoPoint]
         
         guard let request = URLServiceProvider().getNewJsonPostRequest(withURL: urlString, params: params) else {
-            completionHandler(success: false)
+            completionHandler(success: false, error: nil)
             return
         }
         
@@ -541,12 +539,11 @@ class UserServiceProvider: NSObject {
             (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             
             if error != nil {
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
                 return
             }
 
             let statusCode = (response as? NSHTTPURLResponse)!.statusCode
-            print(statusCode)
             switch statusCode {
             case 201:   // Catching status code 201, success, new location created
                 do {
@@ -556,21 +553,19 @@ class UserServiceProvider: NSObject {
                     guard let address = json["home_address_address"] as? String else { return }
                     guard let name = json["home_address_name"] as? String else { return }
                     guard let googlePlacesID = json["home_address_google_places_id"] as? String else { return }
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let realm = try! Realm()
-                        try! realm.write {
-                            guard let localUser = self.getLocalUser() else { return }
-                            localUser.homeAddress_name = name
-                            localUser.homeAddress_address = address
-                            localUser.homeAddress_googlePlacesID = googlePlacesID
-                        }
-                        completionHandler(success: true)
-                    })
+                    let realm = try! Realm()
+                    try! realm.write {
+                        guard let localUser = self.getLocalUser() else { return }
+                        localUser.homeAddress_name = name
+                        localUser.homeAddress_address = address
+                        localUser.homeAddress_googlePlacesID = googlePlacesID
+                    }
+                    completionHandler(success: true, error: nil)
                 } catch {
-                    dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                    completionHandler(success: false, error: .Unknown)
                 }
             default:
-                dispatch_async(dispatch_get_main_queue(), { completionHandler(success: false) })
+                completionHandler(success: false, error: .Unknown)
             }
         })
         task.resume()

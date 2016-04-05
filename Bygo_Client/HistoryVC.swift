@@ -28,9 +28,14 @@ class HistoryVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        
+        let l = LoadingScreen(frame: view.bounds, message: nil)
+        view.addSubview(l)
+        l.beginAnimation()
         model?.historyServiceProvider.fetchUsersHistoricalRentEvents(userID, completionHandler: {
             (success:Bool) in
             dispatch_async(GlobalMainQueue, {
+                l.endAnimation()
                 self.tableView.reloadData()
             })
         })

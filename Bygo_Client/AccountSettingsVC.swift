@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ErrorMessageDelegate {
     
     // MARK: - Outlets
     @IBOutlet var headerView: UIView!
@@ -71,7 +71,6 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     }
     
     override func viewDidAppear(animated: Bool) {
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: <#T##String?#>, object: <#T##AnyObject?#>)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
@@ -89,6 +88,37 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
         // Dispose of any resources that can be recreated.
     }
     
+    func isUserDataValid() -> Bool {
+        guard let model = model else { return false }
+        
+        guard let firstName = firstNameTextField.text else {
+            return false
+        }
+        guard let lastName = lastNameTextField.text else {
+            return false
+        }
+        guard let mobile = mobileTextField.text else {
+            return false
+        }
+        guard let email = emailTextField.text else {
+            return false
+        }
+        
+        if !model.dataValidator.isValidFirstName(firstName) {
+            return false
+        }
+        if !model.dataValidator.isValidLastName(lastName) {
+            return false
+        }
+        if !model.dataValidator.isValidPhoneNumber(mobile)  {
+            return false
+        }
+        if !model.dataValidator.isValidEmail(email) {
+            return false
+        }
+        
+        return true
+    }
     
     // MARK: - User
     func configureUserSpecificUI() {
@@ -128,7 +158,6 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
                 self.profileImageView.alpha = 1.0
             })
         }
-        
     }
     
     
@@ -225,7 +254,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
 
                             dispatch_async(GlobalMainQueue, {
                                 l.endAnimation()
-                                // TODO: Handle error
+                                self.handleError(error)
                             })
                         }
                     })
@@ -240,7 +269,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
                 dispatch_async(GlobalMainQueue, {
                     self.navigationController?.navigationBar.userInteractionEnabled = true
                     l.endAnimation()
-                    // TODO: Handle Error
+                    self.handleError(error)
                 })
             }
         })
@@ -300,6 +329,7 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
                 let remainder = decimalString.substringFromIndex(index)
                 formattedString.appendString(remainder)
                 textField.text = formattedString as String
+                saveButton.enabled = isUserDataValid()
                 return false
             }
         }
@@ -307,6 +337,8 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     }
     
     func textFieldShouldClear(textField: UITextField) -> Bool {
+        
+        saveButton.enabled = false
         
         // Format the phoneNumberTextField to a constant country code of "+1 "
         if textField == mobileTextField {
@@ -317,8 +349,54 @@ class AccountSettingsVC: UIViewController, UITextFieldDelegate, UIImagePickerCon
     }
     
     @IBAction func textFieldDidChange(textField: UITextField) {
-        saveButton.enabled = true
+        print("What")
+        saveButton.enabled = isUserDataValid()
     }
+    
+    
+    // MARK: - ErrorMesageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .PhoneNumberAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .EmailAddressAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+    
+    func okayButtonTapped(error: BygoError) {
+        return
+    }
+    
+    func retryButtonTapped(error: BygoError) {
+        
+    }
+    
+
+    
     
     // MARK: - Image Picker Delegate
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {

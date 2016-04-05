@@ -190,38 +190,6 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
         }
         return true
     }
-    
-    private func handleError(error: BygoError?) {
-        let window = UIApplication.sharedApplication().keyWindow!
-        var e: ErrorMessage?
-        
-        guard let error = error else {
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
-            if let e = e {
-                e.delegate = self
-                window.addSubview(e)
-                e.show()
-            }
-            return
-        }
-        
-        switch error {
-        case .PhoneNumberAlreadyRegistered:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
-        
-        case .EmailAddressAlreadyRegistered:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
-        
-        default:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
-        }
-        
-        if let e = e {
-            e.delegate = self
-            window.addSubview(e)
-            e.show()
-        }
-    }
 
     // MARK: - UI Actions
     @IBAction func backButtonTapped(sender: AnyObject) {
@@ -342,6 +310,38 @@ class CreateAccountVC: UIViewController, UITextFieldDelegate, ErrorMessageDelega
     }
     
     // MARK: - ErrorMessageDelegate
+    private func handleError(error: BygoError?) {
+        let window = UIApplication.sharedApplication().keyWindow!
+        var e: ErrorMessage?
+        
+        guard let error = error else {
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            if let e = e {
+                e.delegate = self
+                window.addSubview(e)
+                e.show()
+            }
+            return
+        }
+        
+        switch error {
+        case .PhoneNumberAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This phone number is already registered to another account", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        case .EmailAddressAlreadyRegistered:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "This email is already registered to another account", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
+            
+        default:
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+        }
+        
+        if let e = e {
+            e.delegate = self
+            window.addSubview(e)
+            e.show()
+        }
+    }
+    
     func okayButtonTapped(error: BygoError) {
         return
     }

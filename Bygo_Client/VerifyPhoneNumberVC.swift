@@ -218,7 +218,7 @@ class VerifyPhoneNumberVC: UIViewController, UITextFieldDelegate, ErrorMessageDe
             e = ErrorMessage(frame: window.bounds, title: "Verification Code Invalid", detail: "Tap \"Okay\" to send a new code via SMS", error: error, priority: .High, options: [ErrorMessageOptions.Okay])
             
         default:
-            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong.", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Cancel, ErrorMessageOptions.Retry])
+            e = ErrorMessage(frame: window.bounds, title: "Uh oh!", detail: "Something went wrong. Please contact support@bygo.io for help", error: .Unknown, priority: .High, options: [ErrorMessageOptions.Okay])
         }
         
         if let e = e {

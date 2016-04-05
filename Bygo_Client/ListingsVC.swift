@@ -42,7 +42,6 @@ class ListingsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                     self.collectionView.reloadSections(NSIndexSet(index: 0))
                     l.endAnimation()
                 }, completion: nil)
-                // self.collectionView.reloadData()
             })
         })
     }
