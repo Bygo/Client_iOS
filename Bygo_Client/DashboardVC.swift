@@ -9,11 +9,12 @@
 import UIKit
 import RealmSwift
 
-class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollectionViewDataSource, PendingOrderDelegate {
     
     var model:Model?
     var delegate:DashboardDelegate?
     
+    private var targetOrderID: String?
     
     @IBOutlet var headerView: UIView!
     @IBOutlet var collectionView: UICollectionView!
@@ -42,11 +43,10 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         collectionView.backgroundColor = .clearColor()
         
         refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(DashboardVC.refreshNotifications), forControlEvents: .ValueChanged)
+        refreshControl?.addTarget(self, action: #selector(DashboardVC.refresh), forControlEvents: .ValueChanged)
         tableView.addSubview(refreshControl!)
         
-        refreshNotifications()
-        refreshOpenOrders()
+        refresh()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -71,9 +71,21 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     }
     
     
-    private func refreshOpenOrders() {
+    private func refreshCurrentOrders() {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.listingServiceProvider.fetchUsersRentedListings(userID, completionHandler: {
+            (success:Bool) in
+            if success {
+                dispatch_async(GlobalMainQueue, {
+                    self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Fade)
+                })
+            }
+        })
+    }
+    
+    private func refreshUnfilledOrders() {
+        guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+        model?.orderServiceProvider.fetchUsersUnfilledOrders(userID, completionHandler: {
             (success:Bool) in
             if success {
                 dispatch_async(GlobalMainQueue, {
@@ -83,7 +95,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         })
     }
     
-    func refreshNotifications() {
+    private func refreshNotifications() {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.notificationServiceProvider.fetchUsersNotificationData(userID, completionHandler: {
             (data: AnyObject?) in
@@ -94,6 +106,12 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
                 self.collectionView.layoutIfNeeded()
             })
         })
+    }
+    
+    func refresh() {
+        refreshNotifications()
+        refreshCurrentOrders()
+        refreshUnfilledOrders()
     }
     
     // MARK: - Table view data source
@@ -108,6 +126,8 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
             return "Current Orders"
         case 1:
             return "Pending Orders"
+        case 2:
+            return "Your Activity"
         default:
             return nil
         }
@@ -118,7 +138,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         case 0:
             guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return 1 }
             let realm = try! Realm()
-            let count = realm.objects(Listing).filter("renterID == \"\(userID)\"").count
+            let count = realm.objects(Listing).filter("(renterID == \"\(userID)\") AND (status != \"Concluded\") AND (status != \"Canceled\")").count
             if count == 0 {
                 return 1
             } else {
@@ -126,7 +146,15 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
             }
             
         case 1:
-            return 1
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return 1 }
+            let realm = try! Realm()
+            let count = realm.objects(Order).filter("(renterID == \"\(userID)\") AND (status == \"Requested\" OR status == \"Offered\")").count
+            if count == 0 {
+                return 1
+            } else {
+                return count
+            }
+            
         case 2:
             return 2
         default:
@@ -135,9 +163,16 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     }
     
     
-    private func configureNoOpenOrdersCell(indexPath: NSIndexPath) -> UITableViewCell {
+    private func configureNoCurrentOrdersCell(indexPath: NSIndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
         cell.titleLabel.text = "You have no current orders"
+        cell.backgroundColor = .clearColor()
+        return cell
+    }
+    
+    private func configureNoPendingOrdersCell(indexPath: NSIndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+        cell.titleLabel.text = "You have no pending orders"
         cell.backgroundColor = .clearColor()
         return cell
     }
@@ -146,16 +181,17 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         switch indexPath.section {
         case 0:
             guard let userID = model?.userServiceProvider.getLocalUser()?.userID else {
-                return configureNoOpenOrdersCell(indexPath)
+                return configureNoCurrentOrdersCell(indexPath)
             }
             let realm = try! Realm()
-            let listings = realm.objects(Listing).filter("renterID == \"\(userID)\"")
+            let listings = realm.objects(Listing).filter("(renterID == \"\(userID)\") AND (status != \"Concluded\") AND (status != \"Canceled\")")
             
             if listings.count == 0 {
-                return configureNoOpenOrdersCell(indexPath)
+                return configureNoCurrentOrdersCell(indexPath)
             } else {
                 let listing = listings[indexPath.row]
                 guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+                cell.accessoryType = .DisclosureIndicator
                 guard let typeID = listing.typeID else { return cell }
                 model?.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
                     (success:Bool) in
@@ -171,11 +207,31 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
             }
             
         case 1:
-            // TODO: Populate with data
-            guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
-            cell.titleLabel.text = "You have no pending orders"
-            cell.backgroundColor = .clearColor()
-            return cell
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else {
+                return configureNoPendingOrdersCell(indexPath)
+            }
+            let realm = try! Realm()
+            let orders = realm.objects(Order).filter("(renterID == \"\(userID)\") AND (status == \"Requested\" OR status == \"Offered\")")
+            
+            if orders.count == 0 {
+                return configureNoPendingOrdersCell(indexPath)
+            } else {
+                let order = orders[indexPath.row]
+                guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
+                cell.accessoryType = .DisclosureIndicator
+                guard let typeID = order.typeID else { return cell }
+                model?.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                    (success:Bool) in
+                    if success {
+                        let realm = try! Realm()
+                        guard let name = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0].name else { return }
+                        dispatch_async(GlobalMainQueue, {
+                            cell.titleLabel.text = name
+                        })
+                    }
+                })
+                return cell
+            }
             
         case 2:
             guard let cell = tableView.dequeueReusableCellWithIdentifier("DashboardCell", forIndexPath: indexPath) as? BygoGeneralTableViewCell else { return UITableViewCell() }
@@ -206,7 +262,14 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         case 0:
             break
         case 1:
-            break
+            // TODO: Segue to ReviewOrder
+            guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
+            let realm = try! Realm()
+            let orders = realm.objects(Order).filter("(renterID == \"\(userID)\") AND (status == \"Requested\" OR status == \"Offered\")")
+            let order = orders[indexPath.row]
+            targetOrderID = order.orderID
+            performSegueWithIdentifier("ReviewOrder", sender: nil)
+            
         case 2:
             if indexPath.row == 0 {
                 performSegueWithIdentifier("ShowListings", sender: nil)
@@ -292,12 +355,25 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         if segue.identifier == "ShowListings" {
             guard let destVC            = segue.destinationViewController as? ListingsVC else { return }
             destVC.model                = model
+            
         } else if segue.identifier == "ShowHistory" {
             guard let destVC = segue.destinationViewController as? HistoryVC else { return }
             destVC.model = model
+            
+        } else if segue.identifier == "ReviewOrder" {
+            guard let destVC = segue.destinationViewController as? PendingOrderVC else { return }
+            destVC.model = model
+            destVC.orderID = targetOrderID
+            destVC.delegate = self
+            
         }
         
         delegate?.didMoveOneLevelIntoNavigation()
+    }
+    
+    // MARK: - PendingOrder Delegate
+    func didCancelOrder(orderID: String) {
+        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Fade)
     }
     
 }

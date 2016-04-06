@@ -23,4 +23,9 @@ class BygoGeneralTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    
+    override func prepareForReuse() {
+        backgroundColor = .whiteColor()
+        accessoryType = .None
+    }
 }

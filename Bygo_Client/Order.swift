@@ -12,7 +12,7 @@ import RealmSwift
 class Order: Object {
     // Attributes
     dynamic var orderID:String? = nil
-    dynamic var userID:String? = nil
+    dynamic var renterID:String? = nil
     dynamic var typeID:String? = nil
     let duration = RealmOptional<Int>()
     dynamic var timeFrame: String? = nil

@@ -87,6 +87,7 @@
 		73D799931CB3726A0034CBC3 /* HowDoesBygoWork.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73D799921CB3726A0034CBC3 /* HowDoesBygoWork.storyboard */; };
 		73D799951CB390520034CBC3 /* OrderServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799941CB390520034CBC3 /* OrderServiceProvider.swift */; };
 		73D799971CB45E620034CBC3 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799961CB45E620034CBC3 /* Order.swift */; };
+		73D799991CB4B5D90034CBC3 /* PendingOrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D799981CB4B5D90034CBC3 /* PendingOrderVC.swift */; };
 		73DD4C991C6575F90003698A /* RealmString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4C981C6575F90003698A /* RealmString.swift */; };
 		73DD4CA21C68F2B30003698A /* MeetingServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */; };
 		73DE66A51C63867D006D9810 /* Dashboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73DE66A41C63867D006D9810 /* Dashboard.storyboard */; };
@@ -212,6 +213,7 @@
 		73D799921CB3726A0034CBC3 /* HowDoesBygoWork.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = HowDoesBygoWork.storyboard; sourceTree = "<group>"; };
 		73D799941CB390520034CBC3 /* OrderServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderServiceProvider.swift; sourceTree = "<group>"; };
 		73D799961CB45E620034CBC3 /* Order.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
+		73D799981CB4B5D90034CBC3 /* PendingOrderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PendingOrderVC.swift; sourceTree = "<group>"; };
 		73DD4C981C6575F90003698A /* RealmString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmString.swift; sourceTree = "<group>"; };
 		73DD4CA11C68F2B30003698A /* MeetingServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingServiceProvider.swift; sourceTree = "<group>"; };
 		73DD4CC11C6FB1FD0003698A /* Bygo_Client-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bygo_Client-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 				73372E761CB0158C0019A6FD /* DashboardVC.swift */,
 				73372E801CB0B3750019A6FD /* HistoryVC.swift */,
 				73DE66AA1C639519006D9810 /* ListingsVC.swift */,
+				73D799981CB4B5D90034CBC3 /* PendingOrderVC.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -887,6 +890,7 @@
 				73DE66F31C6408BB006D9810 /* RentServiceProvider.swift in Sources */,
 				733621631C61327900893034 /* HomeAddressVC.swift in Sources */,
 				73372E6C1CA8D38D0019A6FD /* DiscoveryServiceProvider.swift in Sources */,
+				73D799991CB4B5D90034CBC3 /* PendingOrderVC.swift in Sources */,
 				73372E791CB035D00019A6FD /* NotificationServiceProvider.swift in Sources */,
 				73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */,
 				73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */,

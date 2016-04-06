@@ -202,7 +202,6 @@ class ListingsServiceProvider: NSObject {
         task.resume()
     }
     
-    
     func createNewListing(userID:String, typeID:String, image:UIImage, completionHandler:(success:Bool, error:BygoError?)->Void) {
         
         // Create the request
@@ -230,11 +229,6 @@ class ListingsServiceProvider: NSObject {
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
                     guard let listingID = json["listing_id"] as? String else { return }
-                    
-                    // guard let status            = json["status"] as? String else { return }
-                    //                        let dateFormatter           = NSDateFormatter()
-                    //                        dateFormatter.dateFormat    = "yyyy MM dd HH:mm:SS"
-                    //                        guard let dateLastModified  = dateFormatter.dateFromString(json["date_last_modified"] as! String) else { return }
                     
                     // Add new Listing to local cache
                     let realm                   = try! Realm()
@@ -351,7 +345,6 @@ class ListingsServiceProvider: NSObject {
         })
         task.resume()
     }
-    
     
     func fetchListing(listingID:String, completionHandler:(success:Bool)->Void) {
         print("fetch listing")

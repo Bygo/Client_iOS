@@ -58,6 +58,8 @@ enum BygoError {
     
     case LocationServicesRequired
     
+    case CancelOrderWarning
+    
     case Server
     case Unknown
 }
