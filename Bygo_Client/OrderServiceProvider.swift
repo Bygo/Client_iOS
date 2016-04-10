@@ -104,7 +104,6 @@ class OrderServiceProvider: NSObject {
     }
     
     func fetchUsersUnfilledOrders(userID:String, completionHandler:(success:Bool)->Void) {
-        
         // TODO: If it has been more than a day since the last fetch, delete the cached results and fetch again
         let realm = try! Realm()
         let cachedResults = realm.objects(Order).filter("(renterID == \"\(userID)\") AND (status == \"Requested\" OR status == \"Offered\")")
@@ -291,6 +290,68 @@ class OrderServiceProvider: NSObject {
                 
             default:
                 completionHandler(success: false, error: .Unknown)
+            }
+        })
+        task.resume()
+    }
+    
+    func fetchFillableOrders(userID:String, completionHandler:(success:Bool, data:[String])->Void) {
+        print("A")
+        let realm = try! Realm()
+        let cachedResults = realm.objects(Order).filter("renterID != \"\(userID)\"")
+        try! realm.write {
+            realm.delete(cachedResults)
+        }
+        
+        print("B")
+        // Create the request
+        let urlString       = "\(serverURL)/order/get_fillable/user_id=\(userID)"
+        guard let request = URLServiceProvider().getNewGETRequest(withURL: urlString) else { return }
+        
+        // Execute the request
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request, completionHandler: {
+            
+            // Handle the server response
+            (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
+            print("C")
+            if error != nil {
+                completionHandler(success: false, data:[])
+                return
+            }
+            
+            let statusCode = (response as? NSHTTPURLResponse)!.statusCode
+            print("D")
+            switch statusCode {
+            case 200: // Catching status code 200, success
+                do {
+                    print("E")
+                    // Parse the JSON response
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+                    guard let matchingOrders = json["matching_orders"] as? [[String:AnyObject]] else { return }
+                    
+                    print("F")
+                    
+                    print("\n\nMatching Orders")
+                    print(json)
+                    print("\n\n")
+                    
+                    var matchingOrdersList:[String] = []
+                    for e in matchingOrders {
+                        guard let orderIDs = e["order_ids"] as? [String] else { return }
+                        matchingOrdersList += orderIDs
+                    }
+                    
+                    print("H")
+                    
+                    completionHandler(success: true, data: matchingOrdersList)
+                    
+                } catch {
+                    completionHandler(success: false, data: [])
+                }
+            default:
+                print("G \(statusCode)")
+                completionHandler(success: false, data: [])
             }
         })
         task.resume()

@@ -61,13 +61,14 @@
 		73372E771CB0158C0019A6FD /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E761CB0158C0019A6FD /* DashboardVC.swift */; };
 		73372E791CB035D00019A6FD /* NotificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E781CB035D00019A6FD /* NotificationServiceProvider.swift */; };
 		73372E7B1CB038A70019A6FD /* BygoInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E7A1CB038A70019A6FD /* BygoInfoCollectionViewCell.swift */; };
-		73372E7D1CB0475C0019A6FD /* RequestCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E7C1CB0475C0019A6FD /* RequestCollectionViewCell.swift */; };
+		73372E7D1CB0475C0019A6FD /* OrderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E7C1CB0475C0019A6FD /* OrderCollectionViewCell.swift */; };
 		73372E7F1CB0B0AB0019A6FD /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E7E1CB0B0AB0019A6FD /* HistoryTableViewCell.swift */; };
 		73372E811CB0B3750019A6FD /* HistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E801CB0B3750019A6FD /* HistoryVC.swift */; };
 		73372E831CB0B5420019A6FD /* HistoryServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */; };
 		73372E861CB0CAD80019A6FD /* LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E851CB0CAD80019A6FD /* LoadingScreen.swift */; };
 		73372E881CB0E6FD0019A6FD /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */; };
 		73386BAB1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */; };
+		735BD25D1CBAE0A10004F990 /* WaitlistHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BD25C1CBAE0A10004F990 /* WaitlistHomeVC.swift */; };
 		73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73672D2B1C7FC06600352631 /* WelcomeVC.swift */; };
 		736C822B1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736C822A1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift */; };
 		739ADBD51C7F5E5B00C34CC1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739ADBD41C7F5E5B00C34CC1 /* Image.swift */; };
@@ -189,13 +190,14 @@
 		73372E761CB0158C0019A6FD /* DashboardVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		73372E781CB035D00019A6FD /* NotificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationServiceProvider.swift; sourceTree = "<group>"; };
 		73372E7A1CB038A70019A6FD /* BygoInfoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BygoInfoCollectionViewCell.swift; sourceTree = "<group>"; };
-		73372E7C1CB0475C0019A6FD /* RequestCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCollectionViewCell.swift; sourceTree = "<group>"; };
+		73372E7C1CB0475C0019A6FD /* OrderCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderCollectionViewCell.swift; sourceTree = "<group>"; };
 		73372E7E1CB0B0AB0019A6FD /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		73372E801CB0B3750019A6FD /* HistoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryVC.swift; sourceTree = "<group>"; };
 		73372E821CB0B5420019A6FD /* HistoryServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryServiceProvider.swift; sourceTree = "<group>"; };
 		73372E851CB0CAD80019A6FD /* LoadingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingScreen.swift; sourceTree = "<group>"; };
 		73372E871CB0E6FD0019A6FD /* ErrorMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		73386BAA1C7957AB005140C7 /* PhoneNumberVerificationServiceProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationServiceProvider.swift; sourceTree = "<group>"; };
+		735BD25C1CBAE0A10004F990 /* WaitlistHomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitlistHomeVC.swift; sourceTree = "<group>"; };
 		73672D2B1C7FC06600352631 /* WelcomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
 		736C822A1CB20A8E00D2B9F4 /* HowDoesBygoWorkVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HowDoesBygoWorkVC.swift; sourceTree = "<group>"; };
 		739ADBD41C7F5E5B00C34CC1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -418,6 +420,7 @@
 		733621391C60766600893034 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				735BD25B1CBAE08B0004F990 /* WaitlistApp */,
 				73372E841CB0CABC0019A6FD /* Misc. */,
 				73D7998D1CB36D540034CBC3 /* Help */,
 				730CAA3A1C762F35000BE681 /* Payments */,
@@ -547,6 +550,14 @@
 			name = Misc.;
 			sourceTree = "<group>";
 		};
+		735BD25B1CBAE08B0004F990 /* WaitlistApp */ = {
+			isa = PBXGroup;
+			children = (
+				735BD25C1CBAE0A10004F990 /* WaitlistHomeVC.swift */,
+			);
+			name = WaitlistApp;
+			sourceTree = "<group>";
+		};
 		73BA58D01C82636300C03FCD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -589,7 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				73372E721CAF80130019A6FD /* NotificationCollectionViewCell.swift */,
-				73372E7C1CB0475C0019A6FD /* RequestCollectionViewCell.swift */,
+				73372E7C1CB0475C0019A6FD /* OrderCollectionViewCell.swift */,
 				73DE66AC1C63959B006D9810 /* ListingsCollectionViewCell.swift */,
 				7303C3EA1C727DB700EDD317 /* RentedListingsCollectionViewCell.swift */,
 				73372E7A1CB038A70019A6FD /* BygoInfoCollectionViewCell.swift */,
@@ -854,6 +865,7 @@
 				73DE66ED1C63FB8B006D9810 /* ProposedMeetingTime.swift in Sources */,
 				73DE66EF1C6400F4006D9810 /* RentEvent.swift in Sources */,
 				73372E811CB0B3750019A6FD /* HistoryVC.swift in Sources */,
+				735BD25D1CBAE0A10004F990 /* WaitlistHomeVC.swift in Sources */,
 				7336214E1C60F4E100893034 /* PhoneNumberVC.swift in Sources */,
 				73372E7F1CB0B0AB0019A6FD /* HistoryTableViewCell.swift in Sources */,
 				7336215F1C612E1D00893034 /* AccountSettingsVC.swift in Sources */,
@@ -862,7 +874,7 @@
 				73147DC11C62F44D00FD70B8 /* Listing.swift in Sources */,
 				7336211C1C6074D000893034 /* Model.swift in Sources */,
 				733621421C60778900893034 /* MenuOptionTableViewCell.swift in Sources */,
-				73372E7D1CB0475C0019A6FD /* RequestCollectionViewCell.swift in Sources */,
+				73372E7D1CB0475C0019A6FD /* OrderCollectionViewCell.swift in Sources */,
 				732E50A31C9A40BB00E8A247 /* OrderVC.swift in Sources */,
 				73672D2C1C7FC06600352631 /* WelcomeVC.swift in Sources */,
 				73DE66F11C640453006D9810 /* MeetingEvent.swift in Sources */,

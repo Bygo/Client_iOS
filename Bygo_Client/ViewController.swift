@@ -87,13 +87,14 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
         panGestureRecognizer.addTarget(menuContainer!, action: #selector(MenuContainerVC.panGestureRecognized(_:)))
     }
     
+    
     private func removeModule(inout vc:UIViewController?) {
         vc?.view.removeFromSuperview()
         vc?.removeFromParentViewController()
         vc = nil
     }
 
-
+    
     private func addModule(moduleName:String, inout vc:UIViewController?) {
         let storyboard = UIStoryboard(name: moduleName, bundle: NSBundle.mainBundle())
         vc = storyboard.instantiateInitialViewController()
@@ -117,7 +118,7 @@ class ViewController: UIViewController, MenuContainerDelegate, LoginDelegate, Se
     func didSelectMenuOption(option:MenuOptions) {
         switch option {
         case .Discover:     view.bringSubviewToFront(discoverContainer!.view)
-        case .Dashboard:    view.bringSubviewToFront(dashboardContainer!.view)
+        case .Dashboard:    break; // view.bringSubviewToFront(dashboardContainer!.view)
         case .Settings:     view.bringSubviewToFront(settingsContainer!.view)
         case .Help:         view.bringSubviewToFront(helpContainer!.view)
         case .SignUp:       showLoginMenu(self)

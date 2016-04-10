@@ -20,7 +20,7 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var notificationsVerticalOffset: NSLayoutConstraint!
     
-    private var notificationData: AnyObject?
+    private var notificationData:[(String, String)] = []
     
     
     override func viewDidLoad() {
@@ -71,47 +71,60 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     }
     
     
-    private func refreshCurrentOrders() {
+    private func refreshCurrentOrders(completionHandler:(()->Void)?) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.listingServiceProvider.fetchUsersRentedListings(userID, completionHandler: {
             (success:Bool) in
             if success {
                 dispatch_async(GlobalMainQueue, {
                     self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Fade)
+                    completionHandler?()
                 })
             }
         })
     }
     
-    private func refreshUnfilledOrders() {
+    private func refreshUnfilledOrders(completionHandler:(()->Void)?) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
         model?.orderServiceProvider.fetchUsersUnfilledOrders(userID, completionHandler: {
             (success:Bool) in
             if success {
                 dispatch_async(GlobalMainQueue, {
                     self.tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Fade)
+                    completionHandler?()
                 })
             }
         })
     }
     
-    private func refreshNotifications() {
+    private func refreshNotifications(completionHandler:(()->Void)?) {
         guard let userID = model?.userServiceProvider.getLocalUser()?.userID else { return }
-        model?.notificationServiceProvider.fetchUsersNotificationData(userID, completionHandler: {
-            (data: AnyObject?) in
-            self.refreshControl?.endRefreshing()
-            self.notificationData = data
-            dispatch_async(GlobalMainQueue, {
-                self.collectionView.reloadData()
-                self.collectionView.layoutIfNeeded()
-            })
+        model?.orderServiceProvider.fetchFillableOrders(userID, completionHandler: {
+            (success:Bool, data:[String]) in
+            if success {
+                for d in data {
+                    self.notificationData.append(("Order", d))
+                }
+                
+                dispatch_async(GlobalMainQueue, {
+                    self.collectionView.reloadData()
+                    self.collectionView.layoutIfNeeded()
+                    completionHandler?()
+                })
+            }
         })
     }
     
     func refresh() {
-        refreshNotifications()
-        refreshCurrentOrders()
-        refreshUnfilledOrders()
+        refreshNotifications({
+            self.refreshCurrentOrders({
+                self.refreshUnfilledOrders({
+                    self.refreshControl?.endRefreshing()
+                })
+            })
+        })
+        //refreshCurrentOrders()
+        //refreshUnfilledOrders()
     }
     
     // MARK: - Table view data source
@@ -290,13 +303,11 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let notificationData = notificationData as? [[String:AnyObject]] else { return 1 }
-        let count = notificationData.count
-        if count == 0 {
+        if notificationData.count == 0 {
             return 1
-        } else {
-            return count
         }
+        
+        return notificationData.count
     }
     
     private func configureNoNotificationsCell(indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -306,24 +317,83 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
         return noNotificationsCell
     }
     
+    func configureOrderCell(cell:OrderCollectionViewCell, indexPath:NSIndexPath) {
+        let orderID = notificationData[indexPath.row].1
+        model?.orderServiceProvider.fetchOrder(orderID, completionHandler: {
+            (success:Bool) in
+            if success {
+                let realm = try! Realm()
+                let order = realm.objects(Order).filter("orderID == \"\(orderID)\"")[0]
+                guard let renterID = order.renterID else { return }
+                guard let typeID = order.typeID else { return }
+                guard let duration = order.duration.value else { return }
+                guard let fee = order.rentalFee.value else { return }
+                
+                self.model?.userServiceProvider.fetchUser(renterID, completionHandler: {
+                    (success: Bool) in
+                    if success {
+                        let realm = try! Realm()
+                        let user = realm.objects(User).filter("userID == \"\(renterID)\"")[0]
+                        guard let name = user.firstName else { return }
+                        
+                        self.model?.itemTypeServiceProvider.fetchItemType(typeID, completionHandler: {
+                            (success: Bool) in
+                            if success {
+                                let realm = try! Realm()
+                                let itemType = realm.objects(ItemType).filter("typeID == \"\(typeID)\"")[0]
+                                guard let typeName = itemType.name else { return }
+                                
+                                
+                            }
+                        })
+                    }
+                })
+            }
+        })
+    }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        if notificationData.count == 0 {
+            return configureNoNotificationsCell(indexPath)
+        }
+        let type = notificationData[indexPath.item].0
         
-        guard let notificationData = notificationData as? [[String:AnyObject]] else {
-            return configureNoNotificationsCell(indexPath)
+        switch type {
+        case "Delivery":
+            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("NotificationCell", forIndexPath: indexPath) as? NotificationCollectionViewCell else { return UICollectionViewCell() }
+            cell.imageView.image = UIImage(named: "DeliveryTruck")?.imageWithRenderingMode(.AlwaysTemplate)
+            cell.imageView.tintColor = kCOLOR_ONE
+            cell.imageView.alpha = 0.75
+            cell.titleLabel.text = "1 Delivery"
+            cell.detailLabel.text = "The Xbox One Console will be delivered in approximately 20 minutes."
+            cell.backgroundColor = .whiteColor()
+            return cell
+            
+        case "Order":
+            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("NotificationCell", forIndexPath: indexPath) as? NotificationCollectionViewCell else { return UICollectionViewCell() }
+            cell.imageView.image = UIImage(named: "DeliveryTruck")?.imageWithRenderingMode(.AlwaysTemplate)
+            cell.imageView.tintColor = kCOLOR_ONE
+            cell.imageView.alpha = 0.75
+            cell.titleLabel.text = "1 Delivery"
+            cell.detailLabel.text = "The Xbox One Console will be delivered in approximately 20 minutes."
+            cell.backgroundColor = .whiteColor()
+            return cell
+            /*
+            guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("OrderCell", forIndexPath: indexPath) as? OrderCollectionViewCell else { return UICollectionViewCell() }
+            
+            cell.imageView.image = nil
+            cell.imageView.backgroundColor = .lightGrayColor()
+            
+            cell.titleLabel.text = "Test title"
+            cell.detailLabel.text = "Some detailed text"
+            cell.backgroundColor = .whiteColor()
+            return cell
+             */
+            
+        default:
+            return UICollectionViewCell()
+            
         }
-        let count = notificationData.count
-        if count == 0 {
-            return configureNoNotificationsCell(indexPath)
-        }
-
-        guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier("NotificationCell", forIndexPath: indexPath) as? NotificationCollectionViewCell else { return UICollectionViewCell() }
-        cell.imageView.image = UIImage(named: "DeliveryTruck")?.imageWithRenderingMode(.AlwaysTemplate)
-        cell.imageView.tintColor = kCOLOR_ONE
-        cell.imageView.alpha = 0.75
-        cell.titleLabel.text = "1 Delivery"
-        cell.detailLabel.text = "The Xbox One Console will be delivered in approximately 20 minutes."
-        cell.backgroundColor = .whiteColor()
-        return cell
     }
     
     
@@ -378,9 +448,10 @@ class DashboardVC: UITableViewController, UICollectionViewDelegate, UICollection
     
 }
 
+let cellSpacing:CGFloat = 16.0
 
 // MARK: - UICollectionViewDelegate
-extension DashboardVC : UICollectionViewDelegateFlowLayout{
+extension DashboardVC : UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         return CGSizeMake(headerView.bounds.width-16.0, headerView.bounds.height-16.0)
     }
@@ -388,8 +459,11 @@ extension DashboardVC : UICollectionViewDelegateFlowLayout{
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
     }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 16.0
+    }
 }
-
 
 
 protocol DashboardDelegate {
